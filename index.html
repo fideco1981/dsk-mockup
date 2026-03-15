@@ -1078,7 +1078,7 @@
     </div>
     <div class="stat-item fade-in fade-in-delay-2">
       <div class="stat-num"><em>133</em> m</div>
-      <div class="stat-label">Vertikalt fall</div>
+      <div class="stat-label">Høydeforskjell</div>
     </div>
     <div class="stat-item fade-in fade-in-delay-3">
       <div class="stat-num"><em>500</em> m</div>
@@ -1209,13 +1209,13 @@
       <div class="section-tag fade-in">Vår hjemmebane</div>
       <h2 class="section-title fade-in fade-in-delay-1">Haukåsløypa</h2>
       <p class="haukos-desc fade-in fade-in-delay-2">
-        133 meters vertikalt fall, 500 meter løype og 33% maks stigning — midt i Drammen. Haukåsløypa er en sjelden urban alpinperle med egen barnebakke, belysning og godt vedlikeholdt løype hele vinteren.
+        133 meters høydeforskjell, 500 meter løype og <span id="haukos-grad">47%</span> maks fall — midt i Drammen. Haukåsløypa er en sjelden urban alpinperle med egen barnebakke, belysning og godt vedlikeholdt løype hele vinteren.
       </p>
       <div class="haukos-facts fade-in fade-in-delay-3">
         <div class="fact-chip">
           <div class="fact-icon">⬇️</div>
           <div class="fact-text">
-            <div class="fact-label">Hovedløype — fall</div>
+            <div class="fact-label">Hovedløype — høydeforskjell</div>
             <div class="fact-value">133m</div>
           </div>
         </div>
@@ -1229,7 +1229,7 @@
         <div class="fact-chip">
           <div class="fact-icon">🧒</div>
           <div class="fact-text">
-            <div class="fact-label">Barnebakke — fall</div>
+            <div class="fact-label">Barnebakke — høydeforskjell</div>
             <div class="fact-value">18m</div>
           </div>
         </div>
@@ -1538,6 +1538,17 @@ add(el('polygon',{points:fillStr,fill:'url(#epFg)'}));
 // Steep section highlight (from 141m down)
 let steepIdx = 0;
 for (let i=0; i<storeP.length; i++) { if (storeP[i].e<=141) { steepIdx=i; break; } }
+
+// Calculate gradients from KML data
+const upperGrad = Math.round((222 - storeP[steepIdx].e) / storeP[steepIdx].d * 100);
+let steepMaxGrad = 0;
+for (let i=steepIdx; i<storeP.length-2; i++) {
+  const dE = storeP[i].e - storeP[i+2].e;
+  const dD = storeP[i+2].d - storeP[i].d;
+  if (dD > 0.5) steepMaxGrad = Math.max(steepMaxGrad, dE/dD*100);
+}
+steepMaxGrad = Math.round(steepMaxGrad);
+document.getElementById('haukos-grad').textContent = steepMaxGrad + '%';
 const [sx,sy] = sPts[steepIdx];
 const steepStr = sPts.slice(steepIdx).map(([x,y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
   + ` ${(W-MR).toFixed(1)},${botY} ${sx.toFixed(1)},${botY}`;
@@ -1593,15 +1604,16 @@ add(
 const [annUpX,annUpY] = xy(165, 183);
 add(
   el('line',{x1:topX.toFixed(1),y1:topY2.toFixed(1),x2:sx.toFixed(1),y2:sy.toFixed(1),stroke:'rgba(51,196,240,0.22)','stroke-width':'1.5','stroke-dasharray':'5 3'}),
-  el('rect',{x:(annUpX-21).toFixed(1),y:(annUpY-15).toFixed(1),width:'44',height:'19',rx:'3',fill:'rgba(0,30,60,0.7)',stroke:'rgba(51,196,240,0.35)','stroke-width':'0.8'}),
-  el('text',{fill:'#33C4F0','font-family':'Syne,sans-serif','font-weight':'700','font-size':'12','text-anchor':'middle',x:annUpX.toFixed(1),y:(annUpY-2).toFixed(1),_t:'~24%'})
+  el('rect',{x:(annUpX-27).toFixed(1),y:(annUpY-17).toFixed(1),width:'56',height:'32',rx:'3',fill:'rgba(0,30,60,0.7)',stroke:'rgba(51,196,240,0.35)','stroke-width':'0.8'}),
+  el('text',{fill:'#33C4F0','font-family':'Syne,sans-serif','font-weight':'700','font-size':'14','text-anchor':'middle',x:annUpX.toFixed(1),y:(annUpY-3).toFixed(1),_t:`${upperGrad}%`}),
+  el('text',{fill:'rgba(51,196,240,0.65)','font-family':'Outfit,sans-serif','font-size':'9','text-anchor':'middle',x:annUpX.toFixed(1),y:(annUpY+11).toFixed(1),_t:'snitt fall'})
 );
 
 // Steep section annotation 33%
 const [annStX,annStY] = xy(430, 113);
 add(
   el('rect',{x:(annStX-27).toFixed(1),y:(annStY-17).toFixed(1),width:'56','height':'32',rx:'4',fill:'rgba(20,10,50,0.75)',stroke:'rgba(102,85,187,0.5)','stroke-width':'1'}),
-  el('text',{fill:'#9988DD','font-family':'Syne,sans-serif','font-weight':'700','font-size':'14','text-anchor':'middle',x:annStX.toFixed(1),y:(annStY-3).toFixed(1),_t:'33%'}),
+  el('text',{fill:'#9988DD','font-family':'Syne,sans-serif','font-weight':'700','font-size':'14','text-anchor':'middle',x:annStX.toFixed(1),y:(annStY-3).toFixed(1),_t:`${steepMaxGrad}%`}),
   el('text',{fill:'rgba(153,136,221,0.65)','font-family':'Outfit,sans-serif','font-size':'9','text-anchor':'middle',x:annStX.toFixed(1),y:(annStY+11).toFixed(1),_t:'maks fall'})
 );
 
@@ -1617,7 +1629,7 @@ add(el('text',{fill:'#3A9A4A','font-family':'Syne,sans-serif','font-weight':'700
 
 const LML=LBOX.x+10, LMR=LBOX.x+LBOX.w-10, LMT=LBOX.y+19, LMB=LBOX.y+LBOX.h-13;
 const LPW=LMR-LML, LPH=LMB-LMT;
-function lxy(d,e) { return [LML+(d/130)*LPW, LMT+LPH-((e-93)/18)*LPH]; }
+function lxy(d,e) { return [LML+(d/130)*LPW, LMT+LPH-((e-93)/26)*LPH]; }
 const lPts = lilleP.map(({d,e}) => lxy(d,e));
 const lBotY = LMB.toFixed(1);
 const [lX0]=lxy(0,111), [lX1]=lxy(130,93);
@@ -1642,7 +1654,7 @@ add(
   const messages = [
     '❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>',
     '🕐 Åpningstider: man–tors 18–20, lør–søn 11–15',
-    '🎿 Åpent for alle — både medlemmer og ikke-medlemmer er velkomne!',
+    '🎿 Åpent for alle — både medlemmer og ikke-medlemmer er velkomne. Betaling via Vipps #943468.',
     '❤️ Støtt oss via Grasrotandelen — <a href="https://www.norsk-tipping.no/grasrotandelen/din-mottaker/883456912" target="_blank" rel="noopener">Legg til Drammen Slalåmklubb som din grasrotmottaker →</a>',
   ];
   const el = document.querySelector('.topbar-msg');
@@ -1658,7 +1670,7 @@ add(
         el.classList.remove('fade-in-top');
       }));
     }, 500);
-  }, 4000);
+  }, 5000);
 })();
 </script>
 </body>
