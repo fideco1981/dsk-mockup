@@ -50,6 +50,8 @@
     z-index: 100;
   }
   .topbar span { opacity: 0.85; margin: 0 6px; }
+  .topbar a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }
+  .topbar a:hover { text-decoration-color: #fff; }
   .topbar-msg {
     display: inline-block;
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -1639,6 +1641,7 @@ add(
     '❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>',
     '🕐 Åpningstider: man–tors 18–20, lør–søn 11–15',
     '🎿 Åpent for alle — både medlemmer og ikke-medlemmer er velkomne!',
+    '❤️ Støtt oss via Grasrotandelen — <a href="https://www.norsk-tipping.no/grasrotandelen/din-mottaker/883456912" target="_blank" rel="noopener">Legg til Drammen Slalåmklubb som din grasrotmottaker →</a>',
   ];
   const el = document.querySelector('.topbar-msg');
   let idx = 0;
