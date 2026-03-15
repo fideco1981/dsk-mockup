@@ -1077,12 +1077,12 @@
       <div class="stat-label">Alder</div>
     </div>
     <div class="stat-item fade-in fade-in-delay-2">
-      <div class="stat-num"><em>133</em> m</div>
-      <div class="stat-label">Høydeforskjell</div>
-    </div>
-    <div class="stat-item fade-in fade-in-delay-3">
       <div class="stat-num"><em>500</em> m</div>
       <div class="stat-label">Lengde</div>
+    </div>
+    <div class="stat-item fade-in fade-in-delay-3">
+      <div class="stat-num"><em>133</em> m</div>
+      <div class="stat-label">Høydeforskjell</div>
     </div>
   </div>
 </div>
@@ -1213,13 +1213,6 @@
       </p>
       <div class="haukos-facts fade-in fade-in-delay-3">
         <div class="fact-chip">
-          <div class="fact-icon">⬇️</div>
-          <div class="fact-text">
-            <div class="fact-label">Hovedløype — høydeforskjell</div>
-            <div class="fact-value">133m</div>
-          </div>
-        </div>
-        <div class="fact-chip">
           <div class="fact-icon">📏</div>
           <div class="fact-text">
             <div class="fact-label">Hovedløype — lengde</div>
@@ -1227,10 +1220,10 @@
           </div>
         </div>
         <div class="fact-chip">
-          <div class="fact-icon">🧒</div>
+          <div class="fact-icon">⬇️</div>
           <div class="fact-text">
-            <div class="fact-label">Barnebakke — høydeforskjell</div>
-            <div class="fact-value">18m</div>
+            <div class="fact-label">Hovedløype — høydeforskjell</div>
+            <div class="fact-value">133m</div>
           </div>
         </div>
         <div class="fact-chip">
@@ -1238,6 +1231,13 @@
           <div class="fact-text">
             <div class="fact-label">Barnebakke — lengde</div>
             <div class="fact-value">130m</div>
+          </div>
+        </div>
+        <div class="fact-chip">
+          <div class="fact-icon">🧒</div>
+          <div class="fact-text">
+            <div class="fact-label">Barnebakke — høydeforskjell</div>
+            <div class="fact-value">18m</div>
           </div>
         </div>
       </div>
@@ -1453,7 +1453,7 @@ const statsObs = new IntersectionObserver((entries) => {
   if (entries[0].isIntersecting) {
     statsObs.disconnect();
     const nums = document.querySelectorAll('.stat-num em');
-    const configs = [{el: nums[0], val: 4}, {el: nums[1], val: 133}, {el: nums[2], val: 500}];
+    const configs = [{el: nums[0], val: 4}, {el: nums[1], val: 500}, {el: nums[2], val: 133}];
     configs.forEach(({el, val}) => {
       if (el) animateCounter(el, val);
     });
@@ -1485,7 +1485,7 @@ function buildProfile(pts, total) {
   return pts.map((p,i) => ({d:d[i]*s, e:p[2]}));
 }
 
-const W=620, H=330, ML=60, MR=20, MT=52, MB=38;
+const W=620, H=330, ML=60, MR=20, MT=52, MB=48;
 const PW=W-ML-MR, PH=H-MT-MB;
 const EMIN=89, ERNG=133;
 function xy(d, e) {
