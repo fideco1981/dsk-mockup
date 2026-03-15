@@ -50,6 +50,12 @@
     z-index: 100;
   }
   .topbar span { opacity: 0.85; margin: 0 6px; }
+  .topbar-msg {
+    display: inline-block;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .topbar-msg.fade-out { opacity: 0; transform: translateY(-6px); }
+  .topbar-msg.fade-in-top { opacity: 0; transform: translateY(6px); }
 
   /* ─── NAV ─── */
   nav {
@@ -983,7 +989,7 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-  ❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;<span>·</span>&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>
+  <span class="topbar-msg">❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong></span>
 </div>
 
 <!-- NAV -->
@@ -1341,8 +1347,8 @@
       <h4>Kontakt</h4>
       <ul>
         <li><a href="#">post@drammenslalomklubb.no</a></li>
-        <li><a href="#">Haukåsveien 1</a></li>
-        <li><a href="#">3023 Drammen</a></li>
+        <li><a href="#">Blektjernveien 18</a></li>
+        <li><a href="#">Drammen</a></li>
         <li><a href="#">Bli Medlem</a></li>
         <li><a href="#">Styret</a></li>
       </ul>
@@ -1625,6 +1631,29 @@ add(
   el('text',{...ls,'text-anchor':'middle',x:((LML+LMR)/2).toFixed(1),y:(LMB+11).toFixed(1),_t:'130m · 14%'})
 );
 
+})();
+
+// ── TOPBAR ROTATOR ──
+(() => {
+  const messages = [
+    '❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>',
+    '🕐 Åpningstider: man–tors 18–20, lør–søn 11–15',
+    '🎿 Åpent for alle — både medlemmer og ikke-medlemmer er velkomne!',
+  ];
+  const el = document.querySelector('.topbar-msg');
+  let idx = 0;
+  setInterval(() => {
+    el.classList.add('fade-out');
+    setTimeout(() => {
+      idx = (idx + 1) % messages.length;
+      el.innerHTML = messages[idx];
+      el.classList.remove('fade-out');
+      el.classList.add('fade-in-top');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.classList.remove('fade-in-top');
+      }));
+    }, 500);
+  }, 4000);
 })();
 </script>
 </body>
