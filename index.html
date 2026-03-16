@@ -1452,11 +1452,11 @@ for (let i = 0; i < particleCount; i++) {
   // Gate definitions: x/y as fractions of hero size
   // side L = inner pole on left (skier passes right), R = inner pole on right (skier passes left)
   const gateData = [
-    { x: 0.47, y: 0.18, color: '#e8001c', side: 'L' },
-    { x: 0.80, y: 0.33, color: '#1155cc', side: 'R' },
-    { x: 0.43, y: 0.50, color: '#e8001c', side: 'L' },
-    { x: 0.78, y: 0.65, color: '#1155cc', side: 'R' },
-    { x: 0.45, y: 0.80, color: '#e8001c', side: 'L' },
+    { x: 0.53, y: 0.18, color: '#e8001c', side: 'L' },
+    { x: 0.73, y: 0.33, color: '#1155cc', side: 'R' },
+    { x: 0.51, y: 0.50, color: '#e8001c', side: 'L' },
+    { x: 0.72, y: 0.65, color: '#1155cc', side: 'R' },
+    { x: 0.52, y: 0.80, color: '#e8001c', side: 'L' },
   ];
   const colorRGB = { '#e8001c': '232,0,28', '#1155cc': '17,85,204' };
 
@@ -1473,20 +1473,25 @@ for (let i = 0; i < particleCount; i++) {
   });
   gateEls.forEach((el, i) => setTimeout(() => el.classList.add('visible'), 400 + i * 220));
 
-  // Skier path waypoints — right half of hero, clear of the text on the left
+  // Skier path waypoints — approach, pass gate, round outside, cross to next
   const waypoints = [
-    { x: 0.63, y: -0.08 },
-    { x: 0.60, y: 0.06  },
-    { x: 0.57, y: 0.18  }, // gate 1
-    { x: 0.78, y: 0.26  },
-    { x: 0.73, y: 0.33  }, // gate 2
-    { x: 0.52, y: 0.42  },
-    { x: 0.54, y: 0.50  }, // gate 3
-    { x: 0.76, y: 0.58  },
-    { x: 0.71, y: 0.65  }, // gate 4
-    { x: 0.51, y: 0.73  },
-    { x: 0.55, y: 0.80  }, // gate 5
-    { x: 0.65, y: 0.92  },
+    { x: 0.63, y: -0.06 },
+    { x: 0.65, y: 0.09  },
+    { x: 0.60, y: 0.18  }, // gate 1 (passes right of left pole)
+    { x: 0.53, y: 0.24  }, // round outside (swings left past pole)
+    { x: 0.67, y: 0.28  },
+    { x: 0.67, y: 0.33  }, // gate 2 (passes left of right pole)
+    { x: 0.73, y: 0.39  }, // round outside (swings right past pole)
+    { x: 0.58, y: 0.44  },
+    { x: 0.58, y: 0.50  }, // gate 3 (passes right of left pole)
+    { x: 0.51, y: 0.56  }, // round outside (swings left past pole)
+    { x: 0.67, y: 0.60  },
+    { x: 0.66, y: 0.65  }, // gate 4 (passes left of right pole)
+    { x: 0.72, y: 0.71  }, // round outside (swings right past pole)
+    { x: 0.58, y: 0.75  },
+    { x: 0.58, y: 0.80  }, // gate 5 (passes right of left pole)
+    { x: 0.52, y: 0.86  }, // round outside (swings left past pole)
+    { x: 0.63, y: 0.93  },
     { x: 0.63, y: 1.08  },
   ];
 
