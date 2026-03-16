@@ -258,9 +258,8 @@
     transition: opacity 0.7s ease, filter 0.25s ease;
   }
   .slalom-gate.visible { opacity: 1; }
-  .slalom-gate.lit { filter: drop-shadow(0 0 10px currentColor) brightness(1.5); }
-  .gate-flag { width: 14px; height: 9px; border-radius: 1px; }
-  .gate-pole { width: 2px; height: 30px; background: rgba(255,255,255,0.65); }
+  .slalom-gate.lit { filter: drop-shadow(0 0 10px currentColor) brightness(1.6); }
+  .gate-pole { width: 3px; height: 38px; border-radius: 2px; }
   #slalom-skier {
     position: absolute;
     font-size: 22px;
@@ -1467,31 +1466,26 @@ for (let i = 0; i < particleCount; i++) {
     el.style.color = g.color;
     el.style.left = (g.x * 100) + '%';
     el.style.top  = (g.y * 100) + '%';
-    el.innerHTML = `<div class="gate-flag" style="background:${g.color}"></div><div class="gate-pole"></div>`;
+    el.innerHTML = `<div class="gate-pole" style="background:${g.color}"></div>`;
     run.appendChild(el);
     return el;
   });
   gateEls.forEach((el, i) => setTimeout(() => el.classList.add('visible'), 400 + i * 220));
 
-  // Skier path waypoints — approach, pass gate, round outside, cross to next
+  // Skier path waypoints — passes LEFT of red gates, RIGHT of blue gates, rounding each on the outside
   const waypoints = [
     { x: 0.63, y: -0.06 },
-    { x: 0.65, y: 0.09  },
-    { x: 0.60, y: 0.18  }, // gate 1 (passes right of left pole)
-    { x: 0.53, y: 0.24  }, // round outside (swings left past pole)
-    { x: 0.67, y: 0.28  },
-    { x: 0.67, y: 0.33  }, // gate 2 (passes left of right pole)
-    { x: 0.73, y: 0.39  }, // round outside (swings right past pole)
-    { x: 0.58, y: 0.44  },
-    { x: 0.58, y: 0.50  }, // gate 3 (passes right of left pole)
-    { x: 0.51, y: 0.56  }, // round outside (swings left past pole)
-    { x: 0.67, y: 0.60  },
-    { x: 0.66, y: 0.65  }, // gate 4 (passes left of right pole)
-    { x: 0.72, y: 0.71  }, // round outside (swings right past pole)
-    { x: 0.58, y: 0.75  },
-    { x: 0.58, y: 0.80  }, // gate 5 (passes right of left pole)
-    { x: 0.52, y: 0.86  }, // round outside (swings left past pole)
-    { x: 0.63, y: 0.93  },
+    { x: 0.62, y: 0.10  },
+    { x: 0.46, y: 0.19  }, // gate 1 red: LEFT of pole at 0.53
+    { x: 0.63, y: 0.26  }, // round and cross right
+    { x: 0.80, y: 0.34  }, // gate 2 blue: RIGHT of pole at 0.73
+    { x: 0.62, y: 0.41  }, // round and cross left
+    { x: 0.44, y: 0.51  }, // gate 3 red: LEFT of pole at 0.51
+    { x: 0.63, y: 0.58  }, // round and cross right
+    { x: 0.79, y: 0.66  }, // gate 4 blue: RIGHT of pole at 0.72
+    { x: 0.62, y: 0.73  }, // round and cross left
+    { x: 0.44, y: 0.81  }, // gate 5 red: LEFT of pole at 0.52
+    { x: 0.63, y: 0.89  }, // round and exit
     { x: 0.63, y: 1.08  },
   ];
 
