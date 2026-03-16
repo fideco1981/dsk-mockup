@@ -221,16 +221,17 @@
   }
   .snow-particle {
     position: absolute;
-    top: -10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.8);
+    top: -20px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1;
+    user-select: none;
     animation: snowfall linear infinite;
   }
   @keyframes snowfall {
-    0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+    0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
     10%  { opacity: 1; }
     90%  { opacity: 0.6; }
-    100% { transform: translateY(100vh) translateX(var(--drift)) rotate(360deg); opacity: 0; }
+    100% { transform: translateY(105vh) translateX(var(--drift)) rotate(var(--spin)); opacity: 0; }
   }
 
   /* Grid overlay */
@@ -1367,22 +1368,26 @@
 <script>
 // ─── SNOW PARTICLES ───
 const snowContainer = document.getElementById('snow');
-const particleCount = 35;
+const snowGlyphs = ['❄', '❅', '❆'];
+const particleCount = 40;
 for (let i = 0; i < particleCount; i++) {
-  const p = document.createElement('div');
+  const p = document.createElement('span');
   p.className = 'snow-particle';
-  const size = Math.random() * 4 + 2;
+  p.textContent = snowGlyphs[Math.floor(Math.random() * snowGlyphs.length)];
+  const size = Math.random() * 14 + 8;
   const left = Math.random() * 100;
-  const duration = Math.random() * 8 + 6;
-  const delay = Math.random() * 10;
-  const drift = (Math.random() - 0.5) * 80;
+  const duration = Math.random() * 10 + 8;
+  const delay = Math.random() * 12;
+  const drift = (Math.random() - 0.5) * 100;
+  const spin = (Math.random() - 0.5) > 0 ? `${Math.random() * 360 + 180}deg` : `-${Math.random() * 360 + 180}deg`;
   p.style.cssText = `
-    width:${size}px; height:${size}px;
+    font-size:${size}px;
     left:${left}%;
     animation-duration:${duration}s;
     animation-delay:-${delay}s;
     --drift:${drift}px;
-    opacity:${Math.random() * 0.6 + 0.2};
+    --spin:${spin};
+    opacity:${Math.random() * 0.5 + 0.3};
   `;
   snowContainer.appendChild(p);
 }
