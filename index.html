@@ -1584,8 +1584,10 @@ for (let i = 0; i < particleCount; i++) {
       skierEl.style.top  = py + 'px';
       if (trail.length > 5) {
         const prev = trail[trail.length - 5];
-        const tilt = Math.max(-28, Math.min(28, (px - prev.x) * 1.8));
-        skierEl.style.transform = `translate(-50%,-50%) rotate(${tilt}deg)`;
+        const dx = px - prev.x;
+        const facing = dx >= 0 ? 1 : -1;
+        const tilt = facing * Math.min(18, Math.abs(dx) * 1.5);
+        skierEl.style.transform = `translate(-50%,-50%) scaleX(${facing}) rotate(${tilt}deg)`;
       }
     } else {
       skierEl.style.opacity = '0';
