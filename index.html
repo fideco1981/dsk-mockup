@@ -1465,11 +1465,11 @@ for (let i = 0; i < particleCount; i++) {
   // Gate definitions: x/y as fractions of hero size
   // side L = inner pole on left (skier passes right), R = inner pole on right (skier passes left)
   const gateData = [
-    { x: 0.53, y: 0.18, color: '#e8001c', side: 'L' },
-    { x: 0.73, y: 0.33, color: '#1155cc', side: 'R' },
-    { x: 0.51, y: 0.50, color: '#e8001c', side: 'L' },
-    { x: 0.72, y: 0.65, color: '#1155cc', side: 'R' },
-    { x: 0.52, y: 0.80, color: '#e8001c', side: 'L' },
+    { x: 0.59, y: 0.18, color: '#e8001c', side: 'L' },
+    { x: 0.79, y: 0.33, color: '#1155cc', side: 'R' },
+    { x: 0.57, y: 0.50, color: '#e8001c', side: 'L' },
+    { x: 0.78, y: 0.65, color: '#1155cc', side: 'R' },
+    { x: 0.58, y: 0.80, color: '#e8001c', side: 'L' },
   ];
   const colorRGB = { '#e8001c': '232,0,28', '#1155cc': '17,85,204' };
 
@@ -1488,19 +1488,19 @@ for (let i = 0; i < particleCount; i++) {
 
   // Skier path waypoints — passes LEFT of red gates, RIGHT of blue gates, rounding each on the outside
   const waypoints = [
-    { x: 0.63, y: -0.06 },
-    { x: 0.62, y: 0.10  },
-    { x: 0.46, y: 0.19  }, // gate 1 red: LEFT of pole at 0.53
-    { x: 0.63, y: 0.26  }, // round and cross right
-    { x: 0.80, y: 0.34  }, // gate 2 blue: RIGHT of pole at 0.73
-    { x: 0.62, y: 0.41  }, // round and cross left
-    { x: 0.44, y: 0.51  }, // gate 3 red: LEFT of pole at 0.51
-    { x: 0.63, y: 0.58  }, // round and cross right
-    { x: 0.79, y: 0.66  }, // gate 4 blue: RIGHT of pole at 0.72
-    { x: 0.62, y: 0.73  }, // round and cross left
-    { x: 0.44, y: 0.81  }, // gate 5 red: LEFT of pole at 0.52
-    { x: 0.63, y: 0.89  }, // round and exit
-    { x: 0.63, y: 1.08  },
+    { x: 0.69, y: -0.06 },
+    { x: 0.68, y: 0.10  },
+    { x: 0.52, y: 0.19  }, // gate 1 red: LEFT of pole at 0.59
+    { x: 0.69, y: 0.26  }, // round and cross right
+    { x: 0.86, y: 0.34  }, // gate 2 blue: RIGHT of pole at 0.79
+    { x: 0.68, y: 0.41  }, // round and cross left
+    { x: 0.50, y: 0.51  }, // gate 3 red: LEFT of pole at 0.57
+    { x: 0.69, y: 0.58  }, // round and cross right
+    { x: 0.85, y: 0.66  }, // gate 4 blue: RIGHT of pole at 0.78
+    { x: 0.68, y: 0.73  }, // round and cross left
+    { x: 0.50, y: 0.81  }, // gate 5 red: LEFT of pole at 0.58
+    { x: 0.69, y: 0.89  }, // round and exit
+    { x: 0.69, y: 1.08  },
   ];
 
   function catmullRom(p0, p1, p2, p3, t) {
