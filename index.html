@@ -234,6 +234,44 @@
     100% { transform: translateY(105vh) translateX(var(--drift)) rotate(var(--spin)); opacity: 0; }
   }
 
+  /* ── SLALOM ANIMATION START  (delete from here to SLALOM ANIMATION END to revert) ── */
+  #slalom-run {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+  }
+  #slalom-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .slalom-gate {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.7s ease, filter 0.25s ease;
+  }
+  .slalom-gate.visible { opacity: 1; }
+  .slalom-gate.lit { filter: drop-shadow(0 0 10px currentColor) brightness(1.5); }
+  .gate-flag { width: 14px; height: 9px; border-radius: 1px; }
+  .gate-pole { width: 2px; height: 30px; background: rgba(255,255,255,0.65); }
+  #slalom-skier {
+    position: absolute;
+    font-size: 22px;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.75));
+    transition: opacity 0.3s;
+    line-height: 1;
+    pointer-events: none;
+  }
+  /* ── SLALOM ANIMATION END ── */
+
   /* Grid overlay */
   .hero-grid {
     position: absolute;
@@ -1391,6 +1429,160 @@ for (let i = 0; i < particleCount; i++) {
   `;
   snowContainer.appendChild(p);
 }
+
+// ── SLALOM ANIMATION START  (delete from here to SLALOM ANIMATION END to revert) ──
+(function () {
+  const hero = document.getElementById('hero');
+  if (!hero) return;
+
+  // DOM
+  const run = document.createElement('div');
+  run.id = 'slalom-run';
+  hero.appendChild(run);
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'slalom-canvas';
+  run.appendChild(canvas);
+
+  const skierEl = document.createElement('div');
+  skierEl.id = 'slalom-skier';
+  skierEl.textContent = '⛷';
+  run.appendChild(skierEl);
+
+  // Gate definitions: x/y as fractions of hero size
+  // side L = inner pole on left (skier passes right), R = inner pole on right (skier passes left)
+  const gateData = [
+    { x: 0.47, y: 0.18, color: '#e8001c', side: 'L' },
+    { x: 0.80, y: 0.33, color: '#1155cc', side: 'R' },
+    { x: 0.43, y: 0.50, color: '#e8001c', side: 'L' },
+    { x: 0.78, y: 0.65, color: '#1155cc', side: 'R' },
+    { x: 0.45, y: 0.80, color: '#e8001c', side: 'L' },
+  ];
+  const colorRGB = { '#e8001c': '232,0,28', '#1155cc': '17,85,204' };
+
+  // Create gate elements
+  const gateEls = gateData.map(g => {
+    const el = document.createElement('div');
+    el.className = 'slalom-gate';
+    el.style.color = g.color;
+    el.style.left = (g.x * 100) + '%';
+    el.style.top  = (g.y * 100) + '%';
+    el.innerHTML = `<div class="gate-flag" style="background:${g.color}"></div><div class="gate-pole"></div>`;
+    run.appendChild(el);
+    return el;
+  });
+  gateEls.forEach((el, i) => setTimeout(() => el.classList.add('visible'), 400 + i * 220));
+
+  // Skier path waypoints — right half of hero, clear of the text on the left
+  const waypoints = [
+    { x: 0.63, y: -0.08 },
+    { x: 0.60, y: 0.06  },
+    { x: 0.57, y: 0.18  }, // gate 1
+    { x: 0.78, y: 0.26  },
+    { x: 0.73, y: 0.33  }, // gate 2
+    { x: 0.52, y: 0.42  },
+    { x: 0.54, y: 0.50  }, // gate 3
+    { x: 0.76, y: 0.58  },
+    { x: 0.71, y: 0.65  }, // gate 4
+    { x: 0.51, y: 0.73  },
+    { x: 0.55, y: 0.80  }, // gate 5
+    { x: 0.65, y: 0.92  },
+    { x: 0.63, y: 1.08  },
+  ];
+
+  function catmullRom(p0, p1, p2, p3, t) {
+    const t2 = t * t, t3 = t2 * t;
+    return {
+      x: 0.5*(2*p1.x+(-p0.x+p2.x)*t+(2*p0.x-5*p1.x+4*p2.x-p3.x)*t2+(-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+      y: 0.5*(2*p1.y+(-p0.y+p2.y)*t+(2*p0.y-5*p1.y+4*p2.y-p3.y)*t2+(-p0.y+3*p1.y-3*p2.y+p3.y)*t3),
+    };
+  }
+  function getPoint(t) {
+    const n = waypoints.length;
+    const seg = Math.min(Math.floor(t * (n - 3)), n - 4);
+    const st = t * (n - 3) - seg;
+    return catmullRom(
+      waypoints[Math.max(0, seg - 1)],
+      waypoints[seg],
+      waypoints[seg + 1],
+      waypoints[Math.min(n - 1, seg + 2)],
+      st
+    );
+  }
+
+  const trail = [];
+  const TRAIL_MAX = 90;
+  const CYCLE_MS  = 7500;
+  let startTime   = null;
+  let lastGateIdx = -1;
+  let trailColor  = '#e8001c';
+  let W, H;
+
+  function resize() {
+    W = hero.offsetWidth;
+    H = hero.offsetHeight;
+    canvas.width  = W;
+    canvas.height = H;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function animate(ts) {
+    if (!startTime) startTime = ts;
+    const t = ((ts - startTime) % CYCLE_MS) / CYCLE_MS;
+
+    if (t < 0.02 && lastGateIdx >= 0) {
+      lastGateIdx = -1;
+      trail.length = 0;
+    }
+
+    const frac = getPoint(t);
+    const px = frac.x * W;
+    const py = frac.y * H;
+
+    gateData.forEach((g, i) => {
+      if (i > lastGateIdx && py > g.y * H) {
+        lastGateIdx = i;
+        trailColor  = g.color;
+        gateEls[i].classList.add('lit');
+        setTimeout(() => gateEls[i].classList.remove('lit'), 500);
+      }
+    });
+
+    trail.push({ x: px, y: py, color: trailColor });
+    if (trail.length > TRAIL_MAX) trail.shift();
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 1; i < trail.length; i++) {
+      const alpha = (i / trail.length) * 0.7;
+      ctx.strokeStyle = `rgba(${colorRGB[trail[i].color]},${alpha.toFixed(2)})`;
+      ctx.lineWidth = 2.5;
+      ctx.lineCap   = 'round';
+      ctx.beginPath();
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x,     trail[i].y);
+      ctx.stroke();
+    }
+
+    if (py >= -20 && py <= H + 20) {
+      skierEl.style.opacity = '1';
+      skierEl.style.left = px + 'px';
+      skierEl.style.top  = py + 'px';
+      if (trail.length > 5) {
+        const prev = trail[trail.length - 5];
+        const tilt = Math.max(-28, Math.min(28, (px - prev.x) * 1.8));
+        skierEl.style.transform = `translate(-50%,-50%) rotate(${tilt}deg)`;
+      }
+    } else {
+      skierEl.style.opacity = '0';
+    }
+
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+})();
+// ── SLALOM ANIMATION END ──
 
 // ─── STAR FIELD ───
 const starsEl = document.getElementById('stars');
