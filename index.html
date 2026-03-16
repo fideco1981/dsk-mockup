@@ -257,7 +257,7 @@
     opacity: 0;
     transition: opacity 0.7s ease, filter 0.25s ease;
   }
-  .slalom-gate.visible { opacity: 1; }
+  .slalom-gate.visible { opacity: 0.6; }
   .slalom-gate.lit { filter: drop-shadow(0 0 10px currentColor) brightness(1.6); }
   .gate-pole { width: 3px; height: 38px; border-radius: 2px; }
   #slalom-skier {
@@ -265,6 +265,7 @@
     transform: translate(-50%, -50%);
     transition: opacity 0.3s;
     pointer-events: none;
+    opacity: 0.6;
   }
   #slalom-skier img {
     height: 45px;
@@ -1556,7 +1557,7 @@ for (let i = 0; i < particleCount; i++) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, W, H);
     for (let i = 1; i < trail.length; i++) {
-      const alpha = (i / trail.length) * 0.7;
+      const alpha = (i / trail.length) * 0.4;
       ctx.strokeStyle = `rgba(${colorRGB[trail[i].color]},${alpha.toFixed(2)})`;
       ctx.lineWidth = 2.5;
       ctx.lineCap   = 'round';
