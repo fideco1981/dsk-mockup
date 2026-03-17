@@ -26,7 +26,7 @@
     --snow:      #EEF4FA;
     --snow2:     #DDE8F2;
     --white:     #FFFFFF;
-    --muted:     #7A9BB8;
+    --muted:     #8BAFC8;
     --font-head: 'Syne', sans-serif;
     --font-body: 'Outfit', sans-serif;
   }
@@ -129,18 +129,50 @@
   }
   .btn-nav:hover { background: var(--blue-dk); transform: translateY(-1px); }
 
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -100%; left: 8px;
+    background: var(--blue);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px; font-weight: 600;
+    z-index: 9999;
+    text-decoration: none;
+  }
+  .skip-link:focus { top: 8px; }
+
+  /* Inline SVG icon helper */
+  .icon {
+    width: 1em; height: 1em;
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+  }
+  .note-icon .icon  { width: 20px; height: 20px; }
+  .mobile-close .icon { width: 28px; height: 28px; }
+  .hamburger .icon  { width: 24px; height: 24px; }
+  .s-loc .icon, .s-time .icon { width: 12px; height: 12px; flex-shrink: 0; }
+  .lift-header .icon { width: 14px; height: 14px; vertical-align: -0.15em; }
+  .event-location .icon { width: 14px; height: 14px; vertical-align: -0.15em; }
+
   /* Hamburger */
   .hamburger {
     display: none;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
     cursor: pointer;
-    padding: 4px;
+    padding: 8px;
+    color: #fff;
+    line-height: 0;
+    border-radius: 6px;
   }
-  .hamburger span {
-    display: block; width: 24px; height: 2px;
-    background: #fff; border-radius: 2px;
-    transition: all 0.3s;
+  .hamburger:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
   }
   .mobile-menu {
     display: none;
@@ -156,8 +188,15 @@
   .mobile-menu.open { display: flex; }
   .mobile-menu a { font-family: var(--font-head); font-size: 28px; font-weight: 700; }
   .mobile-close {
-    position: absolute; top: 24px; right: 24px;
-    font-size: 32px; cursor: pointer; color: var(--muted);
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none;
+    cursor: pointer; color: var(--muted);
+    padding: 8px; border-radius: 6px; line-height: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mobile-close:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
   }
 
   /* ─── HERO ─── */
@@ -1105,9 +1144,47 @@
     .legend { gap: 8px; }
     .legend-item { font-size: 12px; padding: 5px 10px 5px 6px; }
   }
+
+  /* ─── REDUCED MOTION ─── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .snow-particle { display: none; }
+    #slalom-run    { display: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Skip to main content -->
+<a class="skip-link" href="#hero">Hopp til innhold</a>
+
+<!-- SVG icon symbols (referenced throughout as <use href="#icon-*">) -->
+<svg style="display:none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+    <path d="M12 22c4-4 8-7.582 8-12a8 8 0 1 0-16 0c0 4.418 4 8 8 12Z"/>
+  </symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 6v6l4 2m6-2c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+  <symbol id="icon-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1v19"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12h18M3 6h18M3 18h18"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 6 6 18M6 6l12 12"/>
+  </symbol>
+</svg>
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -1127,14 +1204,16 @@
     <li><a href="#haukos">Om oss</a></li>
   </ul>
   <a href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener" class="btn-nav">Bli Medlem</a>
-  <div class="hamburger" id="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">
-    <span></span><span></span><span></span>
-  </div>
+  <button class="hamburger" id="hamburger" aria-label="Åpne meny" aria-expanded="false" aria-controls="mobileMenu">
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-menu"/></svg>
+  </button>
 </nav>
 
 <!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <span class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</span>
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigasjon">
+  <button class="mobile-close" id="mobileClose" aria-label="Lukk meny">
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-close"/></svg>
+  </button>
   <a href="#programs" onclick="document.getElementById('mobileMenu').classList.remove('open')">Skiskole</a>
   <a href="#programs" onclick="document.getElementById('mobileMenu').classList.remove('open')">Trening</a>
   <a href="#events" onclick="document.getElementById('mobileMenu').classList.remove('open')">Arrangement</a>
@@ -1143,7 +1222,7 @@
 </div>
 
 <!-- HERO -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" tabindex="-1">
   <div class="hero-slash"></div>
   <div class="hero-grid"></div>
 
@@ -1221,7 +1300,7 @@
         </div>
         <div class="program-card-body">
           <span class="program-age">5-8 år</span>
-          <div class="program-name">Rekrutten</div>
+          <h3 class="program-name">Rekrutten</h3>
           <p class="program-desc">Første møte med ski gjennom lek og moro. Trygt og gledelig for de minste.</p>
           <a href="#" class="program-link">Les mer →</a>
         </div>
@@ -1233,7 +1312,7 @@
         </div>
         <div class="program-card-body">
           <span class="program-age">8-12 år</span>
-          <div class="program-name">Teknikeren</div>
+          <h3 class="program-name">Teknikeren</h3>
           <p class="program-desc">Bygg solid teknikk og få selvtillit i bakken med erfarne trenere.</p>
           <a href="#" class="program-link">Les mer →</a>
         </div>
@@ -1245,7 +1324,7 @@
         </div>
         <div class="program-card-body">
           <span class="program-age">10-13 år</span>
-          <div class="program-name">DSK Fun</div>
+          <h3 class="program-name">DSK Fun</h3>
           <p class="program-desc">Uformell og sosial skiaktivitet for de som vil ha glede og fellesskap.</p>
           <a href="#" class="program-link">Les mer →</a>
         </div>
@@ -1257,7 +1336,7 @@
         </div>
         <div class="program-card-body">
           <span class="program-age">U12-U16</span>
-          <div class="program-name">U12-U16 DSK</div>
+          <h3 class="program-name">U12-U16 DSK</h3>
           <p class="program-desc">Konkurransesatsing for unge talenter med ambisjoner om å kjøre fort.</p>
           <a href="#" class="program-link">Les mer →</a>
         </div>
@@ -1301,17 +1380,17 @@
         <!-- Monday -->
         <div class="day-cell">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
               <div class="session-card card-blue">
                 <span class="s-group">Rekrutten</span>
-                <span class="s-loc">📍 Barnebakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Barnebakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
               <div class="session-card card-purple">
                 <span class="s-group">Teknikern 1</span>
-                <span class="s-loc">📍 Hovedbakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
@@ -1321,17 +1400,17 @@
         <!-- Tuesday -->
         <div class="day-cell">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
               <div class="session-card card-green">
                 <span class="s-group">Teknikern 2</span>
-                <span class="s-loc">📍 Hovedbakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
               <div class="session-card card-orange">
                 <span class="s-group">DSK Fun</span>
-                <span class="s-loc">📍 Hovbakken / Skogen</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovbakken / Skogen</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
@@ -1341,17 +1420,17 @@
         <!-- Wednesday -->
         <div class="day-cell">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
               <div class="session-card card-blue">
                 <span class="s-group">Rekrutten</span>
-                <span class="s-loc">📍 Barnebakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Barnebakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
               <div class="session-card card-purple">
                 <span class="s-group">Teknikern 1</span>
-                <span class="s-loc">📍 Hovedbakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
@@ -1361,17 +1440,17 @@
         <!-- Thursday -->
         <div class="day-cell">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
               <div class="session-card card-green">
                 <span class="s-group">Teknikern 2</span>
-                <span class="s-loc">📍 Hovedbakken</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
               <div class="session-card card-orange">
                 <span class="s-group">DSK Fun</span>
-                <span class="s-loc">📍 Hovbakken / Skogen</span>
-                <span class="s-time">🕕 18:00 – 19:30</span>
+                <span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovbakken / Skogen</span>
+                <span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span>
               </div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
@@ -1381,7 +1460,7 @@
         <!-- Friday -->
         <div class="day-cell weekend">
           <div class="lift-wrapper lift-closed">
-            <div class="lift-header">🚡 Heis stengt</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis stengt</div>
             <div class="lift-cards"></div>
           </div>
         </div>
@@ -1389,7 +1468,7 @@
         <!-- Saturday -->
         <div class="day-cell weekend">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 11:00 – 15:00</div>
             <div class="lift-cards"></div>
           </div>
         </div>
@@ -1397,7 +1476,7 @@
         <!-- Sunday -->
         <div class="day-cell weekend">
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 11:00 – 15:00</div>
             <div class="lift-cards"></div>
           </div>
         </div>
@@ -1408,10 +1487,10 @@
         <div class="mobile-day">
           <div class="mobile-day-header"><span class="day-pill">Mandag</span></div>
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
-              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc">📍 Barnebakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
-              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Barnebakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
+              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
           </div>
@@ -1419,10 +1498,10 @@
         <div class="mobile-day">
           <div class="mobile-day-header"><span class="day-pill">Tirsdag</span></div>
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
-              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
-              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc">📍 Hovedbakken & Skogen</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
+              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken & Skogen</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
           </div>
@@ -1430,10 +1509,10 @@
         <div class="mobile-day">
           <div class="mobile-day-header"><span class="day-pill">Onsdag</span></div>
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
-              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc">📍 Barnebakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
-              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Barnebakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
+              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
           </div>
@@ -1441,10 +1520,10 @@
         <div class="mobile-day">
           <div class="mobile-day-header"><span class="day-pill">Torsdag</span></div>
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 18:00 – 20:00</div>
             <div class="lift-cards">
-              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
-              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc">📍 Hovedbakken & Skogen</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
+              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Hovedbakken & Skogen</span><span class="s-time"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>18:00 – 19:30</span></div>
             </div>
             <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
           </div>
@@ -1452,14 +1531,14 @@
         <div class="mobile-day inactive">
           <div class="mobile-day-header"><span class="day-pill">Fredag</span></div>
           <div class="lift-wrapper lift-closed">
-            <div class="lift-header">🚡 Heis stengt</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis stengt</div>
             <div class="lift-cards"></div>
           </div>
         </div>
         <div class="mobile-day inactive">
           <div class="mobile-day-header"><span class="day-pill">Lørdag – Søndag</span></div>
           <div class="lift-wrapper">
-            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-header"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-flag"/></svg>Heis 11:00 – 15:00</div>
             <div class="lift-cards"></div>
           </div>
         </div>
@@ -1467,7 +1546,7 @@
 
       <!-- Info note -->
       <div class="schedule-note">
-        <span class="note-icon">ℹ️</span>
+        <span class="note-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg></span>
         <span>Alle treninger starter <strong>18:00</strong> og slutter <strong>19:30</strong>. Ta kontakt med din trener ved spørsmål.</span>
       </div>
 
@@ -1494,8 +1573,8 @@
             <span class="event-chip chip-blue">Skiskole</span>
             <span class="event-chip chip-orange">Åpen</span>
           </div>
-          <div class="event-title">Vårens første skiskolesamling</div>
-          <div class="event-location">📍 Haukåsløypa, Drammen</div>
+          <h3 class="event-title">Vårens første skiskolesamling</h3>
+          <div class="event-location"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Haukåsløypa, Drammen</div>
         </div>
       </div>
       <div class="event-card fade-in fade-in-delay-1">
@@ -1507,8 +1586,8 @@
           <div class="event-chips">
             <span class="event-chip chip-green">Renn</span>
           </div>
-          <div class="event-title">DSK Vårklassikern — Slalåmrenn</div>
-          <div class="event-location">📍 Haukåsløypa, Drammen</div>
+          <h3 class="event-title">DSK Vårklassikern — Slalåmrenn</h3>
+          <div class="event-location"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Haukåsløypa, Drammen</div>
         </div>
       </div>
       <div class="event-card fade-in fade-in-delay-2">
@@ -1521,8 +1600,8 @@
             <span class="event-chip chip-blue">Dugnad</span>
             <span class="event-chip chip-orange">Alle</span>
           </div>
-          <div class="event-title">Sesongsavslutning & dugnad 2025/26</div>
-          <div class="event-location">📍 Klubbhuset, Haukåsen</div>
+          <h3 class="event-title">Sesongsavslutning & dugnad 2025/26</h3>
+          <div class="event-location"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>Klubbhuset, Haukåsen</div>
         </div>
       </div>
     </div>
@@ -1740,11 +1819,11 @@ for (let i = 0; i < particleCount; i++) {
   // Gate definitions: x/y as fractions of hero size
   // side L = inner pole on left (skier passes right), R = inner pole on right (skier passes left)
   const gateData = [
-    { x: 0.65, y: 0.18, color: '#e8001c', side: 'L' },
+    { x: 0.71, y: 0.18, color: '#e8001c', side: 'L' },
     { x: 0.85, y: 0.33, color: '#1155cc', side: 'R' },
-    { x: 0.63, y: 0.50, color: '#e8001c', side: 'L' },
+    { x: 0.69, y: 0.50, color: '#e8001c', side: 'L' },
     { x: 0.84, y: 0.65, color: '#1155cc', side: 'R' },
-    { x: 0.64, y: 0.80, color: '#e8001c', side: 'L' },
+    { x: 0.70, y: 0.80, color: '#e8001c', side: 'L' },
   ];
   const colorRGB = { '#e8001c': '232,0,28', '#1155cc': '17,85,204' };
 
@@ -1764,16 +1843,16 @@ for (let i = 0; i < particleCount; i++) {
   // Skier path waypoints — passes LEFT of red gates, RIGHT of blue gates, rounding each on the outside
   const waypoints = [
     { x: 0.75, y: -0.06 },
-    { x: 0.74, y: 0.10  },
-    { x: 0.58, y: 0.19  }, // gate 1 red: LEFT of pole at 0.65
-    { x: 0.75, y: 0.26  }, // round and cross right
-    { x: 0.92, y: 0.34  }, // gate 2 blue: RIGHT of pole at 0.85
-    { x: 0.74, y: 0.41  }, // round and cross left
-    { x: 0.56, y: 0.51  }, // gate 3 red: LEFT of pole at 0.63
-    { x: 0.75, y: 0.58  }, // round and cross right
-    { x: 0.91, y: 0.66  }, // gate 4 blue: RIGHT of pole at 0.84
-    { x: 0.74, y: 0.73  }, // round and cross left
-    { x: 0.56, y: 0.81  }, // gate 5 red: LEFT of pole at 0.64
+    { x: 0.74, y: 0.09  },
+    { x: 0.67, y: 0.17  }, // gate 1 red: LEFT of pole at 0.71
+    { x: 0.76, y: 0.25  }, // round and cross right
+    { x: 0.89, y: 0.33  }, // gate 2 blue: RIGHT of pole at 0.85
+    { x: 0.75, y: 0.41  }, // round and cross left
+    { x: 0.65, y: 0.49  }, // gate 3 red: LEFT of pole at 0.69
+    { x: 0.76, y: 0.57  }, // round and cross right
+    { x: 0.88, y: 0.65  }, // gate 4 blue: RIGHT of pole at 0.84
+    { x: 0.75, y: 0.73  }, // round and cross left
+    { x: 0.66, y: 0.80  }, // gate 5 red: LEFT of pole at 0.70
     { x: 0.75, y: 0.89  }, // round and exit
     { x: 0.75, y: 1.08  },
   ];
@@ -2158,6 +2237,57 @@ add(
       }));
     }, 500);
   }, 5000);
+})();
+
+// ─── MOBILE MENU ACCESSIBILITY ───
+(function () {
+  const hamburger   = document.getElementById('hamburger');
+  const mobileClose = document.getElementById('mobileClose');
+  const menu        = document.getElementById('mobileMenu');
+  if (!hamburger || !mobileClose || !menu) return;
+
+  const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function openMenu() {
+    menu.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    // Focus first focusable element inside menu
+    const first = menu.querySelectorAll(FOCUSABLE)[0];
+    if (first) setTimeout(() => first.focus(), 50);
+  }
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.focus();
+  }
+
+  hamburger.addEventListener('click', openMenu);
+  mobileClose.addEventListener('click', closeMenu);
+
+  // Escape key closes menu
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu();
+  });
+
+  // Focus trap inside mobile menu
+  menu.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    const focusable = Array.from(menu.querySelectorAll(FOCUSABLE));
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // Close menu when a nav link inside is clicked
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMenu);
+  });
 })();
 </script>
 </body>
