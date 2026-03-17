@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treningsplan — Drammen Slalåmklubb</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET & BASE ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue:      #009FE3;
+    --blue-dk:   #007DB4;
+    --blue-lt:   #33C4F0;
+    --accent:    #4A3A9A;
+    --accent-lt: #6655BB;
+    --green:     #2D7A3A;
+    --green-lt:  #3A9A4A;
+    --orange:    #E8870A;
+    --orange-lt: #F5A030;
+    --dark:      #0C1A26;
+    --dark2:     #132233;
+    --dark3:     #1A2D40;
+    --snow:      #EEF4FA;
+    --snow2:     #DDE8F2;
+    --white:     #FFFFFF;
+    --muted:     #7A9BB8;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+  }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body {
+    font-family: var(--font-body);
+    background: var(--dark);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--blue);
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: #fff;
+    position: relative;
+    z-index: 100;
+  }
+  .topbar a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }
+  .topbar a:hover { text-decoration-color: #fff; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background: rgba(15, 25, 35, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 0 40px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s;
+  }
+  .nav-logo {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-logo .logo-svg {
+    width: 64px; height: 64px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 6px rgba(0,0,0,0.5));
+  }
+  .nav-logo .wordmark { color: #fff; font-size: 18px; }
+  .nav-logo .wordmark em { color: var(--blue); font-style: normal; }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links a.active { color: #fff; }
+  .nav-links a.active::after { transform: scaleX(1); background: var(--blue); }
+  .btn-nav {
+    background: var(--blue);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-nav:hover { background: var(--blue-dk); transform: translateY(-1px); }
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: #fff; border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { font-family: var(--font-head); font-size: 28px; font-weight: 700; }
+  .mobile-close {
+    position: absolute; top: 24px; right: 24px;
+    font-size: 32px; cursor: pointer; color: var(--muted);
+  }
+
+  /* ─── PAGE HERO ─── */
+  .page-hero {
+    background:
+      linear-gradient(160deg, rgba(10,21,32,0.90) 0%, rgba(13,32,53,0.85) 60%, rgba(10,24,37,0.92) 100%),
+      url(background.jpg) center/cover no-repeat;
+    padding: 80px 40px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .page-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--blue); }
+  .back-link svg { width: 14px; height: 14px; }
+  .page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,159,227,0.15);
+    border: 1px solid rgba(0,159,227,0.35);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5DD9F7;
+    margin-bottom: 20px;
+  }
+  .page-tag .dot {
+    width: 6px; height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+  }
+  .page-hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 4.5vw, 58px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .page-hero h1 em {
+    color: var(--blue);
+    font-style: normal;
+  }
+  .page-hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 480px;
+  }
+
+  /* ─── SCHEDULE SECTION ─── */
+  .schedule-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 40px 80px;
+  }
+
+  /* ─── LEGEND ─── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 48px;
+    align-items: center;
+  }
+  .legend-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 100px;
+    padding: 6px 14px 6px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-dot.blue   { background: var(--blue); box-shadow: 0 0 8px rgba(0,159,227,0.5); }
+  .legend-dot.purple { background: var(--accent-lt); box-shadow: 0 0 8px rgba(74,58,154,0.5); }
+  .legend-dot.green  { background: var(--green-lt); box-shadow: 0 0 8px rgba(45,122,58,0.5); }
+  .legend-dot.orange { background: var(--orange); box-shadow: 0 0 8px rgba(232,135,10,0.5); }
+
+  /* ─── WEEKLY GRID ─── */
+  .week-grid {
+    display: grid;
+    grid-template-columns: 64px repeat(7, 1fr);
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--dark2);
+  }
+
+  /* Day header row */
+  .grid-corner {
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .day-header {
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 20px 12px;
+    text-align: center;
+  }
+  .day-header:last-child { border-right: none; }
+  .day-header .day-name {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .day-header .day-abbr {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+  .day-header.weekend .day-name { color: var(--muted); }
+  .day-header.active .day-name { color: var(--blue-lt); }
+
+  /* Time column */
+  .time-slot {
+    border-right: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 0 0 0 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-top: 10px;
+    padding-right: 10px;
+    min-height: 180px;
+  }
+  .time-slot span {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1;
+  }
+
+  /* Day cells */
+  .day-cell {
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 180px;
+  }
+  .day-cell:last-child { border-right: none; }
+  .day-cell.weekend {
+    background: rgba(0,0,0,0.12);
+  }
+  .day-cell.weekend-note {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+  }
+  .weekend-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+
+  /* Session cards */
+  .session-card {
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    cursor: default;
+  }
+  .session-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .session-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+  }
+  .session-card .s-group {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: block;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .session-card .s-loc {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .session-card .s-time {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Blue — Rekrutten */
+  .card-blue {
+    background: rgba(0,159,227,0.13);
+    border: 1px solid rgba(0,159,227,0.3);
+    color: #cceeff;
+  }
+  .card-blue::before { background: var(--blue); }
+  .card-blue .s-group { color: #5DD9F7; }
+
+  /* Purple — Teknikern 1 */
+  .card-purple {
+    background: rgba(74,58,154,0.18);
+    border: 1px solid rgba(102,85,187,0.35);
+    color: #d4ccff;
+  }
+  .card-purple::before { background: var(--accent-lt); }
+  .card-purple .s-group { color: #b8aaff; }
+
+  /* Pink — Teknikern 2 */
+  .card-green {
+    background: rgba(194,24,91,0.13);
+    border: 1px solid rgba(236,64,122,0.28);
+    color: #ffc0d6;
+  }
+  .card-green::before { background: #ec407a; }
+  .card-green .s-group { color: #f48fb1; }
+
+  /* Orange — DSK Fun */
+  .card-orange {
+    background: rgba(232,135,10,0.13);
+    border: 1px solid rgba(232,135,10,0.3);
+    color: #fde5b8;
+  }
+  .card-orange::before { background: var(--orange); }
+  .card-orange .s-group { color: #f5a030; }
+
+  /* ─── LIFT WRAPPER ─── */
+  .lift-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(58,154,74,0.3);
+    background: rgba(45,122,58,0.07);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .lift-wrapper.lift-day {
+    border-color: rgba(0,159,227,0.28);
+    background: rgba(0,159,227,0.07);
+  }
+  .lift-wrapper.lift-closed {
+    border-color: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+  }
+  .lift-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7bdb90;
+    padding: 6px 9px;
+    background: rgba(45,122,58,0.14);
+    border-bottom: 1px solid rgba(58,154,74,0.2);
+  }
+  .lift-wrapper.lift-day .lift-header {
+    color: #5DD9F7;
+    background: rgba(0,159,227,0.12);
+    border-bottom-color: rgba(0,159,227,0.2);
+  }
+  .lift-wrapper.lift-closed .lift-header {
+    color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.03);
+    border-bottom-color: rgba(255,255,255,0.06);
+  }
+  .lift-cards {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .lift-tail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(123,219,144,0.5);
+    border-top: 1px dashed rgba(58,154,74,0.22);
+    letter-spacing: 0.03em;
+  }
+  .lift-tail .tail-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(58,154,74,0.25), transparent);
+  }
+
+  /* ─── INFO NOTE ─── */
+  .schedule-note {
+    margin-top: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(0,159,227,0.07);
+    border: 1px solid rgba(0,159,227,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+  .schedule-note .note-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ─── MOBILE SCHEDULE (cards per day) ─── */
+  .mobile-schedule { display: none; }
+  .mobile-day {
+    margin-bottom: 24px;
+  }
+  .mobile-day-header {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-lt);
+    padding: 10px 0 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mobile-day-header .day-pill {
+    background: rgba(0,159,227,0.15);
+    border: 1px solid rgba(0,159,227,0.3);
+    border-radius: 100px;
+    padding: 3px 12px;
+    font-size: 12px;
+  }
+  .mobile-day.inactive .mobile-day-header {
+    color: var(--muted);
+  }
+  .mobile-day.inactive .day-pill {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.1);
+  }
+  .mobile-day .session-card {
+    margin-bottom: 0;
+  }
+  .mobile-day .cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mobile-day .no-sessions {
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    padding: 8px 0;
+    font-style: italic;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #090f17;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 72px 40px 0;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-brand p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 260px;
+  }
+  .footer-social {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .social-btn {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.07);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s, transform 0.2s;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .social-btn:hover { background: var(--accent); transform: translateY(-2px); }
+  .footer-col h4 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 12px; }
+  .footer-col a {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: #fff; }
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .footer-bottom a { color: var(--muted); transition: color 0.2s; }
+  .footer-bottom a:hover { color: #fff; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 0 24px; }
+    .nav-links { gap: 20px; }
+    .page-hero { padding: 60px 24px 48px; }
+    .schedule-section { padding: 48px 24px 64px; }
+    footer { padding: 56px 24px 0; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 36px; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links, .btn-nav { display: none; }
+    .hamburger { display: flex; }
+    .page-hero { padding: 48px 20px 40px; }
+    .schedule-section { padding: 36px 20px 56px; }
+
+    /* Hide desktop grid, show mobile list */
+    .week-grid { display: none; }
+    .mobile-schedule { display: block; }
+
+    .legend { gap: 8px; }
+    .legend-item { font-size: 12px; padding: 5px 10px 5px 6px; }
+
+    footer { padding: 48px 20px 0; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .footer-inner { grid-template-columns: 1fr; }
+    .page-hero h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  ❄️ Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    <img class="logo-svg" src="logo.png" alt="Drammen Slalåmklubb logo">
+    <div class="wordmark">Drammen <em>Slalåmklubb</em></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#programs">Skiskole</a></li>
+    <li><a href="index.html#programs" class="active">Trening</a></li>
+    <li><a href="index.html#events">Arrangement</a></li>
+    <li><a href="index.html#haukos">Om oss</a></li>
+  </ul>
+  <a href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener" class="btn-nav">Bli Medlem</a>
+  <div class="hamburger" id="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</span>
+  <a href="index.html" onclick="document.getElementById('mobileMenu').classList.remove('open')">Forside</a>
+  <a href="index.html#programs" onclick="document.getElementById('mobileMenu').classList.remove('open')">Skiskole</a>
+  <a href="index.html#programs" onclick="document.getElementById('mobileMenu').classList.remove('open')">Trening</a>
+  <a href="index.html#events" onclick="document.getElementById('mobileMenu').classList.remove('open')">Arrangement</a>
+  <a href="index.html#haukos" onclick="document.getElementById('mobileMenu').classList.remove('open')">Om oss</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="10 4 6 8 10 12"/>
+      </svg>
+      Tilbake til forsiden
+    </a>
+    <div class="page-tag"><span class="dot"></span>Ukentlig treningsprogram</div>
+    <h1>Trenings<em>plan</em></h1>
+    <p>Oversikt over faste treningsøkter for alle grupper. Sesong 2025/26.</p>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="schedule-section">
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-label">Grupper:</span>
+    <div class="legend-item"><span class="legend-dot blue"></span>Rekrutten</div>
+    <div class="legend-item"><span class="legend-dot purple"></span>Teknikern 1</div>
+    <div class="legend-item"><span class="legend-dot green"></span>Teknikern 2</div>
+    <div class="legend-item"><span class="legend-dot orange"></span>DSK Fun</div>
+  </div>
+
+  <!-- Desktop weekly grid -->
+  <div class="week-grid">
+    <!-- Header row -->
+    <div class="grid-corner"></div>
+    <div class="day-header active"><span class="day-name">Mandag</span></div>
+    <div class="day-header active"><span class="day-name">Tirsdag</span></div>
+    <div class="day-header active"><span class="day-name">Onsdag</span></div>
+    <div class="day-header active"><span class="day-name">Torsdag</span></div>
+    <div class="day-header weekend"><span class="day-name">Fredag</span></div>
+    <div class="day-header active"><span class="day-name">Lørdag</span></div>
+    <div class="day-header active"><span class="day-name">Søndag</span></div>
+
+    <!-- Time label -->
+    <div class="time-slot"><span>18:00<br>—<br>19:30</span></div>
+
+    <!-- Monday -->
+    <div class="day-cell">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-blue">
+            <span class="s-group">Rekrutten</span>
+            <span class="s-loc">📍 Barnebakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-purple">
+            <span class="s-group">Teknikern 1</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <!-- Tuesday -->
+    <div class="day-cell">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-green">
+            <span class="s-group">Teknikern 2</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-orange">
+            <span class="s-group">DSK Fun</span>
+            <span class="s-loc">📍 Hovbakken / Skogen</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <!-- Wednesday -->
+    <div class="day-cell">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-blue">
+            <span class="s-group">Rekrutten</span>
+            <span class="s-loc">📍 Barnebakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-purple">
+            <span class="s-group">Teknikern 1</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <!-- Thursday -->
+    <div class="day-cell">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-green">
+            <span class="s-group">Teknikern 2</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-orange">
+            <span class="s-group">DSK Fun</span>
+            <span class="s-loc">📍 Hovbakken / Skogen</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <!-- Friday -->
+    <div class="day-cell weekend">
+      <div class="lift-wrapper lift-closed">
+        <div class="lift-header">🚡 Heis stengt</div>
+        <div class="lift-cards"></div>
+      </div>
+    </div>
+
+    <!-- Saturday -->
+    <div class="day-cell weekend">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+        <div class="lift-cards"></div>
+      </div>
+    </div>
+
+    <!-- Sunday -->
+    <div class="day-cell weekend">
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+        <div class="lift-cards"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile schedule (stacked by day) -->
+  <div class="mobile-schedule">
+    <div class="mobile-day">
+      <div class="mobile-day-header"><span class="day-pill">Mandag</span></div>
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-blue">
+            <span class="s-group">Rekrutten</span>
+            <span class="s-loc">📍 Barnebakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-purple">
+            <span class="s-group">Teknikern 1</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <div class="mobile-day">
+      <div class="mobile-day-header"><span class="day-pill">Tirsdag</span></div>
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-green">
+            <span class="s-group">Teknikern 2</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-orange">
+            <span class="s-group">DSK Fun</span>
+            <span class="s-loc">📍 Hovedbakken & Skogen</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <div class="mobile-day">
+      <div class="mobile-day-header"><span class="day-pill">Onsdag</span></div>
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-blue">
+            <span class="s-group">Rekrutten</span>
+            <span class="s-loc">📍 Barnebakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-purple">
+            <span class="s-group">Teknikern 1</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <div class="mobile-day">
+      <div class="mobile-day-header"><span class="day-pill">Torsdag</span></div>
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+        <div class="lift-cards">
+          <div class="session-card card-green">
+            <span class="s-group">Teknikern 2</span>
+            <span class="s-loc">📍 Hovedbakken</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+          <div class="session-card card-orange">
+            <span class="s-group">DSK Fun</span>
+            <span class="s-loc">📍 Hovedbakken & Skogen</span>
+            <span class="s-time">🕕 18:00 – 19:30</span>
+          </div>
+        </div>
+        <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+      </div>
+    </div>
+
+    <div class="mobile-day inactive">
+      <div class="mobile-day-header"><span class="day-pill">Fredag</span></div>
+      <div class="lift-wrapper lift-closed">
+        <div class="lift-header">🚡 Heis stengt</div>
+        <div class="lift-cards"></div>
+      </div>
+    </div>
+
+    <div class="mobile-day inactive">
+      <div class="mobile-day-header"><span class="day-pill">Lørdag – Søndag</span></div>
+      <div class="lift-wrapper">
+        <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+        <div class="lift-cards"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info note -->
+  <div class="schedule-note">
+    <span class="note-icon">ℹ️</span>
+    <span>Alle treninger starter <strong>18:00</strong> og slutter <strong>19:30</strong>. Ta kontakt med din trener ved spørsmål.</span>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:16px">
+        <img class="logo-svg" src="logo.png" alt="Drammen Slalåmklubb logo">
+        <div class="wordmark">Drammen <em>Slalåmklubb</em></div>
+      </div>
+      <p>Drammen Slalåmklubb — alpinsport for barn, unge og voksne i hjertet av Drammen siden 1936.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn" title="Instagram">📷</a>
+        <a href="#" class="social-btn" title="Facebook">👥</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Sider</h4>
+      <ul>
+        <li><a href="index.html">Forside</a></li>
+        <li><a href="index.html#programs">Skiskole</a></li>
+        <li><a href="index.html#events">Arrangement</a></li>
+        <li><a href="index.html#haukos">Om oss</a></li>
+        <li><a href="#">Kontakt</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Trening</h4>
+      <ul>
+        <li><a href="#">Rekrutten</a></li>
+        <li><a href="#">Teknikern 1</a></li>
+        <li><a href="#">Teknikern 2</a></li>
+        <li><a href="#">DSK Fun</a></li>
+        <li><a href="#">Haukåsløypa</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="#">post@drammenslalomklubb.no</a></li>
+        <li><a href="#">Blektjernveien 18</a></li>
+        <li><a href="#">Drammen</a></li>
+        <li><a href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Bli Medlem</a></li>
+        <li><a href="#">Styret</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Drammen Slalåmklubb. Alle rettigheter forbeholdt.</span>
+    <span><a href="#">Personvern</a> · <a href="#">Cookies</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
