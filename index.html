@@ -1028,6 +1028,83 @@
     .hero h1 { font-size: 40px; }
     .section-title { font-size: 26px; }
   }
+
+  /* ─── SCHEDULE SECTION ─── */
+  .schedule-section { max-width: 1200px; margin: 0 auto; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 48px; align-items: center; }
+  .legend-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; padding: 6px 14px 6px 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-dot.blue   { background: var(--blue); box-shadow: 0 0 8px rgba(0,159,227,0.5); }
+  .legend-dot.purple { background: var(--accent-lt); box-shadow: 0 0 8px rgba(74,58,154,0.5); }
+  .legend-dot.sched-pink  { background: #ec407a; box-shadow: 0 0 8px rgba(236,64,122,0.5); }
+  .legend-dot.orange { background: #E8870A; box-shadow: 0 0 8px rgba(232,135,10,0.5); }
+
+  /* Weekly grid */
+  .week-grid { display: grid; grid-template-columns: 64px repeat(7, 1fr); gap: 0; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; background: var(--dark2); }
+  .grid-corner { background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; padding: 20px 0; }
+  .day-header { background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.06); padding: 20px 12px; text-align: center; }
+  .day-header:last-child { border-right: none; }
+  .day-header .day-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.9); display: block; }
+  .day-header.weekend .day-name { color: var(--muted); }
+  .day-header.active .day-name { color: var(--blue-lt); }
+  .time-slot { border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; justify-content: flex-end; padding: 10px 10px 0 8px; min-height: 180px; }
+  .time-slot span { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); text-align: right; line-height: 1; }
+  .day-cell { border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 180px; }
+  .day-cell:last-child { border-right: none; }
+  .day-cell.weekend { background: rgba(0,0,0,0.12); }
+  .weekend-text { font-size: 11px; color: rgba(255,255,255,0.2); font-weight: 400; line-height: 1.6; letter-spacing: 0.02em; }
+
+  /* Session cards */
+  .session-card { border-radius: 8px; padding: 10px 12px; position: relative; overflow: hidden; transition: transform 0.18s ease, box-shadow 0.18s ease; cursor: default; }
+  .session-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .session-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 3px 0 0 3px; }
+  .session-card .s-group { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; display: block; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .session-card .s-loc { font-size: 11px; font-weight: 400; opacity: 0.7; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .session-card .s-time { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
+  .card-blue { background: rgba(0,159,227,0.13); border: 1px solid rgba(0,159,227,0.3); color: #cceeff; }
+  .card-blue::before { background: var(--blue); }
+  .card-blue .s-group { color: #5DD9F7; }
+  .card-purple { background: rgba(74,58,154,0.18); border: 1px solid rgba(102,85,187,0.35); color: #d4ccff; }
+  .card-purple::before { background: var(--accent-lt); }
+  .card-purple .s-group { color: #b8aaff; }
+  .card-green { background: rgba(194,24,91,0.13); border: 1px solid rgba(236,64,122,0.28); color: #ffc0d6; }
+  .card-green::before { background: #ec407a; }
+  .card-green .s-group { color: #f48fb1; }
+  .card-orange { background: rgba(232,135,10,0.13); border: 1px solid rgba(232,135,10,0.3); color: #fde5b8; }
+  .card-orange::before { background: #E8870A; }
+  .card-orange .s-group { color: #f5a030; }
+
+  /* Lift wrapper */
+  .lift-wrapper { border-radius: 8px; overflow: hidden; border: 1px solid rgba(58,154,74,0.3); background: rgba(45,122,58,0.07); display: flex; flex-direction: column; flex: 1; }
+  .lift-wrapper.lift-closed { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); }
+  .lift-header { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7bdb90; padding: 6px 9px; background: rgba(45,122,58,0.14); border-bottom: 1px solid rgba(58,154,74,0.2); }
+  .lift-wrapper.lift-closed .lift-header { color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.03); border-bottom-color: rgba(255,255,255,0.06); }
+  .lift-cards { padding: 8px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .lift-tail { display: flex; align-items: center; gap: 6px; padding: 5px 9px; font-size: 10px; font-weight: 500; color: rgba(123,219,144,0.5); border-top: 1px dashed rgba(58,154,74,0.22); letter-spacing: 0.03em; }
+  .lift-tail .tail-line { flex: 1; height: 1px; background: linear-gradient(to right, rgba(58,154,74,0.25), transparent); }
+
+  /* Info note */
+  .schedule-note { margin-top: 28px; display: flex; align-items: flex-start; gap: 12px; background: rgba(0,159,227,0.07); border: 1px solid rgba(0,159,227,0.2); border-radius: 10px; padding: 16px 20px; font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+  .schedule-note .note-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Mobile schedule */
+  .mobile-schedule { display: none; }
+  .mobile-day { margin-bottom: 24px; }
+  .mobile-day-header { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-lt); padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .mobile-day-header .day-pill { background: rgba(0,159,227,0.15); border: 1px solid rgba(0,159,227,0.3); border-radius: 100px; padding: 3px 12px; font-size: 12px; }
+  .mobile-day.inactive .mobile-day-header { color: var(--muted); }
+  .mobile-day.inactive .day-pill { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+  .mobile-day .no-sessions { font-size: 13px; color: rgba(255,255,255,0.2); padding: 8px 0; font-style: italic; }
+
+  @media (max-width: 768px) {
+    .week-grid { display: none; }
+    .mobile-schedule { display: block; }
+    .legend { gap: 8px; }
+    .legend-item { font-size: 12px; padding: 5px 10px 5px 6px; }
+  }
 </style>
 </head>
 <body>
@@ -1045,7 +1122,7 @@
   </div>
   <ul class="nav-links">
     <li><a href="#programs">Skiskole</a></li>
-    <li><a href="#programs">Trening</a></li>
+    <li><a href="#schedule">Treningsplan</a></li>
     <li><a href="#events">Arrangement</a></li>
     <li><a href="#haukos">Om oss</a></li>
   </ul>
@@ -1185,6 +1262,215 @@
           <a href="#" class="program-link">Les mer →</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag fade-in">Ukentlig</div>
+      <h2 class="section-title fade-in fade-in-delay-1">Treningsplan</h2>
+      <p class="section-sub fade-in fade-in-delay-2">Oversikt over alle treningsøkter og heisåpningstider gjennom uken.</p>
+    </div>
+    <div class="schedule-section">
+
+      <!-- Legend -->
+      <div class="legend">
+        <span class="legend-label">Grupper:</span>
+        <div class="legend-item"><span class="legend-dot blue"></span>Rekrutten</div>
+        <div class="legend-item"><span class="legend-dot purple"></span>Teknikern 1</div>
+        <div class="legend-item"><span class="legend-dot sched-pink"></span>Teknikern 2</div>
+        <div class="legend-item"><span class="legend-dot orange"></span>DSK Fun</div>
+      </div>
+
+      <!-- Desktop weekly grid -->
+      <div class="week-grid">
+        <div class="grid-corner"></div>
+        <div class="day-header active"><span class="day-name">Mandag</span></div>
+        <div class="day-header active"><span class="day-name">Tirsdag</span></div>
+        <div class="day-header active"><span class="day-name">Onsdag</span></div>
+        <div class="day-header active"><span class="day-name">Torsdag</span></div>
+        <div class="day-header weekend"><span class="day-name">Fredag</span></div>
+        <div class="day-header active"><span class="day-name">Lørdag</span></div>
+        <div class="day-header active"><span class="day-name">Søndag</span></div>
+
+        <div class="time-slot"><span>18:00<br>—<br>19:30</span></div>
+
+        <!-- Monday -->
+        <div class="day-cell">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-blue">
+                <span class="s-group">Rekrutten</span>
+                <span class="s-loc">📍 Barnebakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+              <div class="session-card card-purple">
+                <span class="s-group">Teknikern 1</span>
+                <span class="s-loc">📍 Hovedbakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+
+        <!-- Tuesday -->
+        <div class="day-cell">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-green">
+                <span class="s-group">Teknikern 2</span>
+                <span class="s-loc">📍 Hovedbakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+              <div class="session-card card-orange">
+                <span class="s-group">DSK Fun</span>
+                <span class="s-loc">📍 Hovbakken / Skogen</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+
+        <!-- Wednesday -->
+        <div class="day-cell">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-blue">
+                <span class="s-group">Rekrutten</span>
+                <span class="s-loc">📍 Barnebakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+              <div class="session-card card-purple">
+                <span class="s-group">Teknikern 1</span>
+                <span class="s-loc">📍 Hovedbakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+
+        <!-- Thursday -->
+        <div class="day-cell">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-green">
+                <span class="s-group">Teknikern 2</span>
+                <span class="s-loc">📍 Hovedbakken</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+              <div class="session-card card-orange">
+                <span class="s-group">DSK Fun</span>
+                <span class="s-loc">📍 Hovbakken / Skogen</span>
+                <span class="s-time">🕕 18:00 – 19:30</span>
+              </div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+
+        <!-- Friday -->
+        <div class="day-cell weekend">
+          <div class="lift-wrapper lift-closed">
+            <div class="lift-header">🚡 Heis stengt</div>
+            <div class="lift-cards"></div>
+          </div>
+        </div>
+
+        <!-- Saturday -->
+        <div class="day-cell weekend">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-cards"></div>
+          </div>
+        </div>
+
+        <!-- Sunday -->
+        <div class="day-cell weekend">
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-cards"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile schedule -->
+      <div class="mobile-schedule">
+        <div class="mobile-day">
+          <div class="mobile-day-header"><span class="day-pill">Mandag</span></div>
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc">📍 Barnebakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+        <div class="mobile-day">
+          <div class="mobile-day-header"><span class="day-pill">Tirsdag</span></div>
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc">📍 Hovedbakken & Skogen</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+        <div class="mobile-day">
+          <div class="mobile-day-header"><span class="day-pill">Onsdag</span></div>
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-blue"><span class="s-group">Rekrutten</span><span class="s-loc">📍 Barnebakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-purple"><span class="s-group">Teknikern 1</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+        <div class="mobile-day">
+          <div class="mobile-day-header"><span class="day-pill">Torsdag</span></div>
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 18:00 – 20:00</div>
+            <div class="lift-cards">
+              <div class="session-card card-green"><span class="s-group">Teknikern 2</span><span class="s-loc">📍 Hovedbakken</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+              <div class="session-card card-orange"><span class="s-group">DSK Fun</span><span class="s-loc">📍 Hovedbakken & Skogen</span><span class="s-time">🕕 18:00 – 19:30</span></div>
+            </div>
+            <div class="lift-tail"><span>19:30 – 20:00</span><div class="tail-line"></div></div>
+          </div>
+        </div>
+        <div class="mobile-day inactive">
+          <div class="mobile-day-header"><span class="day-pill">Fredag</span></div>
+          <div class="lift-wrapper lift-closed">
+            <div class="lift-header">🚡 Heis stengt</div>
+            <div class="lift-cards"></div>
+          </div>
+        </div>
+        <div class="mobile-day inactive">
+          <div class="mobile-day-header"><span class="day-pill">Lørdag – Søndag</span></div>
+          <div class="lift-wrapper">
+            <div class="lift-header">🚡 Heis 11:00 – 15:00</div>
+            <div class="lift-cards"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info note -->
+      <div class="schedule-note">
+        <span class="note-icon">ℹ️</span>
+        <span>Alle treninger starter <strong>18:00</strong> og slutter <strong>19:30</strong>. Ta kontakt med din trener ved spørsmål.</span>
+      </div>
+
     </div>
   </div>
 </section>
