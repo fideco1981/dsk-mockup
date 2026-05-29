@@ -1127,6 +1127,127 @@
   }
   .board-note .icon { width: 18px; height: 18px; color: var(--blue-lt); flex-shrink: 0; margin-top: 2px; }
 
+  /* ─── ABOUT (om-oss) ─── */
+  .about { background: var(--dark); }
+  .about-inner { max-width: 880px; }
+  .about-prose {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.75;
+    font-weight: 300;
+  }
+  .about-prose p { margin: 0 0 20px; }
+  .about-prose p:last-child { margin-bottom: 0; }
+  .about-prose strong { color: #fff; font-weight: 600; }
+
+  .about-mission {
+    background: linear-gradient(120deg, var(--dark2) 0%, var(--dark3) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .about-mission::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,159,227,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .about-mission-header { text-align: center; margin-bottom: 40px; }
+  .about-mission-header .section-sub { margin-left: auto; margin-right: auto; }
+  .about-quote {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 32px;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+  }
+  .about-quote p {
+    font-family: var(--font-head);
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 600;
+    line-height: 1.4;
+    color: #fff;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  .about-quote-mark {
+    position: absolute;
+    top: -8px; left: 24px;
+    font-family: var(--font-head);
+    font-size: 80px;
+    line-height: 1;
+    color: var(--blue);
+    opacity: 0.45;
+  }
+  .about-quote-attr {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-lt);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .about-achievements { background: var(--dark); }
+  .achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .achievement-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 32px 28px;
+    transition: transform 0.3s cubic-bezier(.2,.8,.3,1), box-shadow 0.3s, border-color 0.3s;
+  }
+  .achievement-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 44px rgba(0,0,0,0.45);
+    border-color: rgba(0,159,227,0.4);
+  }
+  .achievement-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,159,227,0.15);
+    margin-bottom: 18px;
+  }
+  .achievement-icon .icon { width: 22px; height: 22px; color: var(--blue-lt); }
+  .achievement-year {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue-lt);
+    margin-bottom: 8px;
+  }
+  .achievement-name {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 12px;
+    line-height: 1.25;
+  }
+  .achievement-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .about-haukos { background: var(--dark2); }
+  .about-haukos .about-prose { max-width: 880px; margin-bottom: 36px; }
+  .about-haukos-facts {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 880px;
+  }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 1024px) {
     .board-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1134,6 +1255,7 @@
     .insta-grid { grid-template-columns: repeat(3, 1fr); }
     .insta-tile:nth-child(n+4) { display: none; }
     .footer-inner { grid-template-columns: 1fr 1fr; }
+    .achievement-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -1160,6 +1282,12 @@
     .footer-inner { grid-template-columns: 1fr 1fr; }
     .footer-brand { grid-column: 1 / -1; }
     .topbar { font-size: 11px; }
+  }
+  @media (max-width: 768px) {
+    .achievement-grid { grid-template-columns: 1fr; }
+    .about-haukos-facts { grid-template-columns: 1fr; }
+    .about-quote { padding: 32px 24px; }
+    .about-quote-mark { font-size: 60px; left: 16px; top: -4px; }
   }
   @media (max-width: 480px) {
     .stats-inner { grid-template-columns: 1fr 1fr; }

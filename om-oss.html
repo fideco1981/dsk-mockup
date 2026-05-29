@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Om oss — Drammen Slalåmklubb</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="om-oss">
+
+<!-- Skip to main content -->
+<a class="skip-link" href="#main">Hopp til innhold</a>
+
+<!-- SVG icon symbols referenced by the injected nav/footer (and this page) -->
+<svg style="display:none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12h18M3 6h18M3 18h18"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 6 6 18M6 6l12 12"/>
+  </symbol>
+  <symbol id="icon-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m18.062 8.5-12.124 7m12.124-7 1.098-4.098M18.062 8.5l4.098 1.098M5.938 15.5 1.84 14.402M5.938 15.5 4.84 19.598M18.062 15.5l-12.124-7m12.124 7 4.098-1.098M18.062 15.5l1.098 4.098M5.938 8.5 4.84 4.402M5.938 8.5 1.84 9.598M12 5v14m0-14L9 2m3 3 3-3m-3 17-3 3m3-3 3 3"/>
+  </symbol>
+  <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 8.377c0-.35 0-.525.015-.673a3 3 0 0 1 2.69-2.69C4.851 5 5.035 5 5.404 5c.143 0 .214 0 .274-.004a2 2 0 0 0 1.735-1.25c.023-.056.044-.12.086-.246.042-.127.063-.19.086-.246a2 2 0 0 1 1.735-1.25C9.38 2 9.448 2 9.58 2h4.838c.133 0 .2 0 .26.004a2 2 0 0 1 1.735 1.25c.023.056.044.12.086.246.042.127.063.19.086.246a2 2 0 0 0 1.735 1.25c.06.004.131.004.273.004.37 0 .554 0 .702.015a3 3 0 0 1 2.69 2.69c.014.147.014.322.014.672V16.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C19.72 21 18.88 21 17.2 21H6.8c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C2 18.72 2 17.88 2 16.2V8.377Z"/>
+    <path d="M12 16.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 21v-2a4.002 4.002 0 0 0-3-3.874M15.5 3.291a4.001 4.001 0 0 1 0 7.418M17 21c0-1.864 0-2.796-.305-3.53a4 4 0 0 0-2.164-2.165C13.796 15 12.864 15 11 15H8c-1.864 0-2.796 0-3.53.305a4 4 0 0 0-2.166 2.164C2 18.204 2 19.136 2 21M13.5 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+  <symbol id="icon-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 15a6 6 0 0 1-6-6V3.444c0-.413 0-.62.06-.786a1 1 0 0 1 .598-.598C6.824 2 7.031 2 7.444 2h9.112c.413 0 .62 0 .786.06a1 1 0 0 1 .598.598c.06.166.06.373.06.786V9a6 6 0 0 1-6 6Zm0 0v3m6-14h2.5c.466 0 .699 0 .883.076a1 1 0 0 1 .54.541c.077.184.077.417.077.883V6c0 .93 0 1.395-.102 1.776a3 3 0 0 1-2.122 2.122C19.395 10 18.93 10 18 10M6 4H3.5c-.466 0-.699 0-.883.076a1 1 0 0 0-.54.541C2 4.801 2 5.034 2 5.5V6c0 .93 0 1.395.102 1.776a3 3 0 0 0 2.122 2.122C4.605 10 5.07 10 6 10m1.444 12h9.112a.444.444 0 0 0 .444-.444A3.556 3.556 0 0 0 13.444 18h-2.888A3.556 3.556 0 0 0 7 21.556c0 .245.199.444.444.444Z"/>
+  </symbol>
+  <symbol id="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+    <path d="M12 22c4-4 8-7.582 8-12a8 8 0 1 0-16 0c0 4.418 4 8 8 12Z"/>
+  </symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 6v6l4 2m6-2c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+</svg>
+
+<!-- Shared layout (topbar + nav + mobile menu) injected by site.js -->
+<div id="site-nav"></div>
+<noscript>
+  <nav class="nav-fallback">
+    <a href="index.html">Hjem</a>
+    <a href="skiskole.html">Skiskole</a>
+    <a href="treningsopplegg.html">Treningsopplegg</a>
+    <a href="om-oss.html">Om oss</a>
+    <a href="styret.html">Styret</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
+</noscript>
+
+<main id="main" tabindex="-1">
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="section-tag">Klubben</div>
+      <h1 class="page-hero-title">Om oss</h1>
+      <p class="page-hero-sub">
+        Norges eldste rene alpinklubb — grunnlagt 7. januar 1936, med Haukåsløypa som hjemmebane midt i Drammen.
+      </p>
+    </div>
+  </section>
+
+  <!-- IDENTITY / HISTORY -->
+  <section class="about">
+    <div class="section-inner about-inner">
+
+      <div class="section-header">
+        <div class="section-tag">Vår historie</div>
+        <h2 class="section-title">Stiftet 7. januar 1936</h2>
+        <p class="section-sub">Drammen Slalåmklubb er Norges eldste rene alpinklubb, og har formet alpinmiljøet i Drammen i nesten 90 år.</p>
+      </div>
+
+      <div class="about-prose">
+        <p>
+          Klubben ble stiftet <strong>7. januar 1936</strong> — på et tidspunkt hvor alpint som egen idrettsgren fortsatt var ung i Norge. Allerede tidlig ble det organisert lokale renn, og klubben investerte i egne anlegg på Haukås. Slalåmløypa ble bygd ut til en moderne bakke i 1936–37, og elektrisk lys kom på plass allerede i 1937. I 1953 arrangerte klubben sitt første norske mesterskap i slalåm på hjemmebanen.
+        </p>
+        <p>
+          Siden den gang har generasjon etter generasjon av Drammen-skiløpere lært å svinge i Haukåsløypa, og klubben har vokst seg til et levende miljø for barn, ungdom og voksne med felles glede over alpinsport.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="about-mission">
+    <div class="section-inner">
+      <div class="section-header about-mission-header">
+        <div class="section-tag">Vår oppgave</div>
+        <h2 class="section-title">Hva vi jobber for</h2>
+      </div>
+      <blockquote class="about-quote">
+        <span class="about-quote-mark" aria-hidden="true">«</span>
+        <p>Drammen Slalåmklubb skal være en hovedaktør for utvikling av alpinidrett i Drammensområdet.</p>
+        <footer class="about-quote-attr">— Klubbens formål</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+  <section class="about-achievements">
+    <div class="section-inner">
+
+      <div class="section-header">
+        <div class="section-tag">Bragder</div>
+        <h2 class="section-title">Navn fra klubbens historie</h2>
+        <p class="section-sub">Tre profiler som har satt Drammen Slalåmklubb på det nasjonale og internasjonale alpinkartet.</p>
+      </div>
+
+      <div class="achievement-grid">
+
+        <article class="achievement-card">
+          <div class="achievement-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-trophy"/></svg>
+          </div>
+          <div class="achievement-year">1938</div>
+          <h3 class="achievement-name">Hildegunn Meinstad</h3>
+          <p class="achievement-desc">
+            Klubbens første — og hittil eneste — kvinnelige medlem som deltok i alpin-VM, i Engelberg i 1938.
+          </p>
+        </article>
+
+        <article class="achievement-card">
+          <div class="achievement-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-trophy"/></svg>
+          </div>
+          <div class="achievement-year">Junior-VM</div>
+          <h3 class="achievement-name">Jørgen Brath &amp; Espen Theodorsen</h3>
+          <p class="achievement-desc">
+            To Drammen-løpere som har representert Norge i junior-VM i alpint.
+          </p>
+        </article>
+
+        <article class="achievement-card">
+          <div class="achievement-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-trophy"/></svg>
+          </div>
+          <div class="achievement-year">Mars 1940</div>
+          <h3 class="achievement-name">Trygve Brunsell</h3>
+          <p class="achievement-desc">
+            Klubbens eneste mannlige senior-NM-vinner i slalåm, etter seieren i mars 1940.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- HAUKÅSLØYPA OVERVIEW -->
+  <section class="about-haukos">
+    <div class="section-inner">
+
+      <div class="section-header">
+        <div class="section-tag">Vår hjemmebane</div>
+        <h2 class="section-title">Haukåsløypa</h2>
+        <p class="section-sub">Haukåsløypa er et møtested for flere generasjoner — en urban alpinperle midt i Drammen.</p>
+      </div>
+
+      <div class="about-prose">
+        <p>
+          Anlegget ligger i Strømsåsen med adresse Blektjernveien 18, og høyeste punkt er Almedalshøyden på 349 moh. Vi har både en hovedbakke og en barnebakke — begge med heis — pluss snøkanoner (siden 1982) og en grillhytte. Belysningen ble satt opp så tidlig som i 1937, og den nåværende heisen ble oppgradert og åpnet på nytt sesongen 2022–2023.
+        </p>
+      </div>
+
+      <div class="haukos-facts about-haukos-facts">
+        <div class="fact-chip">
+          <div class="fact-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg></div>
+          <div class="fact-text">
+            <div class="fact-label">Adresse</div>
+            <div class="fact-value">Blektjernveien 18, Drammen</div>
+          </div>
+        </div>
+        <div class="fact-chip">
+          <div class="fact-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-snowflake"/></svg></div>
+          <div class="fact-text">
+            <div class="fact-label">Bakker</div>
+            <div class="fact-value">Hovedbakke + barnebakke, begge med heis</div>
+          </div>
+        </div>
+        <div class="fact-chip">
+          <div class="fact-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg></div>
+          <div class="fact-text">
+            <div class="fact-label">Åpningstider</div>
+            <div class="fact-value">Man–Tor 18:00–20:00 · Helg 11:00–15:00</div>
+          </div>
+        </div>
+        <div class="fact-chip">
+          <div class="fact-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg></div>
+          <div class="fact-text">
+            <div class="fact-label">Belysning</div>
+            <div class="fact-value">Siden 1937 · Snøkanoner siden 1982</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="board-note">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
+        Lengde, høydeforskjell og maks fall på løypa er foreløpig ikke bekreftet på nytt og er derfor utelatt her — vi oppdaterer så snart tallene er verifisert med klubben.
+      </p>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- Shared footer injected by site.js -->
+<footer id="site-footer"></footer>
+
+<script src="site.js"></script>
+</body>
+</html>
