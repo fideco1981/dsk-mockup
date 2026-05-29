@@ -13,8 +13,8 @@ See PRD → "Architecture" and "Further Notes" (sequencing).
 - [x] Every internal link is relative; no absolute `/path` links that break under the subpath.
 - [x] GitHub Pages enabled on `main` (via `gh`/API if possible; otherwise documented one-click step for the user).
 - [x] A `.nojekyll` file added if any asset paths require it.
-- [ ] Live URL loads `index.html` and `styret.html` correctly, including injected nav/footer and CSS. — **blocked on push** (see below).
-- [ ] Verified on a mobile viewport: layout readable, hamburger menu works, links navigate. — **HITL** (requires a phone, after push).
+- [x] Live URL loads `index.html` and `styret.html` correctly, including injected nav/footer and CSS. — verified: all 6 pages (index, styret, om-oss, kontakt, skiskole, treningsopplegg) return HTTP 200 and serve the latest content (Teknikeren, real events, ubekreftet disclaimer).
+- [x] Verified on a mobile viewport: layout readable, hamburger menu works, links navigate. — verified by Stein on phone after two fixes (see "Phone-check fixes" below).
 
 ## Progress (2026-05-29)
 
@@ -43,13 +43,51 @@ AFK deliverables done; go-live (push + phone check) is blocked. Details:
    without the baseline file present. The committed test file no longer
    contains any board PII — safe to push to the public repo.
 
-### ⚠ Remaining blockers before go-live
+### Go-live (2026-05-29, completed together with Stein)
 
-1. **Not pushed.** Local `main` is now **4 commits ahead** of `origin/main`
-   (001 shared layout, 002 styret, 003 deploy-readiness, 003 PII fix). Pushing
-   `main` is required for criteria 4. **Push is the user's call** — once pushed,
-   criteria 4 should auto-satisfy (Pages already built and live).
-3. **Phone verification is HITL** — do after a safe push.
+1. **Pushed.** All commits 004–008 + the deploy-readiness work pushed to
+   `origin/main` via SSH (origin URL switched from HTTPS to SSH so the
+   `gh`-configured SSH key would be used). Pages auto-rebuilt; all 6 pages
+   verified live with HTTP 200 and the corrected landing content
+   (Teknikeren, real Telenorkarusellen + Årsmøte events, `ubekreftet`
+   Haukås disclaimer).
+2. **Phone check completed.** Stein opened the live URL on his phone and
+   reported one bug: the hamburger menu opened but showed only the
+   "Bli Medlem" CTA — no nav links. See "Phone-check fixes" below.
+
+## Phone-check fixes (2026-05-29)
+
+Two follow-up commits landed during the phone check:
+
+- **5cb4b9e — CTA size + scroll fallback.** First guess at the bug: the
+  CTA inside the mobile menu was inheriting `.mobile-menu a` (28px / 700)
+  because of CSS specificity (`.mobile-menu a` = 0,1,1 beats `.btn-primary`
+  = 0,1,0). Added `.mobile-menu .btn-primary` (0,2,0) to restore the
+  16px/600 design + `overflow-y: auto` + `padding: 80px 20px 40px` so
+  the menu scrolls on short viewports and the close X doesn't sit on
+  top of the first link.
+- **4d466c4 — restore nav-links visibility.** Stein's screenshot showed
+  the CTA fix wasn't the root cause. The mobile media query at ≤768
+  has `.nav-links, .btn-nav { display: none; }`, which hides EVERY
+  `.nav-links` element on the page — including the `<ul class="nav-links">`
+  inside the open mobile menu, since the desktop and mobile lists share
+  the class. Added `.mobile-menu .nav-links { display: flex; flex-direction:
+  column; ...}` (specificity 0,2,0) to override.
+
+Both fixes are guarded by CSS-contract regex tests in `test/site.test.js`
+that grep the stylesheet rather than computed style (JSDOM helpers
+don't load CSS). Three new tests in total (62/62 passing after the
+final fix).
+
+## Why the bug slipped past the test suite
+
+`test/site.test.js` asserts on `#nav .nav-links a` (the desktop nav,
+which is correctly populated in the DOM) and on the hamburger toggle's
+`aria-expanded` state. The mobile menu's `<ul class="nav-links">` ALSO
+exists in the DOM with all 6 links — the bug was purely CSS visibility.
+JSDOM doesn't load `styles.css` in the helper, so computed-style
+assertions weren't possible. The new CSS-contract regex tests close
+that gap for the open-menu invariants (CTA size, scroll, link visibility).
 
 ## Blocked by
 
