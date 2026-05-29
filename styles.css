@@ -1501,6 +1501,117 @@
     max-width: 520px;
   }
 
+  /* ─── TRENINGSOPPLEGG ─── */
+  .training-quick-nav { background: var(--dark); }
+  .quick-nav-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .quick-nav-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    position: relative;
+  }
+  .quick-nav-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--blue);
+    background: rgba(0,159,227,0.06);
+  }
+  .quick-nav-card:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .quick-nav-age {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-lt);
+  }
+  .quick-nav-name {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .quick-nav-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .quick-nav-arrow {
+    width: 18px;
+    height: 18px;
+    color: var(--blue-lt);
+    margin-top: 4px;
+    align-self: flex-start;
+  }
+
+  .training-group { background: var(--dark); scroll-margin-top: 80px; }
+  .training-group-alt { background: var(--dark2); }
+  .training-tag-blue   { color: var(--blue-lt); }
+  .training-tag-purple { color: var(--accent-lt); }
+  .training-tag-green  { color: var(--green-lt); }
+  .training-tag-orange { color: #E8870A; }
+
+  .training-facts {
+    max-width: 880px;
+    margin: 0 0 40px;
+  }
+  .training-facts li {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .training-facts li:last-child { border-bottom: none; }
+
+  .training-info-grid {
+    max-width: 880px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .training-price-note { margin-top: 8px; max-width: 880px; }
+
+  .training-cta {
+    background: linear-gradient(120deg, #0a1020 0%, #0d1e3a 40%, #130e28 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .training-cta::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,159,227,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .training-cta-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .training-cta .section-tag { color: var(--accent); }
+  .training-cta-sub {
+    margin: 16px auto 28px;
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 520px;
+  }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 1024px) {
     .board-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1511,6 +1622,7 @@
     .achievement-grid { grid-template-columns: repeat(2, 1fr); }
     .kontakt-grid { grid-template-columns: repeat(2, 1fr); }
     .kontakt-social-grid { grid-template-columns: 1fr; }
+    .quick-nav-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -1547,6 +1659,8 @@
     .kontakt-grid { grid-template-columns: 1fr; }
     .course-grid { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
+    .quick-nav-grid { grid-template-columns: 1fr; }
+    .training-info-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 480px) {
     .stats-inner { grid-template-columns: 1fr 1fr; }
