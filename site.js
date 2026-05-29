@@ -53,6 +53,31 @@
     cta: { href: SPOND_URL, label: 'Bli Medlem' },
   };
 
+  // Palette swatches shown in the topbar. The first entry is the default
+  // (no body[data-palette] attribute needed). `swatch` is the visible dot
+  // colour; the actual palette comes from CSS body[data-palette="<key>"].
+  const PALETTES = [
+    { key: 'blue',  label: 'Alpine Edge (blå)',  swatch: '#009FE3' },
+    { key: 'red',   label: 'Rødt Spor (rød)',    swatch: '#E8001C' },
+    { key: 'green', label: 'Grønt Fjell (grønn)', swatch: '#00B87A' },
+  ];
+  const PALETTE_STORAGE_KEY = 'dsk-palette';
+
+  /** Build the palette-switcher widget (3 colour dots in the topbar). */
+  function paletteSwitcherHTML() {
+    return (
+      '<span class="palette-switcher" role="group" aria-label="Velg palett">' +
+      PALETTES.map(function (p) {
+        return (
+          '<button type="button" data-palette="' + p.key + '"' +
+          ' aria-label="' + p.label + '" aria-pressed="false"' +
+          ' style="--swatch: ' + p.swatch + '"></button>'
+        );
+      }).join('') +
+      '</span>'
+    );
+  }
+
   /** Build the nav links markup (shared by desktop nav + mobile menu). */
   function navLinksHTML(currentPage, opts) {
     const onClick = opts && opts.onClick ? ` onclick="${opts.onClick}"` : '';
@@ -80,6 +105,7 @@
           '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-snowflake"/></svg> ' +
           'Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>' +
         '</span>' +
+        paletteSwitcherHTML() +
       '</div>' +
       '<nav id="nav">' +
         '<div class="nav-logo">' +
@@ -158,7 +184,7 @@
     return file.replace(/\.html$/, '') || 'index';
   }
 
-  /** Inject nav + footer, mark active link, and wire the hamburger. */
+  /** Inject nav + footer, mark active link, wire the hamburger + palette. */
   function init(doc) {
     doc = doc || (typeof document !== 'undefined' ? document : null);
     if (!doc) return;
@@ -171,6 +197,41 @@
     if (footerMount) footerMount.innerHTML = footerHTML();
 
     wireHamburger(doc);
+    wirePaletteSwitcher(doc);
+  }
+
+  /** Apply the persisted palette and wire the topbar swatches. */
+  function wirePaletteSwitcher(doc) {
+    const win = doc.defaultView;
+    const buttons = doc.querySelectorAll('.palette-switcher button[data-palette]');
+    if (!buttons.length) return;
+
+    let saved = 'blue';
+    try {
+      saved = (win && win.localStorage.getItem(PALETTE_STORAGE_KEY)) || 'blue';
+    } catch (_) { /* localStorage may be disabled — fall back to default */ }
+    apply(saved);
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const key = btn.getAttribute('data-palette');
+        apply(key);
+        try {
+          if (win) win.localStorage.setItem(PALETTE_STORAGE_KEY, key);
+        } catch (_) { /* silent — picker still works in-session */ }
+      });
+    });
+
+    function apply(key) {
+      const known = PALETTES.some(function (p) { return p.key === key; });
+      const active = known ? key : 'blue';
+      if (active === 'blue') delete doc.body.dataset.palette;
+      else doc.body.dataset.palette = active;
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed',
+          b.getAttribute('data-palette') === active ? 'true' : 'false');
+      });
+    }
   }
 
   /** Wire the mobile hamburger menu (open/close, aria-expanded, focus, Esc). */

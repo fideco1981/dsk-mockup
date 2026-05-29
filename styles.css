@@ -27,6 +27,25 @@
   }
   a { text-decoration: none; color: inherit; }
 
+  /* ─── PALETTE OVERRIDES ─── */
+  /* Selectable via body[data-palette]; site.js applies + persists.
+     Mirrors the variants from index-v2.html (Rødt Spor) and
+     index-v3.html (Grønt Fjell) so the board can pick on-device. */
+  body[data-palette="red"] {
+    --blue:      #E8001C;
+    --blue-dk:   #B40016;
+    --blue-lt:   #F03A52;
+    --accent:    #7A7A90;
+    --accent-lt: #9A9AAA;
+  }
+  body[data-palette="green"] {
+    --blue:      #00B87A;
+    --blue-dk:   #008855;
+    --blue-lt:   #2ADE9A;
+    --accent:    #C4820A;
+    --accent-lt: #D49E2A;
+  }
+
   /* ─── TOPBAR ─── */
   .topbar {
     background: var(--blue);
@@ -38,6 +57,34 @@
     color: #fff;
     position: relative;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .palette-switcher {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .palette-switcher button {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.45);
+    background: var(--swatch, #fff);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .palette-switcher button:hover { transform: scale(1.15); border-color: rgba(255,255,255,0.85); }
+  .palette-switcher button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  .palette-switcher button[aria-pressed="true"] {
+    border-color: #fff;
+    transform: scale(1.15);
   }
   .topbar span { opacity: 0.85; margin: 0 6px; }
   .topbar a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }

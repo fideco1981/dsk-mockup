@@ -15,6 +15,10 @@ function makeDoc(page) {
        <main></main>
        <div id="site-footer"></div>
      </body></html>`,
+    // A real origin is required for window.localStorage to be available
+    // (opaque origins throw "localStorage is not available"). The path
+    // doesn't matter — currentPage() prefers body[data-page] anyway.
+    { url: 'https://example.com/dsk-mockup/' },
   );
   return dom.window.document;
 }

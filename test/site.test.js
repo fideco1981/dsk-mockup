@@ -126,3 +126,59 @@ test('mobile-menu .nav-links stays visible (un-hides from the global mobile rule
     'mobile-menu .nav-links must use display: flex (column) so links render in the open menu',
   );
 });
+
+test('palette switcher renders three swatches (blue/red/green) in the topbar', () => {
+  const doc = makeDoc('index');
+  site.init(doc);
+  const buttons = doc.querySelectorAll('.palette-switcher button[data-palette]');
+  const palettes = [...buttons].map((b) => b.getAttribute('data-palette'));
+  assert.deepEqual(palettes, ['blue', 'red', 'green']);
+});
+
+test('palette switcher click sets body[data-palette] and updates aria-pressed', () => {
+  const doc = makeDoc('index');
+  site.init(doc);
+  const red = doc.querySelector('.palette-switcher button[data-palette="red"]');
+  assert.ok(red, 'red swatch button exists');
+  red.dispatchEvent(new doc.defaultView.Event('click'));
+  assert.equal(doc.body.dataset.palette, 'red');
+  assert.equal(red.getAttribute('aria-pressed'), 'true');
+  // Only one swatch can claim aria-pressed=true at a time.
+  const pressed = [...doc.querySelectorAll('.palette-switcher button[aria-pressed="true"]')];
+  assert.equal(pressed.length, 1);
+});
+
+test('palette switcher persists choice across page loads via localStorage', () => {
+  const doc1 = makeDoc('index');
+  site.init(doc1);
+  doc1
+    .querySelector('.palette-switcher button[data-palette="green"]')
+    .dispatchEvent(new doc1.defaultView.Event('click'));
+
+  // Simulate navigation: a fresh document on a different page, same localStorage.
+  // JSDOM gives each window its own localStorage — copy the saved value across.
+  const saved = doc1.defaultView.localStorage.getItem('dsk-palette');
+  assert.equal(saved, 'green', 'choice written to localStorage');
+
+  const doc2 = makeDoc('styret');
+  doc2.defaultView.localStorage.setItem('dsk-palette', saved);
+  site.init(doc2);
+  assert.equal(doc2.body.dataset.palette, 'green', 'restored on next page load');
+  assert.equal(
+    doc2.querySelector('.palette-switcher button[data-palette="green"]')
+      .getAttribute('aria-pressed'),
+    'true',
+  );
+});
+
+test('styles.css declares palette overrides for red and green', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  const red = css.match(/body\[data-palette\s*=\s*"red"\]\s*\{([^}]+)\}/);
+  const green = css.match(/body\[data-palette\s*=\s*"green"\]\s*\{([^}]+)\}/);
+  assert.ok(red, 'red palette block must exist');
+  assert.ok(green, 'green palette block must exist');
+  assert.match(red[1], /--blue:\s*#/, 'red palette must override --blue');
+  assert.match(green[1], /--blue:\s*#/, 'green palette must override --blue');
+});
