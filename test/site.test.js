@@ -80,3 +80,31 @@ test('currentPage falls back to the location filename without data-page', () => 
   }).window.document;
   assert.equal(site.currentPage(doc), 'kontakt');
 });
+
+test('mobile-menu .btn-primary is sized down so it does not dominate the open menu', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  const rule = css.match(/\.mobile-menu\s+\.btn-primary\s*\{([^}]+)\}/);
+  assert.ok(
+    rule,
+    '.mobile-menu .btn-primary rule must exist — without it, the .mobile-menu a (0,1,1) ' +
+      'selector beats .btn-primary (0,1,0) and the CTA renders at 28px/700 weight, ' +
+      'dominating the open menu',
+  );
+  assert.match(rule[1], /font-size:\s*(1[4-9]|20)px/, 'CTA font-size must stay <= 20px');
+  assert.match(rule[1], /font-weight:\s*[56]00/, 'CTA font-weight must be 500 or 600');
+});
+
+test('mobile-menu allows scrolling when content overflows the viewport', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  const rule = css.match(/\.mobile-menu\s*\{([^}]+)\}/);
+  assert.ok(rule, '.mobile-menu base rule must exist');
+  assert.match(
+    rule[1],
+    /overflow-y:\s*auto/,
+    'mobile-menu must allow vertical scroll so links + CTA stay reachable on short viewports (landscape phones)',
+  );
+});
