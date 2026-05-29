@@ -1248,6 +1248,73 @@
     max-width: 880px;
   }
 
+  /* ─── KONTAKT ─── */
+  .kontakt-visit { background: var(--dark); }
+  .kontakt-facts {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .kontakt-hours-note { margin-top: 28px; }
+  .board-note a {
+    color: var(--blue-lt);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .board-note a:hover { color: #fff; }
+
+  .kontakt-roles { background: var(--dark2); }
+  .kontakt-grid { grid-template-columns: repeat(3, 1fr); }
+
+  .kontakt-social { background: var(--dark); }
+  .kontakt-social-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .kontakt-social-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.25s cubic-bezier(.2,.8,.3,1), border-color 0.25s, box-shadow 0.25s;
+  }
+  .kontakt-social-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,159,227,0.4);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+  }
+  .kontakt-social-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(0,159,227,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .kontakt-social-icon .icon { width: 22px; height: 22px; color: var(--blue-lt); }
+  .kontakt-social-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .kontakt-social-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .kontakt-social-value {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 1024px) {
     .board-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1256,6 +1323,8 @@
     .insta-tile:nth-child(n+4) { display: none; }
     .footer-inner { grid-template-columns: 1fr 1fr; }
     .achievement-grid { grid-template-columns: repeat(2, 1fr); }
+    .kontakt-grid { grid-template-columns: repeat(2, 1fr); }
+    .kontakt-social-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -1288,6 +1357,8 @@
     .about-haukos-facts { grid-template-columns: 1fr; }
     .about-quote { padding: 32px 24px; }
     .about-quote-mark { font-size: 60px; left: 16px; top: -4px; }
+    .kontakt-facts { grid-template-columns: 1fr; }
+    .kontakt-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 480px) {
     .stats-inner { grid-template-columns: 1fr 1fr; }

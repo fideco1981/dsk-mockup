@@ -1,0 +1,159 @@
+'use strict';
+
+// Integration test for kontakt.html — the club's contact/find-us page
+// (issue 005). Loads the real HTML file, runs site.js against it, and
+// asserts: the shared layout marks "Kontakt" active, the page renders the
+// address / Postboks / org.nr / opening hours / social links / role-based
+// contacts exactly per content-baseline.md, AND that personal phone /
+// email details for any board member are masked behind a "kontakt via
+// styret"-style affordance (same masking policy as styret.html per PRD).
+
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { JSDOM } = require('jsdom');
+const site = require('../site');
+
+const HTML = fs.readFileSync(
+  path.join(__dirname, '..', 'kontakt.html'),
+  'utf8',
+);
+
+function renderKontakt() {
+  const doc = new JSDOM(HTML).window.document;
+  site.init(doc);
+  return doc;
+}
+
+// Role-based contacts from content-baseline.md → "Kontakt":
+//   Chair/Teknisk Kenneth Larsen; Skiskole Jon Sæther; Sportslig
+//   Alexandra Forbord; Rekrutten Line Kristin Hafsal; Teknikeren/DSK Fun
+//   Erik Ullhaug Olsen; U12-14 Jon Sæther.
+const ROLE_CONTACTS = [
+  { roleHint: /styreleder|teknisk|leder/i, name: 'Kenneth Larsen' },
+  { roleHint: /skiskole/i, name: 'Jon Sæther' },
+  { roleHint: /sportslig/i, name: 'Alexandra Forbord' },
+  { roleHint: /rekrutt/i, name: 'Line Kristin Hafsal' },
+  { roleHint: /teknikeren|dsk\s*fun/i, name: 'Erik Ullhaug Olsen' },
+  { roleHint: /u12/i, name: 'Jon Sæther' },
+];
+
+// Personal details that must NOT appear on the page. Parsed at test time
+// from the gitignored content-baseline.md so this committed test file
+// (public repo) carries no real phone/email. When the baseline is absent
+// the leak loop is skipped via t.diagnostic — the masking affordance
+// check still runs unconditionally.
+const BASELINE = path.join(__dirname, '..', 'content-baseline.md');
+
+function loadLeakedPII() {
+  if (!fs.existsSync(BASELINE)) return null;
+  const md = fs.readFileSync(BASELINE, 'utf8');
+  const leaked = new Set();
+  // Scrape the "Styret 2024–2025" table.
+  const lines = md.split('\n');
+  const start = lines.findIndex((l) => /^##\s+Styret/.test(l));
+  if (start !== -1) {
+    for (let i = start + 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('## ')) break;
+      if (!line.startsWith('|')) continue;
+      const cols = line.split('|').map((c) => c.trim());
+      if (cols.length < 6) continue;
+      if (cols[1] === 'Role' || /^-+$/.test(cols[1])) continue;
+      if (cols[3]) leaked.add(cols[3]);
+      if (cols[4]) leaked.add(cols[4]);
+    }
+  }
+  // Also pick up Erik Ullhaug Olsen's inline (phone, email) under "Kontakt".
+  const inline = md.match(/\(([^)]*\d[^)]*@[^)]*)\)/g) || [];
+  for (const m of inline) {
+    const inner = m.slice(1, -1);
+    for (const part of inner.split(',')) {
+      const trimmed = part.trim();
+      if (trimmed) leaked.add(trimmed);
+    }
+  }
+  return leaked.size ? [...leaked] : null;
+}
+
+test('kontakt: Kontakt nav link is marked active after layout injection', () => {
+  const doc = renderKontakt();
+  const active = doc.querySelectorAll('#nav .nav-links a.active');
+  assert.equal(active.length, 1, 'exactly one active nav link');
+  assert.equal(active[0].textContent.trim(), 'Kontakt');
+  assert.equal(active[0].getAttribute('aria-current'), 'page');
+});
+
+test('kontakt: address, Postboks, org.nr, and opening hours are shown', () => {
+  const doc = renderKontakt();
+  const text = doc.body.textContent;
+  assert.ok(text.includes('Blektjernveien 18'), 'visiting address');
+  assert.ok(text.includes('Postboks 2404'), 'postboks');
+  assert.ok(/3003\s*DRAMMEN/i.test(text), 'postal code + drammen');
+  assert.ok(text.includes('883 456 912'), 'org.nr');
+  // Opening hours: Man–Tor 18:00–20:00; Fre stengt; helg 11:00–15:00.
+  assert.ok(/18[:.]00\s*[–-]\s*20[:.]00/.test(text), 'weekday hours');
+  assert.ok(/11[:.]00\s*[–-]\s*15[:.]00/.test(text), 'weekend hours');
+  assert.ok(/fre[a-z]*\s*stengt|stengt\s*fre/i.test(text), 'friday closed');
+});
+
+test('kontakt: each role-based contact is listed with role + name', () => {
+  const doc = renderKontakt();
+  const text = doc.body.textContent;
+  for (const { roleHint, name } of ROLE_CONTACTS) {
+    assert.ok(text.includes(name), `lists contact name "${name}"`);
+    assert.match(text, roleHint, `lists a matching role for "${name}"`);
+  }
+});
+
+test('kontakt: Facebook and Instagram links are present', () => {
+  const doc = renderKontakt();
+  // After layout injection both footer + page may carry social links;
+  // we just need at least one Instagram and one Facebook URL.
+  const anchors = [...doc.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'));
+  assert.ok(
+    anchors.some((h) => /instagram\.com\/drammenslalomklubb/i.test(h)),
+    'links Instagram @drammenslalomklubb',
+  );
+  assert.ok(
+    anchors.some((h) => /facebook\.com\/.*drammen|drammensk/i.test(h)),
+    'links Facebook',
+  );
+});
+
+test('kontakt: personal phone numbers and emails are masked', (t) => {
+  const doc = renderKontakt();
+  const html = doc.documentElement.innerHTML;
+  const leaked = loadLeakedPII();
+  if (leaked) {
+    for (const secret of leaked) {
+      assert.ok(
+        !html.includes(secret),
+        `does not leak "${secret}"`,
+      );
+    }
+  } else {
+    t.diagnostic('content-baseline.md absent — PII leak check skipped (run locally with the baseline present)');
+  }
+  // Masking affordance must be present regardless: "kontakt via klubben"
+  // or "kontakt via styret" — both are acceptable wordings.
+  assert.match(
+    doc.body.textContent.toLowerCase(),
+    /kontakt via (styret|klubben)/,
+    'offers a masked "kontakt via styret/klubben" affordance',
+  );
+});
+
+test('kontakt: page has no absolute internal links (subpath-safe)', () => {
+  // Belt-and-braces check on top of test/deploy.test.js, which already
+  // auto-scans every NAV_MODEL page on disk.
+  const bad = [];
+  const re = /(?:href|src)="([^"]*)"/g;
+  let m;
+  while ((m = re.exec(HTML)) !== null) {
+    const url = m[1];
+    if (url.startsWith('/') && !url.startsWith('//')) bad.push(url);
+  }
+  assert.deepEqual(bad, [], `kontakt.html has absolute internal links: ${bad.join(', ')}`);
+});
