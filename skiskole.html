@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skiskole — Drammen Slalåmklubb</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="skiskole">
+
+<!-- Skip to main content -->
+<a class="skip-link" href="#main">Hopp til innhold</a>
+
+<!-- SVG icon symbols referenced by the injected nav/footer (and this page) -->
+<svg style="display:none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12h18M3 6h18M3 18h18"/>
+  </symbol>
+  <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 6 6 18M6 6l12 12"/>
+  </symbol>
+  <symbol id="icon-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m18.062 8.5-12.124 7m12.124-7 1.098-4.098M18.062 8.5l4.098 1.098M5.938 15.5 1.84 14.402M5.938 15.5 4.84 19.598M18.062 15.5l-12.124-7m12.124 7 4.098-1.098M18.062 15.5l1.098 4.098M5.938 8.5 4.84 4.402M5.938 8.5 1.84 9.598M12 5v14m0-14L9 2m3 3 3-3m-3 17-3 3m3-3 3 3"/>
+  </symbol>
+  <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 8.377c0-.35 0-.525.015-.673a3 3 0 0 1 2.69-2.69C4.851 5 5.035 5 5.404 5c.143 0 .214 0 .274-.004a2 2 0 0 0 1.735-1.25c.023-.056.044-.12.086-.246.042-.127.063-.19.086-.246a2 2 0 0 1 1.735-1.25C9.38 2 9.448 2 9.58 2h4.838c.133 0 .2 0 .26.004a2 2 0 0 1 1.735 1.25c.023.056.044.12.086.246.042.127.063.19.086.246a2 2 0 0 0 1.735 1.25c.06.004.131.004.273.004.37 0 .554 0 .702.015a3 3 0 0 1 2.69 2.69c.014.147.014.322.014.672V16.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C19.72 21 18.88 21 17.2 21H6.8c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C2 18.72 2 17.88 2 16.2V8.377Z"/>
+    <path d="M12 16.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 21v-2a4.002 4.002 0 0 0-3-3.874M15.5 3.291a4.001 4.001 0 0 1 0 7.418M17 21c0-1.864 0-2.796-.305-3.53a4 4 0 0 0-2.164-2.165C13.796 15 12.864 15 11 15H8c-1.864 0-2.796 0-3.53.305a4 4 0 0 0-2.166 2.164C2 18.204 2 19.136 2 21M13.5 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
+  </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+  <symbol id="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+    <path d="M12 22c4-4 8-7.582 8-12a8 8 0 1 0-16 0c0 4.418 4 8 8 12Z"/>
+  </symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 6v6l4 2m6-2c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 6 9 17l-5-5"/>
+  </symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 2v4M16 2v4M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z"/>
+  </symbol>
+  <symbol id="icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m20.59 13.41-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82ZM7 7h.01"/>
+  </symbol>
+</svg>
+
+<!-- Shared layout (topbar + nav + mobile menu) injected by site.js -->
+<div id="site-nav"></div>
+<noscript>
+  <nav class="nav-fallback">
+    <a href="index.html">Hjem</a>
+    <a href="skiskole.html">Skiskole</a>
+    <a href="treningsopplegg.html">Treningsopplegg</a>
+    <a href="om-oss.html">Om oss</a>
+    <a href="styret.html">Styret</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
+</noscript>
+
+<main id="main" tabindex="-1">
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <div class="section-tag">For 4–10 år</div>
+      <h1 class="page-hero-title">Skiskole &amp; alpinkurs</h1>
+      <p class="page-hero-sub">
+        Trygg start på alpinski for de yngste — i Haukåsløypa, med erfarne instruktører og tydelige rammer for hver samling.
+      </p>
+    </div>
+  </section>
+
+  <!-- COURSE CARDS -->
+  <section class="skiskole-courses">
+    <div class="section-inner">
+
+      <div class="section-header">
+        <div class="section-tag">Velg kurstype</div>
+        <h2 class="section-title">To kurstilbud</h2>
+        <p class="section-sub">Ettermiddagskurs gjennom tre uker, eller et helgekurs samlet på lørdag og søndag.</p>
+      </div>
+
+      <div class="course-grid">
+
+        <article class="course-card">
+          <div class="course-badge">Ettermiddagskurs</div>
+          <h3 class="course-title">Tirsdag &amp; torsdag</h3>
+          <p class="course-lede">Korte, hyppige samlinger som bygger ferdigheter over tre uker.</p>
+
+          <ul class="course-facts">
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
+              <span><strong>Dager:</strong> tirsdag og torsdag</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
+              <span><strong>Tid:</strong> 17:30–18:45</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg>
+              <span><strong>Omfang:</strong> 6 kvelder over 3 uker (7,5 t totalt)</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
+              <span><strong>Pris:</strong> 2 950 kr</span>
+            </li>
+          </ul>
+
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Meld på via Spond →</a>
+        </article>
+
+        <article class="course-card">
+          <div class="course-badge course-badge-alt">Helgekurs</div>
+          <h3 class="course-title">Lørdag &amp; søndag</h3>
+          <p class="course-lede">Samlet helgekurs — to dager i strekk på fire timer hver dag.</p>
+
+          <ul class="course-facts">
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
+              <span><strong>Dager:</strong> lørdag og søndag</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
+              <span><strong>Tid:</strong> 10:00–14:00 begge dager</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg>
+              <span><strong>Omfang:</strong> 2 dager, 3 t/dag (6 t totalt)</span>
+            </li>
+            <li>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
+              <span><strong>Pris:</strong> 2 500 kr</span>
+            </li>
+          </ul>
+
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Meld på via Spond →</a>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WHAT'S INCLUDED -->
+  <section class="skiskole-included">
+    <div class="section-inner">
+
+      <div class="section-header">
+        <div class="section-tag">I prisen</div>
+        <h2 class="section-title">Hva som er inkludert</h2>
+        <p class="section-sub">Begge kurs gir tilgang til klubbens fasiliteter og videre treningstilbud gjennom sesongen.</p>
+      </div>
+
+      <ul class="included-list">
+        <li>
+          <span class="included-bullet" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
+          </span>
+          <div>
+            <h3>Medlemskap sesongen 2025–2026</h3>
+            <p>Klubbmedlemskap i Drammen Slalåmklubb gjeldende ut inneværende sesong.</p>
+          </div>
+        </li>
+        <li>
+          <span class="included-bullet" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
+          </span>
+          <div>
+            <h3>Sesongkort i Haukåsløypa</h3>
+            <p>Fri bruk av heisen i Haukåsløypa hele sesongen — også utenfor kurstid.</p>
+          </div>
+        </li>
+        <li>
+          <span class="included-bullet" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
+          </span>
+          <div>
+            <h3>Aktivitetsavgift Rekrutten</h3>
+            <p>Avgiften som dekker treninger i Rekrutten-gruppen (U8) ut sesongen.</p>
+          </div>
+        </li>
+      </ul>
+
+      <p class="board-note skiskole-450-note">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
+        Helgekursbarn som ønsker å fortsette i en av klubbens treningsgrupper etter kurset betaler et tilleggsgebyr på +450 kr.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- PRACTICAL INFO -->
+  <section class="skiskole-info">
+    <div class="section-inner">
+
+      <div class="section-header">
+        <div class="section-tag">Praktisk</div>
+        <h2 class="section-title">Krav, utstyr og oppmøte</h2>
+        <p class="section-sub">Det viktigste å vite før dere kommer på første samling.</p>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="info-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-users"/></svg>
+          </div>
+          <h3>Alder 4–10 år</h3>
+          <p>Kursene passer for barn i alderen 4–10 år. Barnet må ha fylt 4 år innen <strong>1. januar 2026</strong> for å delta.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-snowflake"/></svg>
+          </div>
+          <h3>Egne ski</h3>
+          <p>Barnet må ta med egne alpinski — klubben har ikke utlånsutstyr. Hjelm anbefales (og kreves i konkurranser).</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-clock"/></svg>
+          </div>
+          <h3>Møt opp 15 min før</h3>
+          <p>Vær på plass <strong>15 minutter før</strong> samlingen starter — skiene må være klare og barnet ferdig påkledd.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-info"/></svg>
+          </div>
+          <h3>Vær- og tidsendringer</h3>
+          <p>Ved spesielle værforhold kan klubben justere oppstartstidspunktene. Endringer varsles via Spond.</p>
+        </div>
+
+      </div>
+
+      <p class="board-note skiskole-instructor-note">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
+        Hovedinstruktør er <strong>Henrik Hagberg</strong>. Resten av instruktørstaben er tidligere aktive alpinister med konkurranseerfaring.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- SIGNUP CTA -->
+  <section class="skiskole-cta">
+    <div class="section-inner skiskole-cta-inner">
+      <div class="section-tag">Meld på</div>
+      <h2 class="section-title">Klar for å sette skia på?</h2>
+      <p class="skiskole-cta-sub">Påmelding gjøres via Spond — du oppretter konto første gang og melder barnet på kurstypen som passer.</p>
+      <a class="btn-primary" href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Bli medlem &amp; meld på →</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- Shared footer injected by site.js -->
+<footer id="site-footer"></footer>
+
+<script src="site.js"></script>
+</body>
+</html>
