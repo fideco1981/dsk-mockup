@@ -1,0 +1,14 @@
+{
+  "name": "dsk-mockup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Drammen Slalåmklubb MVP website — static multi-page site",
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.0",
+    "typescript": "^5.5.0"
+  }
+}

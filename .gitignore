@@ -1,0 +1,7 @@
+.env
+node_modules/
+
+# Local-only content source-of-truth (full of unmasked PII). Tests that need
+# the baseline values (e.g. test/styret.test.js) read it dynamically and skip
+# the PII-leak check when absent.
+content-baseline.md
