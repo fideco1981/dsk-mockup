@@ -101,3 +101,16 @@ test('styret: personal phone numbers and emails are masked', (t) => {
     'offers a masked "kontakt via styret" affordance',
   );
 });
+
+test('styret: season line clarifies the board is sitting until the 2026 årsmøte', () => {
+  const doc = renderStyret();
+  const text = doc.body.textContent;
+  // Per issue 009: same board still applies. The "2024–2025" line stays
+  // (that's the season they were elected for) but a note explains they
+  // remain seated until the next årsmøte on 25 March 2026.
+  assert.match(
+    text,
+    /sittende.*(25.\s*mars|årsmøte).*(2026)/i,
+    'styret season line must indicate the board sits until the 25 March 2026 årsmøte',
+  );
+});

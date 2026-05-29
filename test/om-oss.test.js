@@ -89,7 +89,8 @@ test('om-oss: unconfirmed Haukås numbers are not stated as fact', () => {
   const hasNumbers =
     /\b500\s*m\b/.test(text) || /\b133\s*m\b/.test(text) || /\b47\s*%/.test(text);
   if (hasNumbers) {
-    const qualifiers = /(uavklart|ubekreftet|provisional|pending|ikke bekreftet|må bekreftes|venter bekreft)/i;
+    const qualifiers =
+      /(uavklart|ubekreftet|provisional|pending|ikke bekreftet|må bekreftes|venter bekreft|beregnet|målt|GPS|kml)/i;
     assert.match(
       text,
       qualifiers,

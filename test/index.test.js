@@ -140,21 +140,22 @@ test('index: hero and membership CTAs link to the Spond signup form', () => {
   assert.match(memSpond.getAttribute('rel') || '', /noopener/);
 });
 
-test('index: unconfirmed Haukås numbers (500m/133m/47%) are qualified as provisional', () => {
+test('index: Haukås numbers (500m/133m/47%) carry a source-or-provisional qualifier', () => {
   const doc = renderIndex();
   const text = doc.body.textContent;
-  // The mockup-only stats are 500m length / 133m vertical / 47% gradient.
-  // They're not confirmed on the live site (see content-baseline.md line 21
-  // and issue 009). If any of them appear, a qualifier word must accompany
-  // them somewhere on the page.
+  // Stats: 500m length / 133m vertical / 47% gradient. Per issue 009, Stein
+  // confirmed they're computed from KML/GPS traces of the slope — so they're
+  // not unverified guesses, but a source attribution (or other provisional
+  // wording) must still accompany them so readers understand the basis.
   const hasNumbers =
     /\b500\s*m\b/.test(text) || /\b133\s*m\b/.test(text) || /\b47\s*%/.test(text);
   if (hasNumbers) {
-    const qualifiers = /(uavklart|ubekreftet|ikke bekreftet|må bekreftes|venter bekreft|provisorisk|provisional)/i;
+    const qualifiers =
+      /(uavklart|ubekreftet|ikke bekreftet|må bekreftes|venter bekreft|provisorisk|provisional|beregnet|målt|GPS|kml)/i;
     assert.match(
       text,
       qualifiers,
-      'if Haukås mockup numbers are present they must be qualified pending club input',
+      'if Haukås numbers are shown they must be qualified — provisional language OR source attribution (GPS/KML/beregnet)',
     );
   }
 });
