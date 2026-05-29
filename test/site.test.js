@@ -108,3 +108,21 @@ test('mobile-menu allows scrolling when content overflows the viewport', () => {
     'mobile-menu must allow vertical scroll so links + CTA stay reachable on short viewports (landscape phones)',
   );
 });
+
+test('mobile-menu .nav-links stays visible (un-hides from the global mobile rule)', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  const rule = css.match(/\.mobile-menu\s+\.nav-links\s*\{([^}]+)\}/);
+  assert.ok(
+    rule,
+    '.mobile-menu .nav-links rule must exist — at <=768px, `.nav-links, .btn-nav { display: none; }` ' +
+      'hides EVERY .nav-links element including the one inside the open mobile menu, ' +
+      'leaving the menu showing only the CTA. Higher-specificity rule restores it.',
+  );
+  assert.match(
+    rule[1],
+    /display:\s*flex/,
+    'mobile-menu .nav-links must use display: flex (column) so links render in the open menu',
+  );
+});
