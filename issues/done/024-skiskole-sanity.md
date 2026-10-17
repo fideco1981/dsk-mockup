@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent PRD
 
@@ -53,7 +53,7 @@ Move `skiskole.html` into Sanity. The source of truth for the content is the clu
 - [x] The hero button on `index.html` links to `skiskole.html`.
 - [x] Fallback HTML matches the 2026/27 courses in `docs/skiskole.pdf`.
 - [x] CONTEXT.md updated.
-- [ ] (HITL) Studio redeployed. Stein enters the Skiskole text and the five courses from Spond.
+- [x] (HITL) Studio redeployed. Stein enters the Skiskole text and the five courses from Spond.
 
 ## Comments
 
@@ -68,3 +68,5 @@ Move `skiskole.html` into Sanity. The source of truth for the content is the clu
 - Still stale, outside this ticket: the `<noscript>` topbar ("Sesong 2025/26") and the `.skiskole-cta` button, which points to the membership form.
 
 2026-10-17: Studio deployed with Skiskole and Kurs from main (86ffe44). What's left is entering the Skiskole text and the five courses; then close the ticket.
+
+2026-10-17: Closed. The Skiskole text and the five courses are published in Sanity, each course with its own Spond signup link. Stein's text names the group "Grønn" (the PDF says "Rekrutten"), so the fallback and the Treningsopplegg CTA now say Grønn too. Shared reservation ("minst 6 deltakere og nok snø") is in `skiSchool.reservation`; no course has a note, so the weekend courses' 450 kr supplement only appears in the fallback and the Treningsopplegg CTA.

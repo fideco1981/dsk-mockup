@@ -150,7 +150,7 @@ function assertFallback(doc) {
   assert.match(school, /4–10 år \(fylte 4 år per 1\. januar 2027\)/);
   assert.match(school, /Medlemskap i Drammen Slalåmklubb for sesongen 2026–2027/);
   assert.match(school, /Sesongkort i Haukåsløypa/);
-  assert.match(school, /Rekrutten/);
+  assert.match(school, /Grønn/);
   assert.match(school, /Deltakerne må ha eget skiutstyr\./);
   assert.match(school, /Møt opp 15 minutter før kursstart\./);
 }
