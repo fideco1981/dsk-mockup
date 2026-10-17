@@ -45,7 +45,7 @@ test('treningsplan: group sessions go on their day in the group colour, sorted b
     ], view);
     assert.deepEqual(cards(doc, view, 'Onsdag').map((c) => c[0]), ['Fun'], view);
     assert.deepEqual(cards(doc, view, 'Tirsdag'), [], view);
-    assert.equal(day(doc, view, 'Mandag').querySelector('.s-loc').textContent, 'Barnebakken', view);
+    assert.equal(doc.querySelector('#schedule .s-loc'), null, 'no place on the cards');
   }
   assert.deepEqual(legend(doc), ['Grønn', 'Fun']);
   assert.ok(doc.querySelector('#schedule .legend-item .legend-dot.group-orange'));

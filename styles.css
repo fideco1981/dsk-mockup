@@ -166,7 +166,7 @@
   .note-icon .icon  { width: 20px; height: 20px; }
   .mobile-close .icon { width: 28px; height: 28px; }
   .hamburger .icon  { width: 24px; height: 24px; }
-  .s-loc .icon, .s-time .icon { width: 12px; height: 12px; flex-shrink: 0; }
+  .s-time .icon { width: 12px; height: 12px; flex-shrink: 0; }
   .lift-header .icon { width: 14px; height: 14px; vertical-align: -0.15em; }
   .event-location .icon { width: 14px; height: 14px; vertical-align: -0.15em; }
   .fact-icon .icon { width: 22px; height: 22px; }
@@ -1749,7 +1749,6 @@
   .session-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
   .session-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 3px 0 0 3px; }
   .session-card .s-group { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; display: block; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .session-card .s-loc { font-size: 11px; font-weight: 400; opacity: 0.7; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .session-card .s-time { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
   /* Tinted by the .group-* colour; text stays white so every colour, Sort included, passes AA. */
   .session-card { background: color-mix(in srgb, var(--group-bg) 22%, var(--dark2)); border: 1px solid rgba(255,255,255,0.14); color: #fff; }

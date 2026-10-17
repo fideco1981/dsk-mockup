@@ -611,7 +611,7 @@
     });
     const entries = [];
     groups.forEach(function (g) {
-      validSessions(g.sessions).forEach(function (s) { entries.push({ session: s, title: g.title, cls: groupClass(g), place: g.place }); });
+      validSessions(g.sessions).forEach(function (s) { entries.push({ session: s, title: g.title, cls: groupClass(g) }); });
     });
     courses.forEach(function (c) {
       validSessions(c.sessions).forEach(function (s) { entries.push({ session: s, title: c.title, cls: SKI_SCHOOL_CLASS, isCourse: true }); });
@@ -660,12 +660,6 @@
     const card = el(doc, e.isCourse ? 'a' : 'div', 'session-card ' + e.cls);
     if (e.isCourse) card.href = 'skiskole.html';
     card.append(el(doc, 'span', 's-group', e.title));
-    if (isText(e.place)) {
-      const loc = el(doc, 'span', 's-loc');
-      setIcon(loc, 'pin');
-      loc.append(e.place);
-      card.append(loc);
-    }
     const time = el(doc, 'span', 's-time');
     setIcon(time, 'clock');
     time.append(e.session.from + ' – ' + e.session.to);
