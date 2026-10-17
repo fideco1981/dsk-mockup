@@ -170,6 +170,16 @@ test('skiskole: a fetch error, a non-OK answer or a missing skiSchool keeps the 
   }
 });
 
+test('skiskole: Ski school markup without .section-sub/.info-grid reveals the fallback instead of throwing', async () => {
+  const doc = new JSDOM(HTML).window.document;
+  doc.querySelectorAll('#ski-school .section-sub, #ski-school .info-grid').forEach((n) => n.remove());
+  stubFetch(doc, { skiSchool: SCHOOL, courses: [WEEKEND] });
+  await site.init(doc);
+  assert.ok(!doc.getElementById('ski-school').hidden);
+  assert.ok(!doc.getElementById('courses').hidden);
+  assert.deepEqual(titles(doc), PDF_COURSES.map((c) => c[0]));
+});
+
 test('skiskole: courses and Ski school are hidden until the CMS answers, with a noscript reveal', () => {
   const doc = new JSDOM(HTML).window.document;
   assert.ok(doc.getElementById('courses').hidden);

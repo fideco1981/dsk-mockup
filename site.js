@@ -223,8 +223,8 @@
     const groupNav = doc.getElementById('training-nav');
     const groupCount = doc.querySelector('.training-quick-nav .section-title');
     const programs = doc.getElementById('programs-grid');
-    const courses = doc.getElementById('courses');
-    const school = doc.getElementById('ski-school');
+    const coursesMount = doc.getElementById('courses');
+    const schoolMount = doc.getElementById('ski-school');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -242,7 +242,7 @@
       const trainingGroups = validGroups(result && result.trainingGroups);
       if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, trainingGroups);
       if (programs) renderProgramCards(doc, programs, trainingGroups);
-      if (courses && school) renderSkiSchool(doc, school, courses, result && result.skiSchool, result && result.courses);
+      if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -336,6 +336,9 @@
 
   function isISODate(d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
 
+  /** Ascending string order, for sort callbacks. */
+  function compareStr(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
+
   /** "2027-01-05" → "5. januar 2027" (or "5. januar" without the year). */
   function longDate(iso, withYear) {
     const p = iso.split('-').map(Number);
@@ -360,7 +363,7 @@
         return e && typeof e.title === 'string' &&
           isISODate(e.date) && e.date >= today;
       })
-      .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; })
+      .sort(function (a, b) { return compareStr(a.date, b.date); })
       .slice(0, 3);
     mount.textContent = '';
     if (!upcoming.length) mount.append(el(doc, 'p', 'events-empty', 'Ingen kommende arrangementer akkurat nå.'));
@@ -431,7 +434,7 @@
   function sessionLines(doc, sessions, className) {
     return (Array.isArray(sessions) ? sessions : [])
       .filter(function (s) { return s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to); })
-      .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || (a.from < b.from ? -1 : a.from > b.from ? 1 : 0); })
+      .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || compareStr(a.from, b.from); })
       .map(function (s) { return factLine(doc, 'clock', null, s.day + ' ' + s.from + '–' + s.to, className); });
   }
 
@@ -529,12 +532,13 @@
    * as-is. Courses whose endDate has passed are left out; none left gives a
    * short message. CMS strings go in as text.
    */
-  function renderSkiSchool(doc, mount, courses, school, list) {
-    if (school && typeof school === 'object') {
-      const sub = mount.querySelector('.section-sub');
+  function renderSkiSchool(doc, schoolMount, coursesMount, school, courseList) {
+    const sub = schoolMount.querySelector('.section-sub');
+    const grid = schoolMount.querySelector('.info-grid');
+    // Missing markup degrades to the fallback rather than throwing with the section hidden.
+    if (school && typeof school === 'object' && sub && grid) {
       if (isText(school.intro)) sub.textContent = school.intro;
       else sub.remove();
-      const grid = mount.querySelector('.info-grid');
       grid.textContent = '';
       if (isText(school.age)) grid.append(infoCard(doc, 'users', 'Alder', el(doc, 'p', null, school.age)));
       const includes = (Array.isArray(school.includes) ? school.includes : []).filter(isText);
@@ -546,10 +550,10 @@
       if (isText(school.equipment)) grid.append(infoCard(doc, 'snowflake', 'Utstyr', el(doc, 'p', null, school.equipment)));
       if (isText(school.meetup)) grid.append(infoCard(doc, 'clock', 'Oppmøte', el(doc, 'p', null, school.meetup)));
       if (isText(school.reservation)) grid.append(infoCard(doc, 'info', 'Forbehold', el(doc, 'p', null, school.reservation)));
+      renderCourses(doc, coursesMount, courseList);
     }
-    mount.hidden = false;
-    if (school && typeof school === 'object') renderCourses(doc, courses, list);
-    courses.hidden = false;
+    schoolMount.hidden = false;
+    coursesMount.hidden = false;
   }
 
   /** Courses that haven't ended, by startDate; with none, a pointer to Spond. */
@@ -559,7 +563,7 @@
       .filter(function (c) {
         return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate) && c.endDate >= today;
       })
-      .sort(function (a, b) { return a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0; });
+      .sort(function (a, b) { return compareStr(a.startDate, b.startDate); });
     mount.textContent = '';
     if (!upcoming.length) {
       const p = el(doc, 'p', 'courses-empty', 'Ingen kurs akkurat nå — ');

@@ -1415,10 +1415,6 @@
     padding: 6px 14px;
     margin-bottom: 16px;
   }
-  .course-badge-alt {
-    color: var(--accent-lt);
-    background: rgba(74,58,154,0.18);
-  }
   .course-title {
     font-family: var(--font-head);
     font-size: 26px;
