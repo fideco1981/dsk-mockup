@@ -126,3 +126,27 @@ test('treningsplan: the HTML fallback has no old group names and no session time
   const times = (t) => t.match(/\d\d:\d\d/g) || [];
   assert.deepEqual(times(schedule.textContent), times(lift));
 });
+
+test('treningsplan: a course ending before the lift opens gets no "Kun skiskole" piece', async () => {
+  const lift = { hours: [session('Tirsdag', '18:00', '20:00')] };
+  const doc = await render({ trainingGroups: GROUPS, liftHours: lift, courses: [course('2000-01-01', '2999-12-31', { sessions: [session('Tirsdag', '16:00', '17:00')] })] });
+  for (const view of VIEWS) assert.equal(pre(doc, view, 'Tirsdag'), null, view);
+});
+
+test('treningsplan: the ISO week number turns over on Monday, including week 53', () => {
+  const week = (y, m, d) => site.currentWeek(new Date(y, m - 1, d, 12)).number;
+  assert.equal(week(2026, 10, 18), 42);
+  assert.equal(week(2026, 10, 19), 43);
+  assert.equal(week(2027, 1, 3), 53);
+  assert.equal(week(2027, 1, 4), 1);
+});
+
+test('treningsplan: skipWeeks hides a course only in exactly the current ISO week', async () => {
+  const n = site.currentWeek().number;
+  const shownWith = async (skipWeeks) => {
+    const doc = await render({ trainingGroups: GROUPS, liftHours: LIFT, courses: [course('2000-01-01', '2999-12-31', { skipWeeks })] });
+    return courseCards(doc, 'week-grid').length;
+  };
+  assert.equal(await shownWith([n]), 0);
+  assert.equal(await shownWith([n - 1, n + 1]), 1);
+});

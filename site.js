@@ -227,6 +227,7 @@
     const programs = doc.getElementById('programs-grid');
     const coursesMount = doc.getElementById('courses');
     const schoolMount = doc.getElementById('ski-school');
+    const schedule = doc.getElementById('schedule');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -247,8 +248,7 @@
       if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
       const lift = result && result.liftHours;
       if (lift && typeof lift === 'object') renderLiftHours(doc, lift);
-      const schedule = doc.getElementById('schedule');
-      if (schedule && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
+      if (schedule && result && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -341,9 +341,8 @@
 
   function todayISO() { return localISO(new Date()); }
 
-  /** The current week, Monday–Sunday in local time, with its ISO week number. */
-  function currentWeek() {
-    const now = new Date();
+  /** The week holding `now`, Monday–Sunday in local time, with its ISO week number. */
+  function currentWeek(now = new Date()) {
     const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
     const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
     // The ISO week is the one holding this week's Thursday, counted from 1 January of its year.
@@ -353,6 +352,16 @@
   }
 
   function isISODate(d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
+
+  /** A Course with what every view needs: a title and a start and end date. */
+  function isValidCourse(c) {
+    return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate);
+  }
+
+  /** Put a decorative icon from the page's sprite into a node, replacing its content. */
+  function setIcon(node, name) {
+    node.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-' + name + '"/></svg>';
+  }
 
   /** Ascending string order, for sort callbacks. */
   function compareStr(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
@@ -414,7 +423,7 @@
     const link = externalLink(doc, e.link, 'Mer info →');
     if (text || link) {
       const loc = el(doc, 'div', 'event-location');
-      loc.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>';
+      setIcon(loc, 'pin');
       if (text) loc.append(text);
       if (link) loc.append(link);
       info.append(loc);
@@ -440,7 +449,7 @@
   /** A facts-list line: decorative icon plus text, optionally with a bold label. */
   function factLine(doc, icon, label, text, className) {
     const li = el(doc, 'li', className);
-    li.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-' + icon + '"/></svg>';
+    setIcon(li, icon);
     const span = el(doc, 'span');
     if (label) span.append(el(doc, 'strong', null, label), ' ');
     span.append(text);
@@ -590,50 +599,52 @@
   /**
    * Fill the landing page's Treningsplan from the Training groups' sessions
    * and this week's Courses, keeping the lift labels. Per day: the sessions by
-   * `from`, a "Kun skiskole" piece when a course starts before the lift opens,
+   * `from`, a "Kun skiskole" piece when a course runs up to the lift opening,
    * and the lift tail after the last session. Lift parts need Lift hours; the
    * fallback labels alone carry no times to compute with. CMS strings go in as text.
    */
   function renderSchedule(doc, mount, groups, courseList, lift) {
     const week = currentWeek();
     const courses = (Array.isArray(courseList) ? courseList : []).filter(function (c) {
-      return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate) &&
-        c.startDate <= week.sunday && c.endDate >= week.monday &&
+      return isValidCourse(c) && c.startDate <= week.sunday && c.endDate >= week.monday &&
         !(Array.isArray(c.skipWeeks) && c.skipWeeks.indexOf(week.number) >= 0);
     });
     const entries = [];
     groups.forEach(function (g) {
-      validSessions(g.sessions).forEach(function (s) { entries.push({ s: s, title: g.title, cls: groupClass(g), place: g.place }); });
+      validSessions(g.sessions).forEach(function (s) { entries.push({ session: s, title: g.title, cls: groupClass(g), place: g.place }); });
     });
     courses.forEach(function (c) {
-      validSessions(c.sessions).forEach(function (s) { entries.push({ s: s, title: c.title, cls: SKI_SCHOOL_CLASS, href: 'skiskole.html' }); });
+      validSessions(c.sessions).forEach(function (s) { entries.push({ session: s, title: c.title, cls: SKI_SCHOOL_CLASS, isCourse: true }); });
     });
-    entries.sort(function (a, b) { return compareStr(a.s.from, b.s.from); });
+    entries.sort(function (a, b) { return compareStr(a.session.from, b.session.from); });
 
     const legend = mount.querySelector('.legend');
     legend.querySelectorAll('.legend-item').forEach(function (i) { i.remove(); });
-    const items = groups.map(function (g) { return [g.title, groupClass(g)]; });
-    if (courses.length) items.push(['Skiskole', SKI_SCHOOL_CLASS]);
+    const items = groups.map(function (g) { return { label: g.title, cls: groupClass(g) }; });
+    if (courses.length) items.push({ label: 'Skiskole', cls: SKI_SCHOOL_CLASS });
     items.forEach(function (it) {
       const item = el(doc, 'div', 'legend-item');
-      item.append(el(doc, 'span', 'legend-dot ' + it[1]), it[0]);
+      item.append(el(doc, 'span', 'legend-dot ' + it.cls), it.label);
       legend.append(item);
     });
 
     mount.querySelectorAll('.lift-header[data-day]').forEach(function (header) {
       const wrapper = header.parentNode;
-      const today = entries.filter(function (e) { return e.s.day === header.dataset.day; });
+      const dayEntries = entries.filter(function (e) { return e.session.day === header.dataset.day; });
       const cards = wrapper.querySelector('.lift-cards');
       cards.textContent = '';
-      today.forEach(function (e) { cards.append(scheduleCard(doc, e)); });
+      dayEntries.forEach(function (e) { cards.append(scheduleCard(doc, e)); });
       wrapper.querySelectorAll('.lift-pre, .lift-tail').forEach(function (p) { p.remove(); });
       const open = lift[header.dataset.day];
-      if (!open || !today.length) return;
-      const course = today.filter(function (e) { return e.href; })[0];
-      if (course && course.s.from < open.from) {
-        wrapper.insertBefore(el(doc, 'div', 'lift-pre', 'Kun skiskole ' + course.s.from + ' – ' + open.from), header);
+      if (!open || !dayEntries.length) return;
+      // Only a course that runs up to the lift opening extends the bar back.
+      const early = dayEntries.filter(function (e) {
+        return e.isCourse && e.session.from < open.from && e.session.to >= open.from;
+      })[0];
+      if (early) {
+        wrapper.insertBefore(el(doc, 'div', 'lift-pre', 'Kun skiskole ' + early.session.from + ' – ' + open.from), header);
       }
-      const last = today.map(function (e) { return e.s.to; }).sort().pop();
+      const last = dayEntries.map(function (e) { return e.session.to; }).sort().pop();
       if (last < open.to) {
         const tail = el(doc, 'div', 'lift-tail');
         tail.append(el(doc, 'span', null, last + ' – ' + open.to), el(doc, 'div', 'tail-line'));
@@ -646,18 +657,18 @@
 
   /** One Treningsplan card; a course card links to skiskole.html. */
   function scheduleCard(doc, e) {
-    const card = el(doc, e.href ? 'a' : 'div', 'session-card ' + e.cls);
-    if (e.href) card.href = e.href;
+    const card = el(doc, e.isCourse ? 'a' : 'div', 'session-card ' + e.cls);
+    if (e.isCourse) card.href = 'skiskole.html';
     card.append(el(doc, 'span', 's-group', e.title));
     if (isText(e.place)) {
       const loc = el(doc, 'span', 's-loc');
-      loc.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>';
+      setIcon(loc, 'pin');
       loc.append(e.place);
       card.append(loc);
     }
     const time = el(doc, 'span', 's-time');
-    time.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>';
-    time.append(e.s.from + ' – ' + e.s.to);
+    setIcon(time, 'clock');
+    time.append(e.session.from + ' – ' + e.session.to);
     card.append(time);
     return card;
   }
@@ -705,7 +716,7 @@
     const today = todayISO();
     const upcoming = (Array.isArray(list) ? list : [])
       .filter(function (c) {
-        return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate) && c.endDate >= today;
+        return isValidCourse(c) && c.endDate >= today;
       })
       .sort(function (a, b) { return compareStr(a.startDate, b.startDate); });
     mount.textContent = '';
@@ -838,6 +849,7 @@
   return {
     NAV_MODEL: NAV_MODEL,
     init: init,
+    currentWeek: currentWeek,
     currentPage: currentPage,
     navHTML: navHTML,
     footerHTML: footerHTML,
