@@ -66,3 +66,5 @@ Move `skiskole.html` into Sanity. The source of truth for the content is the clu
 - The fallback "Meld på" buttons all go to the Spond course list, because the PDF has no per-course signup URLs.
 - Removed from `skiskole.html` because none of it is in the PDF: the instructor note (Henrik Hagberg), the weather/Spond card, "Hjelm anbefales" and the "To kurstilbud" header. Confirm before release.
 - Still stale, outside this ticket: the `<noscript>` topbar ("Sesong 2025/26") and the `.skiskole-cta` button, which points to the membership form.
+
+2026-10-17: Studio deployed with Skiskole and Kurs from main (86ffe44). What's left is entering the Skiskole text and the five courses; then close the ticket.
