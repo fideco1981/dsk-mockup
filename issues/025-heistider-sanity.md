@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: ready-for-human
 
 ## Parent PRD
 
@@ -19,13 +19,13 @@ Move the lift hours into one Sanity singleton and read it everywhere they appear
 
 ## Acceptance criteria
 
-- [ ] Schema `liftHours` registered. `sanity schema validate` passes. Studio rejects two entries for the same day.
-- [ ] It appears in the Studio left menu as a singleton.
-- [ ] Test: the compact form merges consecutive equal days and shows closed days as "stengt", including a closed day in the middle of the week.
-- [ ] Test: om-oss and kontakt render the hours and note from Sanity, and keep the fallback on a fetch error.
-- [ ] Test: the per-day lift labels on `index.html` come from Sanity, with "Heis stengt" for missing days.
-- [ ] The fallback hours are identical on all three pages.
-- [ ] CONTEXT.md updated.
+- [x] Schema `liftHours` registered. `sanity schema validate` passes. Studio rejects two entries for the same day.
+- [x] It appears in the Studio left menu as a singleton.
+- [x] Test: the compact form merges consecutive equal days and shows closed days as "stengt", including a closed day in the middle of the week.
+- [x] Test: om-oss and kontakt render the hours and note from Sanity, and keep the fallback on a fetch error.
+- [x] Test: the per-day lift labels on `index.html` come from Sanity, with "Heis stengt" for missing days.
+- [x] The fallback hours are identical on all three pages.
+- [x] CONTEXT.md updated.
 - [ ] (HITL) Studio redeployed. Stein enters the hours and the note.
 
 ## Comments

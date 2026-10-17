@@ -15,8 +15,9 @@
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
  *   - load the Topbar message, landing-page Events, the footer's Sponsor
- *     strip, the Training groups, the Ski school and Courses from Sanity
- *     (test/cms.test.js, test/treningsopplegg.test.js, test/skiskole.test.js); init(doc)
+ *     strip, the Training groups, the Ski school, Courses and Lift hours from
+ *     Sanity (test/cms.test.js, test/treningsopplegg.test.js,
+ *     test/skiskole.test.js, test/lift-hours.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -54,7 +55,8 @@
     ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url},' +
     ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}},' +
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
-    ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, price, link, note}}';
+    ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, price, link, note},' +
+    ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}}}';
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
@@ -209,8 +211,8 @@
   /**
    * One query to Sanity, then render the Topbar message, the Sponsor strip
    * and, where their mounts exist, the upcoming Events and Training groups
-   * (sections on treningsopplegg.html, cards on the landing page) and the
-   * Ski school with its Courses (skiskole.html). Any failure
+   * (sections on treningsopplegg.html, cards on the landing page), the
+   * Ski school with its Courses (skiskole.html) and the Lift hours. Any failure
    * (rejection, non-OK, malformed data, no fetch) reveals that part's fallback.
    * Never rejects.
    */
@@ -225,6 +227,7 @@
     const programs = doc.getElementById('programs-grid');
     const coursesMount = doc.getElementById('courses');
     const schoolMount = doc.getElementById('ski-school');
+    const liftMounts = doc.querySelectorAll('[data-lift-hours], [data-lift-note], .lift-header[data-day]');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -243,6 +246,8 @@
       if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, trainingGroups);
       if (programs) renderProgramCards(doc, programs, trainingGroups);
       if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
+      const lift = result && result.liftHours;
+      if (lift && typeof lift === 'object') renderLiftHours(liftMounts, lift);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -516,6 +521,44 @@
     }
     mount.hidden = false;
     nav.hidden = false;
+  }
+
+  /**
+   * Fill the Lift hours mounts from the CMS: the compact week
+   * ("Man–Tor 18:00–20:00 · Fre stengt · …"), the per-day lift labels on the
+   * landing page and the note. A day without an entry is closed. Called only
+   * when the singleton exists, so failure keeps the HTML. CMS strings go in as text.
+   */
+  function renderLiftHours(mounts, lift) {
+    const byDay = {};
+    (Array.isArray(lift.hours) ? lift.hours : []).forEach(function (s) {
+      if (s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to) && !byDay[s.day]) byDay[s.day] = s.from + '–' + s.to;
+    });
+    const runs = [];
+    DAYS.forEach(function (d) {
+      const hours = byDay[d] || 'stengt';
+      const last = runs[runs.length - 1];
+      if (last && last.hours === hours) last.to = d;
+      else runs.push({ from: d, to: d, hours: hours });
+    });
+    const short = function (d) { return d.slice(0, 3); };
+    const week = runs.map(function (r) {
+      return short(r.from) + (r.to === r.from ? '' : '–' + short(r.to)) + ' ' + r.hours;
+    }).join(' · ');
+    mounts.forEach(function (m) {
+      if (m.hasAttribute('data-lift-hours')) m.textContent = week;
+      else if (m.hasAttribute('data-lift-note')) {
+        if (isText(lift.note)) m.textContent = lift.note;
+        else m.parentNode.hidden = true;
+      } else {
+        const hours = byDay[m.dataset.day];
+        const icon = m.querySelector('svg');
+        m.textContent = '';
+        if (icon) m.append(icon);
+        m.append(hours ? 'Heis ' + hours.replace('–', ' – ') : 'Heis stengt');
+        m.parentNode.classList.toggle('lift-closed', !hours);
+      }
+    });
   }
 
   /** An info card with a decorative icon, a heading and a body element. */
