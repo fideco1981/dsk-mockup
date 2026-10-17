@@ -227,7 +227,6 @@
     const programs = doc.getElementById('programs-grid');
     const coursesMount = doc.getElementById('courses');
     const schoolMount = doc.getElementById('ski-school');
-    const liftMounts = doc.querySelectorAll('[data-lift-hours], [data-lift-note], .lift-header[data-day]');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -247,7 +246,7 @@
       if (programs) renderProgramCards(doc, programs, trainingGroups);
       if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
       const lift = result && result.liftHours;
-      if (lift && typeof lift === 'object') renderLiftHours(liftMounts, lift);
+      if (lift && typeof lift === 'object') renderLiftHours(doc, lift);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -435,11 +434,16 @@
     return li;
   }
 
-  /** One facts line per valid session, sorted Monday→Sunday: "Mandag 18:00–19:30". */
-  function sessionLines(doc, sessions, className) {
+  /** The sessions with a known day and both times, sorted Monday→Sunday. */
+  function validSessions(sessions) {
     return (Array.isArray(sessions) ? sessions : [])
       .filter(function (s) { return s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to); })
-      .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || compareStr(a.from, b.from); })
+      .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || compareStr(a.from, b.from); });
+  }
+
+  /** One facts line per valid session, sorted Monday→Sunday: "Mandag 18:00–19:30". */
+  function sessionLines(doc, sessions, className) {
+    return validSessions(sessions)
       .map(function (s) { return factLine(doc, 'clock', null, s.day + ' ' + s.from + '–' + s.to, className); });
   }
 
@@ -524,19 +528,24 @@
   }
 
   /**
-   * Fill the Lift hours mounts from the CMS: the compact week
-   * ("Man–Tor 18:00–20:00 · Fre stengt · …"), the per-day lift labels on the
-   * landing page and the note. A day without an entry is closed. Called only
-   * when the singleton exists, so failure keeps the HTML. CMS strings go in as text.
+   * Fill the Lift hours mounts from the CMS: the note, the compact week
+   * ("Man–Tor 18:00–20:00 · Fre stengt · …") and the per-day lift labels on
+   * the landing page. A day without an entry is closed; with no valid hours
+   * at all the hours and labels keep their HTML. Called only when the
+   * singleton exists. CMS strings go in as text.
    */
-  function renderLiftHours(mounts, lift) {
-    const byDay = {};
-    (Array.isArray(lift.hours) ? lift.hours : []).forEach(function (s) {
-      if (s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to) && !byDay[s.day]) byDay[s.day] = s.from + '–' + s.to;
+  function renderLiftHours(doc, lift) {
+    doc.querySelectorAll('[data-lift-note]').forEach(function (m) {
+      if (isText(lift.note)) m.textContent = lift.note;
+      else m.parentNode.hidden = true;
     });
+    const byDay = {};
+    validSessions(lift.hours).forEach(function (s) { if (!byDay[s.day]) byDay[s.day] = { from: s.from, to: s.to }; });
+    if (!Object.keys(byDay).length) return;
     const runs = [];
     DAYS.forEach(function (d) {
-      const hours = byDay[d] || 'stengt';
+      const t = byDay[d];
+      const hours = t ? t.from + '–' + t.to : 'stengt';
       const last = runs[runs.length - 1];
       if (last && last.hours === hours) last.to = d;
       else runs.push({ from: d, to: d, hours: hours });
@@ -545,19 +554,14 @@
     const week = runs.map(function (r) {
       return short(r.from) + (r.to === r.from ? '' : '–' + short(r.to)) + ' ' + r.hours;
     }).join(' · ');
-    mounts.forEach(function (m) {
-      if (m.hasAttribute('data-lift-hours')) m.textContent = week;
-      else if (m.hasAttribute('data-lift-note')) {
-        if (isText(lift.note)) m.textContent = lift.note;
-        else m.parentNode.hidden = true;
-      } else {
-        const hours = byDay[m.dataset.day];
-        const icon = m.querySelector('svg');
-        m.textContent = '';
-        if (icon) m.append(icon);
-        m.append(hours ? 'Heis ' + hours.replace('–', ' – ') : 'Heis stengt');
-        m.parentNode.classList.toggle('lift-closed', !hours);
-      }
+    doc.querySelectorAll('[data-lift-hours]').forEach(function (m) { m.textContent = week; });
+    doc.querySelectorAll('.lift-header[data-day]').forEach(function (m) {
+      const t = byDay[m.dataset.day];
+      const icon = m.querySelector('svg');
+      m.textContent = '';
+      if (icon) m.append(icon);
+      m.append(t ? 'Heis ' + t.from + ' – ' + t.to : 'Heis stengt');
+      m.parentNode.classList.toggle('lift-closed', !t);
     });
   }
 
