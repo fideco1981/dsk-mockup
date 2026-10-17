@@ -1,4 +1,4 @@
-Status: ready-for-human
+Status: done
 
 ## Parent PRD
 
@@ -26,8 +26,10 @@ Move the lift hours into one Sanity singleton and read it everywhere they appear
 - [x] Test: the per-day lift labels on `index.html` come from Sanity, with "Heis stengt" for missing days.
 - [x] The fallback hours are identical on all three pages.
 - [x] CONTEXT.md updated.
-- [ ] (HITL) Studio redeployed. Stein enters the hours and the note.
+- [x] (HITL) Studio redeployed. Stein enters the hours and the note.
 
 ## Comments
 
 2026-10-17: Studio deployed with Heistider from main (6756f1b). What's left is entering the hours and the note in Heistider; then close the ticket. If the note is published with no hours, the pages keep the fallback hours.
+
+2026-10-17: Closed. The hours (Man–Tor 18:00–20:00, Fre stengt, Lør–Søn 11:00–15:00) and the note are published in Sanity. The hours match the fallback. Stein's note ("Bakken er stengt i skolens ferier. Annonsering i sosiale medier ved åpent.") replaces the example note in the fallback on index, om-oss and kontakt.
