@@ -1649,6 +1649,7 @@
     margin: 0 auto;
   }
   .training-cta .section-tag { color: var(--accent-lt); }
+  .training-cta-btns { justify-content: center; }
   .training-cta-sub {
     margin: 16px auto 28px;
     font-size: 16px;
