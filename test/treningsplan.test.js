@@ -150,3 +150,16 @@ test('treningsplan: skipWeeks hides a course only in exactly the current ISO wee
   assert.equal(await shownWith([n]), 0);
   assert.equal(await shownWith([n - 1, n + 1]), 1);
 });
+
+const nextNote = (doc) => doc.querySelector('#schedule [data-skiskole-next] a');
+
+test('treningsplan: with no course this week, a note links to skiskole.html with the next course start', async () => {
+  const doc = await render({ trainingGroups: GROUPS, liftHours: LIFT, courses: [course('2999-03-02', '2999-03-20'), course('2999-01-05', '2999-01-21')] });
+  assert.equal(nextNote(doc).textContent, 'Skiskolen starter 5. januar →');
+  assert.equal(nextNote(doc).getAttribute('href'), 'skiskole.html');
+  for (const cms of [
+    { trainingGroups: GROUPS, liftHours: LIFT, courses: [course('2000-01-01', '2999-12-31'), course('2999-01-05', '2999-01-21')] },
+    { trainingGroups: GROUPS, liftHours: LIFT, courses: [course('2000-01-01', '2000-12-31')] },
+    () => Promise.reject(new Error('offline')),
+  ]) assert.equal(nextNote(await render(cms)), null);
+});

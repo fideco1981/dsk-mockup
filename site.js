@@ -600,7 +600,8 @@
    * Fill the landing page's Treningsplan from the Training groups' sessions
    * and this week's Courses, keeping the lift labels. Per day: the sessions by
    * `from`, a "Kun skiskole" piece when a course runs up to the lift opening,
-   * and the lift tail after the last session. Lift parts need Lift hours; the
+   * and the lift tail after the last session. With no course this week, a note
+   * gives the next course's start. Lift parts need Lift hours; the
    * fallback labels alone carry no times to compute with. CMS strings go in as text.
    */
   function renderSchedule(doc, mount, groups, courseList, lift) {
@@ -653,6 +654,23 @@
     });
     const fallback = mount.querySelector('[data-schedule-fallback]');
     if (fallback) fallback.remove();
+
+    // No course this week: point to the next one so ski school isn't invisible off-season.
+    const next = courses.length ? null : (Array.isArray(courseList) ? courseList : [])
+      .filter(function (c) { return isValidCourse(c) && c.startDate > week.sunday; })
+      .sort(function (a, b) { return compareStr(a.startDate, b.startDate); })[0];
+    if (next) {
+      const note = el(doc, 'div', 'schedule-note');
+      note.dataset.skiskoleNext = '';
+      const icon = el(doc, 'span', 'note-icon');
+      setIcon(icon, 'info');
+      const link = el(doc, 'a', null, 'Skiskolen starter ' + longDate(next.startDate, false) + ' →');
+      link.href = 'skiskole.html';
+      const text = el(doc, 'span');
+      text.append(link);
+      note.append(icon, text);
+      mount.querySelector('[data-lift-note]').parentNode.after(note);
+    }
   }
 
   /** One Treningsplan card; a course card links to skiskole.html. */
