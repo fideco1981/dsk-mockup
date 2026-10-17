@@ -9,7 +9,7 @@ const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 const fs = require('node:fs');
 const path = require('node:path');
-const { NAV_MODEL, PALETTES } = require('../site');
+const { NAV_MODEL } = require('../site');
 
 const ROOT = path.join(__dirname, '..');
 const ORIGIN = 'http://dsk.test';
@@ -19,7 +19,8 @@ const EVENT = {
   location: 'Drammen skisenter', description: 'Renn for alle', link: 'https://example.org/renn',
   chips: ['Renn', 'Gratis'],
 };
-const TOPBAR = { text: 'Renn på lørdag!', link: 'https://example.org/x', show: true };
+// Two messages, so the rotation's pause button is shown and scanned.
+const TOPBAR = { show: true, messages: [{ text: 'Renn på lørdag!', link: 'https://example.org/x' }, { text: 'Åpent for alle' }] };
 // Served from logo.png (see open()). Enough of them to scroll at phone width.
 const SPONSORS = ['A', 'B', 'C', 'D'].map((n) => ({
   name: `Sponsor ${n}`, url: 'https://example.org/s', logo: `https://cdn.sanity.io/images/p/d/${n}.png`,
@@ -78,14 +79,8 @@ async function open(page, file, cms = CMS.success, { js = true } = {}) {
   }
 }
 
-// Known violations, each scoped to one rule and the palette it fails under
-// (blue is the default: no body[data-palette]). Remove an entry once fixed.
-const KNOWN = [
-  // issues/018-palette-accent-contrast.md: blue (default) is fixed; red and
-  // green still fail on accent text and white-on-accent. Fix if the board keeps them.
-  { rule: 'color-contrast', selector: 'body[data-palette="red"] :is(.section-tag, .wordmark em, .board-role, .board-note a, .instagram-handle, .day-name, .day-pill, .training-tag-blue, .quick-nav-age, .achievement-year, .course-badge, .chip-blue, .chip-orange, .topbar-msg *)' },
-  { rule: 'color-contrast', selector: 'body[data-palette="green"] :is(.btn-nav, .btn-primary, .topbar-msg, .topbar-msg *, .chip-blue, .chip-orange, .events .section-tag)' },
-];
+// Known violations, each scoped to one rule and a selector. Remove an entry once fixed.
+const KNOWN = [];
 
 async function expectNoViolations(page) {
   const { violations } = await new AxeBuilder({ page })
@@ -106,13 +101,11 @@ async function expectNoViolations(page) {
 }
 
 for (const { href } of NAV_MODEL.links) {
-  for (const { key: palette } of PALETTES) {
-    test(`${href} (${palette} palette)`, async ({ page }) => {
-      await open(page, href);
-      await page.click(`.palette-switcher [data-palette="${palette}"]`);
-      await expectNoViolations(page);
-    });
-  }
+  test(href, async ({ page }) => {
+    await open(page, href);
+    await expect(page.locator('.topbar-pause')).toBeVisible();
+    await expectNoViolations(page);
+  });
 
   test(`${href} with the mobile menu open`, async ({ page }, { project }) => {
     test.skip(project.name !== 'phone', 'the hamburger only shows at phone width');

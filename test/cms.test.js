@@ -15,7 +15,7 @@ function topbar(doc) {
 
 test('cms: after await init, the topbar shows the CMS text', async () => {
   const doc = makeDoc('index');
-  const calls = stubFetch(doc, { topbar: { text: 'Renn på lørdag!', show: true }, events: [] });
+  const calls = stubFetch(doc, { topbar: { messages: [{ text: 'Renn på lørdag!' }], show: true }, events: [] });
   await site.init(doc);
   assert.equal(calls.length, 1, 'one query per page load');
   assert.match(calls[0], /^https:\/\/\w+\.api\.sanity\.io\//, 'live API, not apicdn');
@@ -35,7 +35,7 @@ test('cms: the topbar message is hidden until the response arrives', () => {
 
 test('cms: an http(s) link opens in a new tab with rel=noopener', async () => {
   const doc = makeDoc('index');
-  stubFetch(doc, { topbar: { text: 'Meld deg på', link: 'https://example.org/x' } });
+  stubFetch(doc, { topbar: { messages: [{ text: 'Meld deg på', link: 'https://example.org/x' }] } });
   await site.init(doc);
   const a = topbar(doc).querySelector('a');
   assert.equal(a.getAttribute('href'), 'https://example.org/x');
@@ -46,7 +46,7 @@ test('cms: an http(s) link opens in a new tab with rel=noopener', async () => {
 
 test('cms: a non-http(s) link is not rendered', async () => {
   const doc = makeDoc('index');
-  stubFetch(doc, { topbar: { text: 'Klikk', link: 'javascript:alert(1)' } });
+  stubFetch(doc, { topbar: { messages: [{ text: 'Klikk', link: 'javascript:alert(1)' }] } });
   await site.init(doc);
   assert.equal(topbar(doc).querySelector('a'), null);
   assert.match(topbar(doc).textContent, /Klikk/);
@@ -54,7 +54,7 @@ test('cms: a non-http(s) link is not rendered', async () => {
 
 test('cms: with the toggle off, the topbar message is hidden', async () => {
   const doc = makeDoc('index');
-  stubFetch(doc, { topbar: { text: 'Skjult', show: false } });
+  stubFetch(doc, { topbar: { messages: [{ text: 'Skjult' }], show: false } });
   await site.init(doc);
   assert.ok(topbar(doc).hidden);
 });
@@ -76,7 +76,7 @@ test('cms: a non-OK response reveals the fallback text', async () => {
 });
 
 test('cms: malformed data reveals the fallback text', async () => {
-  for (const result of [null, {}, { topbar: null }, { topbar: { text: 42 } }]) {
+  for (const result of [null, {}, { topbar: null }, { topbar: { messages: [] } }, { topbar: { messages: [{ text: 42 }, null] } }]) {
     const doc = makeDoc('index');
     stubFetch(doc, result);
     await site.init(doc);
@@ -87,7 +87,7 @@ test('cms: malformed data reveals the fallback text', async () => {
 
 test('cms: a CMS string containing markup is rendered as text', async () => {
   const doc = makeDoc('index');
-  stubFetch(doc, { topbar: { text: '<img src=x onerror=alert(1)><b>hei</b>' } });
+  stubFetch(doc, { topbar: { messages: [{ text: '<img src=x onerror=alert(1)><b>hei</b>' }] } });
   await site.init(doc);
   assert.equal(topbar(doc).querySelector('img, b'), null);
   assert.ok(topbar(doc).textContent.includes('<b>hei</b>'));
@@ -95,7 +95,7 @@ test('cms: a CMS string containing markup is rendered as text', async () => {
 
 test('cms: a non-landing page (no events mount) gets the CMS topbar', async () => {
   const doc = makeDoc('styret');
-  stubFetch(doc, { topbar: { text: 'Årsmøte snart' }, events: [{ title: 'X', date: '2999-01-01' }] });
+  stubFetch(doc, { topbar: { messages: [{ text: 'Årsmøte snart' }] }, events: [{ title: 'X', date: '2999-01-01' }] });
   await site.init(doc);
   assert.match(topbar(doc).textContent, /Årsmøte snart/);
 });
@@ -147,7 +147,7 @@ function cards(doc) {
 test('cms events: only upcoming events, nearest first, at most 3', async () => {
   const doc = makeDoc('index');
   stubFetch(doc, {
-    topbar: { text: 'x' },
+    topbar: { messages: [{ text: 'x' }] },
     events: [
       { title: 'Gammelt', date: '2000-01-01' },
       { title: 'D', date: '2999-04-01' },
@@ -234,7 +234,7 @@ test('cms events: hidden while loading', () => {
 });
 
 test('cms events: a fetch failure reveals the fallback cards', async () => {
-  for (const respond of [() => Promise.reject(new TypeError('offline')), () => Promise.resolve({ ok: false, status: 500, json: async () => ({}) }), { topbar: { text: 'x' }, events: 'nope' }]) {
+  for (const respond of [() => Promise.reject(new TypeError('offline')), () => Promise.resolve({ ok: false, status: 500, json: async () => ({}) }), { topbar: { messages: [{ text: 'x' }] }, events: 'nope' }]) {
     const doc = makeDoc('index');
     stubFetch(doc, respond);
     await site.init(doc);
@@ -344,4 +344,66 @@ test('cms sponsors: the query sorts sponsors by their order field', async () => 
   const calls = stubFetch(doc, {});
   await site.init(doc);
   assert.match(decodeURIComponent(calls[0]), /_type == "sponsor"\] \| order\(order asc\)/);
+});
+
+// ── Topbar rotation (issue 022) ──
+
+// Capture the rotation timer instead of waiting 5 s; run fades instantly.
+function stubTimers(doc) {
+  const ticks = [];
+  doc.defaultView.setInterval = (fn) => ticks.push(fn);
+  doc.defaultView.setTimeout = (fn) => fn();
+  return () => ticks.forEach((fn) => fn());
+}
+
+const TWO = { topbar: { show: true, messages: [{ text: 'Første' }, { text: 'Andre', link: 'https://example.org/2' }] } };
+
+test('cms topbar: several messages rotate in Studio order and wrap around', async () => {
+  const doc = makeDoc('index');
+  const tick = stubTimers(doc);
+  stubFetch(doc, TWO);
+  await site.init(doc);
+  assert.match(topbar(doc).textContent, /Første/);
+  tick();
+  assert.match(topbar(doc).textContent, /Andre/);
+  assert.equal(topbar(doc).querySelector('a').getAttribute('href'), 'https://example.org/2');
+  assert.ok(topbar(doc).querySelector('svg.icon'), 'icon survives the swap');
+  tick();
+  assert.match(topbar(doc).textContent, /Første/);
+});
+
+test('cms topbar: the pause button, hover and focus each stop the rotation', async () => {
+  for (const pauseWith of ['button', 'mouseenter', 'focusin']) {
+    const doc = makeDoc('index');
+    const tick = stubTimers(doc);
+    stubFetch(doc, TWO);
+    await site.init(doc);
+    const button = doc.querySelector('.topbar-pause');
+    assert.ok(!button.hidden);
+    if (pauseWith === 'button') button.dispatchEvent(new doc.defaultView.Event('click'));
+    else doc.querySelector('.topbar').dispatchEvent(new doc.defaultView.Event(pauseWith));
+    if (pauseWith === 'button') assert.equal(button.getAttribute('aria-pressed'), 'true');
+    tick();
+    assert.match(topbar(doc).textContent, /Første/, pauseWith);
+  }
+});
+
+test('cms topbar: one message, or the toggle off, means no rotation and no pause button', async () => {
+  for (const result of [{ topbar: { messages: [{ text: 'Bare én' }] } }, { topbar: { ...TWO.topbar, show: false } }]) {
+    const doc = makeDoc('index');
+    let timers = 0;
+    doc.defaultView.setInterval = () => { timers++; };
+    stubFetch(doc, result);
+    await site.init(doc);
+    assert.equal(timers, 0);
+    assert.ok(doc.querySelector('.topbar-pause').hidden);
+  }
+});
+
+test('cms topbar: the message is not a live region', async () => {
+  const doc = makeDoc('index');
+  stubTimers(doc);
+  stubFetch(doc, TWO);
+  await site.init(doc);
+  assert.equal(doc.querySelector('.topbar [aria-live]'), null);
 });

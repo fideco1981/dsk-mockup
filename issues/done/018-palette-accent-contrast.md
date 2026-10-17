@@ -1,4 +1,4 @@
-Status: needs-triage
+Status: done
 
 ## Parent PRD
 
@@ -16,8 +16,8 @@ Typical fixes: dark text on the accent buttons, or a darker accent shade for but
 
 ## Acceptance criteria
 
-- [ ] The palette(s) the board keeps pass AA colour contrast.
-- [ ] The matching `KNOWN` entries in `a11y/a11y.spec.js` are removed, and `npm run test:a11y` passes.
+- [x] The palette(s) the board keeps pass AA colour contrast.
+- [x] The matching `KNOWN` entries in `a11y/a11y.spec.js` are removed, and `npm run test:a11y` passes.
 
 ## Comments
 
@@ -26,3 +26,5 @@ Typical fixes: dark text on the accent buttons, or a darker accent shade for but
 - `.chip-blue` uses the new `--blue-ink` (`#006A99`), at 5.3:1.
 - `--accent-lt` is lightened to `#9A8CE6` for purple text on dark. `.event-date .day` and the gradient CTA section tags now use it. axe can't measure those tags (gradient background); they were at 2:1. `.chip-orange` and Vara's avatar gradient switch to `--accent` so they stay readable.
 - Still open: red and green. Once the board picks, fix the kept palette the same way (its `--on-blue`, `--blue-ink` and a lighter `--blue-lt`), drop its `KNOWN` entry, then close this ticket.
+
+**Closed 2026-10-17:** Stein dropped the red and green palettes and the switcher (blue is the logo colour; issue 022). Blue already passed, so `KNOWN` in `a11y/a11y.spec.js` is now empty and `npm run test:a11y` passes.

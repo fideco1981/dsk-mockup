@@ -29,29 +29,6 @@
   }
   a { text-decoration: none; color: inherit; }
 
-  /* ─── PALETTE OVERRIDES ─── */
-  /* Selectable via body[data-palette]; site.js applies + persists.
-     Mirrors the variants from index-v2.html (Rødt Spor) and
-     index-v3.html (Grønt Fjell) so the board can pick on-device. */
-  body[data-palette="red"] {
-    --blue:      #E8001C;
-    --blue-hover: #B40016;
-    --blue-lt:   #F03A52;
-    --blue-ink:  var(--blue);
-    --on-blue:   #fff;
-    --accent:    #7A7A90;
-    --accent-lt: #9A9AAA;
-  }
-  body[data-palette="green"] {
-    --blue:      #00B87A;
-    --blue-hover: #008855;
-    --blue-lt:   #2ADE9A;
-    --blue-ink:  var(--blue);
-    --on-blue:   #fff;
-    --accent:    #C4820A;
-    --accent-lt: #D49E2A;
-  }
-
   /* ─── TOPBAR ─── */
   .topbar {
     background: var(--blue);
@@ -69,33 +46,29 @@
     gap: 12px;
     flex-wrap: wrap;
   }
-  .palette-switcher {
+  .topbar-pause {
     display: inline-flex;
-    gap: 6px;
     align-items: center;
-  }
-  .palette-switcher button {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.45);
-    background: var(--swatch, #fff);
-    cursor: pointer;
+    justify-content: center;
+    width: 24px; height: 24px;
     padding: 0;
-    transition: transform 0.15s, border-color 0.15s;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    color: inherit;
+    cursor: pointer;
   }
-  .palette-switcher button:hover { transform: scale(1.15); border-color: rgba(255,255,255,0.85); }
-  .palette-switcher button:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
-  }
-  .palette-switcher button[aria-pressed="true"] {
-    border-color: #fff;
-    transform: scale(1.15);
-  }
+  .topbar-pause[hidden] { display: none; }
+  .topbar-pause:hover { background: rgba(255,255,255,0.45); }
+  .topbar-pause:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+  .topbar .topbar-pause .icon { width: 12px; height: 12px; vertical-align: 0; }
+  .topbar-pause[aria-pressed="true"] .icon-pause,
+  .topbar-pause[aria-pressed="false"] .icon-play { display: none; }
   .topbar span { opacity: 0.85; margin: 0 6px; }
   .topbar a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .topbar a:hover { text-decoration-thickness: 2px; }
-  .topbar-msg { display: inline-block; }
+  .topbar-msg { display: inline-block; transition: opacity 0.5s ease, transform 0.5s ease; }
+  .topbar-msg.fade-out { opacity: 0; transform: translateY(-6px); }
   .topbar-msg[hidden] { display: none; }
 
   /* ─── NAV ─── */

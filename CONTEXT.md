@@ -3,7 +3,7 @@
 Glossary for the club website. Decisions live in `docs/adr/`.
 
 - **Event** (Arrangement, Sanity type `event`): a dated club happening shown on the landing page. Only upcoming ones are shown, nearest first, at most three.
-- **Topbar message** (Sanity type `topbarMessage`): the site-wide announcement line at the top of every page. A singleton with text, an optional link and a show/hide toggle.
+- **Topbar message** (Sanity type `topbarMessage`): the site-wide announcement line at the top of every page. A singleton holding an ordered list of messages (text and optional link) and one show/hide toggle. Several messages rotate every 5 s, with a pause button.
 - **Sponsor** (Sanity type `sponsor`): a club sponsor shown as a logo in the strip at the top of every page's footer, sorted by its order field. The only Sanity type with an image (ADR 0002). It has no Fallback content: the strip is hidden when Sanity fails.
 - **Studio**: the Sanity editing app, sourced from `studio/` and hosted on `*.sanity.studio`. Where editors change Events, the Topbar message and Sponsors.
 - **Fallback content**: the hand-written HTML shown without JS or when Sanity fails. A snapshot that may drift; Sanity wins whenever it answers.

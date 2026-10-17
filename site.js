@@ -48,7 +48,7 @@
   const SANITY_DATASET = 'production';
   // Live API (not apicdn) so a publish in Studio shows on the next reload.
   const CMS_QUERY =
-    '{"topbar": *[_type == "topbarMessage"][0]{text, link, show},' +
+    '{"topbar": *[_type == "topbarMessage"][0]{show, messages[]{text, link}},' +
     ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips},' +
     ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url}}';
   const CMS_URL =
@@ -67,31 +67,6 @@
     ],
     cta: { href: SPOND_URL, label: 'Bli Medlem' },
   };
-
-  // Palette swatches shown in the topbar. The first entry is the default
-  // (no body[data-palette] attribute needed). `swatch` is the visible dot
-  // colour; the actual palette comes from CSS body[data-palette="<key>"].
-  const PALETTES = [
-    { key: 'blue',  label: 'Alpine Edge (blå)',  swatch: '#009FE3' },
-    { key: 'red',   label: 'Rødt Spor (rød)',    swatch: '#E8001C' },
-    { key: 'green', label: 'Grønt Fjell (grønn)', swatch: '#00B87A' },
-  ];
-  const PALETTE_STORAGE_KEY = 'dsk-palette';
-
-  /** Build the palette-switcher widget (3 colour dots in the topbar). */
-  function paletteSwitcherHTML() {
-    return (
-      '<span class="palette-switcher" role="group" aria-label="Velg palett">' +
-      PALETTES.map(function (p) {
-        return (
-          '<button type="button" data-palette="' + p.key + '"' +
-          ' aria-label="' + p.label + '" aria-pressed="false"' +
-          ' style="--swatch: ' + p.swatch + '"></button>'
-        );
-      }).join('') +
-      '</span>'
-    );
-  }
 
   /** Build the nav links markup (shared by desktop nav + mobile menu). */
   function navLinksHTML(currentPage, opts) {
@@ -122,7 +97,11 @@
           'Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — ' +
           '<a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a>' +
         '</span>' +
-        paletteSwitcherHTML() +
+        // Shown only when there are several messages to rotate (WCAG 2.2.2).
+        '<button type="button" class="topbar-pause" aria-label="Pause meldingene" aria-pressed="false" hidden>' +
+          '<svg class="icon icon-pause" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>' +
+          '<svg class="icon icon-play" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"/></svg>' +
+        '</button>' +
       '</div>' +
       '<nav id="nav">' +
         '<div class="nav-logo">' +
@@ -206,7 +185,7 @@
     return file.replace(/\.html$/, '') || 'index';
   }
 
-  /** Inject nav + footer, mark active link, wire the hamburger + palette. */
+  /** Inject nav + footer, mark active link, wire the hamburger. */
   function init(doc) {
     doc = doc || (typeof document !== 'undefined' ? document : null);
     if (!doc) return;
@@ -219,7 +198,6 @@
     if (footerMount) footerMount.innerHTML = footerHTML();
 
     wireHamburger(doc);
-    wirePaletteSwitcher(doc);
     return loadCms(doc);
   }
 
@@ -236,8 +214,11 @@
     const sponsors = doc.querySelector('.sponsor-strip');
     function apply(result) {
       const topbar = result && result.topbar;
+      const messages = topbar && Array.isArray(topbar.messages)
+        ? topbar.messages.filter(function (m) { return m && typeof m.text === 'string' && m.text; })
+        : [];
       if (msg) {
-        if (topbar && typeof topbar.text === 'string') renderTopbar(doc, msg, topbar);
+        if (messages.length) renderTopbar(doc, msg, topbar, messages);
         else msg.hidden = false;
       }
       if (events) {
@@ -272,13 +253,54 @@
     return a;
   }
 
-  /** Replace the fallback with the CMS message. CMS strings go in as text. */
-  function renderTopbar(doc, msg, topbar) {
+  /**
+   * Replace the fallback with the CMS messages, rotating when there are
+   * several. CMS strings go in as text.
+   */
+  function renderTopbar(doc, msg, topbar, messages) {
     const icon = msg.querySelector('svg.icon');
-    msg.textContent = '';
-    if (icon) msg.append(icon, ' ');
-    msg.append(externalLink(doc, topbar.link, topbar.text) || topbar.text);
+    function show(m) {
+      msg.textContent = '';
+      if (icon) msg.append(icon, ' ');
+      msg.append(externalLink(doc, m.link, m.text) || m.text);
+    }
+    show(messages[0]);
     msg.hidden = topbar.show === false;
+    if (!msg.hidden && messages.length > 1) rotateTopbar(doc, msg, messages, show);
+  }
+
+  const TOPBAR_INTERVAL = 5000; // ms per message
+  const TOPBAR_FADE = 500;      // ms, matches the .topbar-msg transition
+
+  /**
+   * Show the next message every TOPBAR_INTERVAL, fading between them. Paused
+   * while the bar is hovered or holds focus, or by the pause button. Not a
+   * live region: screen readers aren't interrupted on every change.
+   */
+  function rotateTopbar(doc, msg, messages, show) {
+    const win = doc.defaultView;
+    const bar = msg.parentNode;
+    const pause = bar.querySelector('.topbar-pause');
+    let i = 0;
+    let hover = false;
+    let focus = false;
+    pause.hidden = false;
+    pause.addEventListener('click', function () {
+      pause.setAttribute('aria-pressed', pause.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    });
+    bar.addEventListener('mouseenter', function () { hover = true; });
+    bar.addEventListener('mouseleave', function () { hover = false; });
+    bar.addEventListener('focusin', function () { focus = true; });
+    bar.addEventListener('focusout', function (e) { focus = bar.contains(e.relatedTarget); });
+    win.setInterval(function () {
+      if (hover || focus || pause.getAttribute('aria-pressed') === 'true') return;
+      msg.classList.add('fade-out');
+      win.setTimeout(function () {
+        i = (i + 1) % messages.length;
+        show(messages[i]);
+        msg.classList.remove('fade-out');
+      }, TOPBAR_FADE);
+    }, TOPBAR_INTERVAL);
   }
 
   // Chip value → colour class. Must match studio/schemaTypes' CHIPS.
@@ -399,40 +421,6 @@
     track.style.setProperty('--sponsor-duration', (width / SPONSOR_SPEED) + 's');
   }
 
-  /** Apply the persisted palette and wire the topbar swatches. */
-  function wirePaletteSwitcher(doc) {
-    const win = doc.defaultView;
-    const buttons = doc.querySelectorAll('.palette-switcher button[data-palette]');
-    if (!buttons.length) return;
-
-    let saved = 'blue';
-    try {
-      saved = (win && win.localStorage.getItem(PALETTE_STORAGE_KEY)) || 'blue';
-    } catch (_) { /* localStorage may be disabled — fall back to default */ }
-    apply(saved);
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        const key = btn.getAttribute('data-palette');
-        apply(key);
-        try {
-          if (win) win.localStorage.setItem(PALETTE_STORAGE_KEY, key);
-        } catch (_) { /* silent — picker still works in-session */ }
-      });
-    });
-
-    function apply(key) {
-      const known = PALETTES.some(function (p) { return p.key === key; });
-      const active = known ? key : 'blue';
-      if (active === 'blue') delete doc.body.dataset.palette;
-      else doc.body.dataset.palette = active;
-      buttons.forEach(function (b) {
-        b.setAttribute('aria-pressed',
-          b.getAttribute('data-palette') === active ? 'true' : 'false');
-      });
-    }
-  }
-
   /** Wire the mobile hamburger menu (open/close, aria-expanded, focus, Esc). */
   function wireHamburger(doc) {
     const hamburger = doc.getElementById('hamburger');
@@ -483,7 +471,6 @@
 
   return {
     NAV_MODEL: NAV_MODEL,
-    PALETTES: PALETTES,
     init: init,
     currentPage: currentPage,
     navHTML: navHTML,
