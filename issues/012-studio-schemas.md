@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: ready-for-human
 
 ## Parent PRD
 
@@ -26,3 +26,16 @@ See PRD: "Content model", "Studio".
 - [ ] The Topbar message is a singleton, and its toggle defaults to on.
 - [ ] `studio/` contains no token or secret.
 - [ ] (HITL) Studio is deployed, and Stein can log in and publish one event.
+
+## Comments
+
+**Agent work done (2026-10-17):** I added the schemas and the singleton structure in `studio/`. `sanity schema validate` reports 0 errors and `sanity build` passes. Three things are left for Stein:
+
+1. Finish 011, then put the project ID (and the dataset, if it isn't `production`) into `studio/project.js`. It currently holds the placeholder `TODO_PROJECT_ID`.
+2. Run `cd studio && npm run dev`, check the labels by eye, and confirm that a new Toppmelding has "Vis meldingen" switched on.
+3. Run `npm run deploy`. It will ask you for the `*.sanity.studio` hostname. Then log in and publish one event.
+
+There is no automated test for the schemas, because the PRD says "Not tested: the Studio schemas". Two notes for later tickets:
+
+- **For 014:** `startTime` is validated as `TT:MM`.
+- **For 013:** treat an unset `show` as on.
