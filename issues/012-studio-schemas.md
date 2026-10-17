@@ -31,7 +31,7 @@ See PRD: "Content model", "Studio".
 
 **Agent work done (2026-10-17):** I added the schemas and the singleton structure in `studio/`. `sanity schema validate` reports 0 errors and `sanity build` passes. Three things are left for Stein:
 
-1. Finish 011, then put the project ID (and the dataset, if it isn't `production`) into `studio/project.js`. It currently holds the placeholder `TODO_PROJECT_ID`.
+1. ~~Put the project ID in `studio/project.js`~~ Done: `uoseskhv` / `production`.
 2. Run `cd studio && npm run dev`, check the labels by eye, and confirm that a new Toppmelding has "Vis meldingen" switched on.
 3. Run `npm run deploy`. It will ask you for the `*.sanity.studio` hostname. Then log in and publish one event.
 

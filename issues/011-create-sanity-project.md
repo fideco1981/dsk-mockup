@@ -22,3 +22,8 @@ See PRD: "Architecture", "Ownership", "Further Notes → HITL prerequisites".
 - [ ] The project exists and its dataset is public.
 - [ ] Both CORS origins are added, without credentials.
 - [ ] The project ID and dataset name are recorded in this ticket.
+
+## Comments
+
+- Project ID: `uoseskhv`
+- Dataset: `production` (public: an anonymous query returns a result, checked 2026-10-17)
