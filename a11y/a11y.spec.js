@@ -73,9 +73,8 @@ async function open(page, file, cms = CMS.success, { js = true } = {}) {
 // Known violations, each scoped to one rule and the palette it fails under
 // (blue is the default: no body[data-palette]). Remove an entry once fixed.
 const KNOWN = [
-  // issues/018-palette-accent-contrast.md: white text on the accent, and
-  // accent/purple text on dark or tinted backgrounds, fail AA. Board decision.
-  { rule: 'color-contrast', selector: 'body:not([data-palette]) :is(.btn-nav, .btn-primary, .topbar-msg, .topbar-msg *, .chip-blue, .event-date .day, .course-badge-alt, .training-tag-purple)' },
+  // issues/018-palette-accent-contrast.md: blue (default) is fixed; red and
+  // green still fail on accent text and white-on-accent. Fix if the board keeps them.
   { rule: 'color-contrast', selector: 'body[data-palette="red"] :is(.section-tag, .wordmark em, .board-role, .board-note a, .instagram-handle, .day-name, .day-pill, .training-tag-blue, .quick-nav-age, .achievement-year, .course-badge, .chip-blue, .chip-orange, .topbar-msg *)' },
   { rule: 'color-contrast', selector: 'body[data-palette="green"] :is(.btn-nav, .btn-primary, .topbar-msg, .topbar-msg *, .chip-blue, .chip-orange, .events .section-tag)' },
 ];

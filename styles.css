@@ -2,10 +2,12 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --blue:      #009FE3;  /* logo sky blue */
-    --blue-dk:   #007DB4;
+    --blue-hover: var(--blue-lt); /* lighter, not darker: --on-blue is dark here */
     --blue-lt:   #33C4F0;
+    --blue-ink:  #006A99;  /* --blue as text on light tints (AA, issue 018) */
+    --on-blue:   var(--dark); /* text on --blue: white is 2.97:1 (AA, issue 018) */
     --accent:    #4A3A9A;  /* logo purple/indigo */
-    --accent-lt: #6655BB;
+    --accent-lt: #9A8CE6;  /* light enough for text on dark (AA, issue 018) */
     --green:     #2D7A3A;  /* logo forest green */
     --green-lt:  #3A9A4A;
     --dark:      #0C1A26;
@@ -33,15 +35,19 @@
      index-v3.html (Grønt Fjell) so the board can pick on-device. */
   body[data-palette="red"] {
     --blue:      #E8001C;
-    --blue-dk:   #B40016;
+    --blue-hover: #B40016;
     --blue-lt:   #F03A52;
+    --blue-ink:  var(--blue);
+    --on-blue:   #fff;
     --accent:    #7A7A90;
     --accent-lt: #9A9AAA;
   }
   body[data-palette="green"] {
     --blue:      #00B87A;
-    --blue-dk:   #008855;
+    --blue-hover: #008855;
     --blue-lt:   #2ADE9A;
+    --blue-ink:  var(--blue);
+    --on-blue:   #fff;
     --accent:    #C4820A;
     --accent-lt: #D49E2A;
   }
@@ -54,7 +60,7 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.03em;
-    color: #fff;
+    color: var(--on-blue);
     position: relative;
     z-index: 100;
     display: flex;
@@ -79,7 +85,7 @@
   }
   .palette-switcher button:hover { transform: scale(1.15); border-color: rgba(255,255,255,0.85); }
   .palette-switcher button:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid currentColor;
     outline-offset: 2px;
   }
   .palette-switcher button[aria-pressed="true"] {
@@ -87,8 +93,8 @@
     transform: scale(1.15);
   }
   .topbar span { opacity: 0.85; margin: 0 6px; }
-  .topbar a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }
-  .topbar a:hover { text-decoration-color: #fff; }
+  .topbar a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .topbar a:hover { text-decoration-thickness: 2px; }
   .topbar-msg { display: inline-block; }
   .topbar-msg[hidden] { display: none; }
 
@@ -152,7 +158,7 @@
   .nav-links a:focus-visible::after { transform: scaleX(1); }
   .btn-nav {
     background: var(--blue);
-    color: #fff;
+    color: var(--on-blue);
     padding: 10px 22px;
     border-radius: 6px;
     font-size: 14px;
@@ -160,7 +166,7 @@
     letter-spacing: 0.02em;
     transition: background 0.2s, transform 0.15s;
   }
-  .btn-nav:hover { background: var(--blue-dk); transform: translateY(-1px); }
+  .btn-nav:hover { background: var(--blue-hover); transform: translateY(-1px); }
   .btn-nav:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
   /* Skip link */
@@ -168,7 +174,7 @@
     position: absolute;
     top: -100%; left: 8px;
     background: var(--blue);
-    color: #fff;
+    color: var(--on-blue);
     padding: 8px 16px;
     border-radius: 4px;
     font-size: 14px; font-weight: 600;
@@ -465,7 +471,7 @@
   }
   .btn-primary {
     background: var(--blue);
-    color: #fff;
+    color: var(--on-blue);
     padding: 16px 32px;
     border-radius: 8px;
     font-size: 16px;
@@ -477,7 +483,7 @@
     gap: 8px;
   }
   .btn-primary:hover {
-    background: var(--blue-dk);
+    background: var(--blue-hover);
     transform: translateY(-2px);
     box-shadow: 0 12px 32px rgba(0,159,227,0.45);
   }
@@ -771,7 +777,7 @@
     font-size: 26px;
     font-weight: 800;
     line-height: 1;
-    color: var(--accent);
+    color: var(--accent-lt);
   }
   .event-date .month {
     font-size: 11px;
@@ -796,8 +802,8 @@
     padding: 3px 9px;
     border-radius: 4px;
   }
-  .chip-blue   { background: rgba(0,159,227,0.12);  color: var(--blue); }
-  .chip-orange { background: rgba(74,58,154,0.15);  color: var(--accent-lt); }
+  .chip-blue   { background: rgba(0,159,227,0.12);  color: var(--blue-ink); }
+  .chip-orange { background: rgba(74,58,154,0.15);  color: var(--accent); } /* not --accent-lt: that is now light for text on dark (AA, issue 018) */
   .chip-green  { background: rgba(45,122,58,0.18);  color: #256b31; } /* not --green-lt: too light on the tint (AA, issue 015) */
   .event-title {
     font-family: var(--font-head);
@@ -956,7 +962,7 @@
     max-width: 700px;
     margin: 0 auto;
   }
-  .membership .section-tag { color: var(--accent); }
+  .membership .section-tag { color: var(--accent-lt); }
   .membership h2 {
     font-family: var(--font-head);
     font-size: clamp(36px, 5vw, 62px);
@@ -1181,7 +1187,7 @@
     box-shadow: 0 8px 24px rgba(0,159,227,0.25);
     margin-bottom: 18px;
   }
-  .board-avatar-vara { background: linear-gradient(135deg, var(--accent-lt), var(--green-lt)); box-shadow: 0 8px 24px rgba(74,58,154,0.25); }
+  .board-avatar-vara { background: linear-gradient(135deg, var(--accent), var(--green-lt)); box-shadow: 0 8px 24px rgba(74,58,154,0.25); }
   .board-name { font-family: var(--font-head); font-size: 18px; font-weight: 700; margin-bottom: 4px; }
   .board-role { color: var(--blue-lt); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 14px; }
   .board-contact {
@@ -1577,7 +1583,7 @@
     max-width: 640px;
     margin: 0 auto;
   }
-  .skiskole-cta .section-tag { color: var(--accent); }
+  .skiskole-cta .section-tag { color: var(--accent-lt); }
   .skiskole-cta-sub {
     margin: 16px auto 28px;
     font-size: 16px;
@@ -1688,7 +1694,7 @@
     max-width: 640px;
     margin: 0 auto;
   }
-  .training-cta .section-tag { color: var(--accent); }
+  .training-cta .section-tag { color: var(--accent-lt); }
   .training-cta-sub {
     margin: 16px auto 28px;
     font-size: 16px;

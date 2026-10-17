@@ -18,3 +18,11 @@ Typical fixes: dark text on the accent buttons, or a darker accent shade for but
 
 - [ ] The palette(s) the board keeps pass AA colour contrast.
 - [ ] The matching `KNOWN` entries in `a11y/a11y.spec.js` are removed, and `npm run test:a11y` passes.
+
+## Comments
+
+**Blue fixed (2026-10-17):** Stein scoped this to the default blue palette. Red and green wait for the board's pick and keep their `KNOWN` exclusions.
+- Buttons, the skip link and the topbar keep the logo blue `#009FE3` with dark text (`--on-blue`), at 5.9:1. Hover goes to the lighter `--blue-lt`, at 8.6:1. `--blue-dk` is renamed to `--blue-hover`, since hover was its only use.
+- `.chip-blue` uses the new `--blue-ink` (`#006A99`), at 5.3:1.
+- `--accent-lt` is lightened to `#9A8CE6` for purple text on dark. `.event-date .day` and the gradient CTA section tags now use it. axe can't measure those tags (gradient background); they were at 2:1. `.chip-orange` and Vara's avatar gradient switch to `--accent` so they stay readable.
+- Still open: red and green. Once the board picks, fix the kept palette the same way (its `--on-blue`, `--blue-ink` and a lighter `--blue-lt`), drop its `KNOWN` entry, then close this ticket.
