@@ -14,8 +14,9 @@
  *   - inject the footer into #site-footer
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
- *   - load the Topbar message, landing-page Events and the footer's Sponsor
- *     strip from Sanity (test/cms.test.js); init(doc)
+ *   - load the Topbar message, landing-page Events, the footer's Sponsor
+ *     strip and the Training groups from Sanity (test/cms.test.js,
+ *     test/treningsopplegg.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -50,7 +51,8 @@
   const CMS_QUERY =
     '{"topbar": *[_type == "topbarMessage"][0]{show, messages[]{text, link}},' +
     ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips},' +
-    ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url}}';
+    ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url},' +
+    ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}}}';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
     SANITY_DATASET + '?query=' + encodeURIComponent(CMS_QUERY);
@@ -202,8 +204,8 @@
   }
 
   /**
-   * One query to Sanity, then render the Topbar message and (where the
-   * #events-list mount exists) the upcoming Events. Any failure (rejection,
+   * One query to Sanity, then render the Topbar message, the Sponsor strip
+   * and, where their mounts exist, the upcoming Events and Training groups. Any failure (rejection,
    * non-OK, malformed data, no fetch) reveals that part's fallback content.
    * Never rejects.
    */
@@ -212,6 +214,9 @@
     const msg = doc.querySelector('.topbar-msg');
     const events = doc.getElementById('events-list');
     const sponsors = doc.querySelector('.sponsor-strip');
+    const groups = doc.getElementById('training-groups');
+    const groupNav = doc.getElementById('training-nav');
+    const groupCount = doc.querySelector('.training-quick-nav .section-title');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -226,6 +231,7 @@
         else events.hidden = false;
       }
       if (sponsors && result && Array.isArray(result.sponsors)) renderSponsors(doc, sponsors, result.sponsors);
+      if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, result && result.trainingGroups);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -370,6 +376,83 @@
     }
     card.append(date, info);
     return card;
+  }
+
+  // Training group colour → class. Must match studio/schemaTypes' GROUP_COLOURS and styles.css.
+  const GROUP_CLASSES = { 'Grønn': 'group-gronn', 'Blå': 'group-bla', 'Rød': 'group-rod', 'Sort': 'group-sort', 'Orange': 'group-orange' };
+  const DAYS = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
+  const COUNTS = ['', 'Én gruppe', 'To grupper', 'Tre grupper', 'Fire grupper', 'Fem grupper', 'Seks grupper',
+    'Sju grupper', 'Åtte grupper', 'Ni grupper', 'Ti grupper'];
+
+  /** Section anchor from a title: "Grønn" → "gronn", "Blå" → "bla". */
+  function slug(title) {
+    return title.toLowerCase().replace(/æ/g, 'ae').replace(/ø/g, 'o').replace(/å/g, 'a')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function isText(t) { return typeof t === 'string' && t !== ''; }
+
+  /** A facts-list line: decorative icon plus text, optionally with a bold label. */
+  function factLine(doc, icon, label, text, className) {
+    const li = el(doc, 'li', className);
+    li.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-' + icon + '"/></svg>';
+    const span = el(doc, 'span');
+    if (label) span.append(el(doc, 'strong', null, label), ' ');
+    span.append(text);
+    li.append(span);
+    return li;
+  }
+
+  /**
+   * Replace the fallback quick-nav cards and group sections with Training
+   * groups (in CMS order). With none valid, or on failure, reveal the
+   * fallback as-is. CMS strings go in as text.
+   */
+  function renderTrainingGroups(doc, mount, nav, count, groups) {
+    const valid = Array.isArray(groups)
+      ? groups.filter(function (g) { return g && isText(g.title) && slug(g.title); })
+      : [];
+    if (valid.length) {
+      mount.textContent = '';
+      nav.textContent = '';
+      valid.forEach(function (g, i) {
+        const id = slug(g.title);
+        const colour = GROUP_CLASSES[g.colour] || 'group-bla';
+
+        const card = el(doc, 'a', 'quick-nav-card ' + colour);
+        card.href = '#' + id;
+        if (isText(g.age)) card.append(el(doc, 'span', 'quick-nav-age', g.age));
+        card.append(el(doc, 'span', 'quick-nav-name', g.title));
+        card.insertAdjacentHTML('beforeend', '<svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>');
+        const li = el(doc, 'li');
+        li.append(card);
+        nav.append(li);
+
+        const header = el(doc, 'div', 'section-header');
+        if (isText(g.age)) header.append(el(doc, 'div', 'training-tag', g.age));
+        header.append(el(doc, 'h2', 'section-title', g.title));
+        if (isText(g.description)) header.append(el(doc, 'p', 'section-sub', g.description));
+        const inner = el(doc, 'div', 'section-inner');
+        inner.append(header);
+
+        const facts = el(doc, 'ul', 'course-facts training-facts');
+        (Array.isArray(g.sessions) ? g.sessions : [])
+          .filter(function (s) { return s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to); })
+          .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || (a.from < b.from ? -1 : a.from > b.from ? 1 : 0); })
+          .forEach(function (s) { facts.append(factLine(doc, 'clock', null, s.day + ' ' + s.from + '–' + s.to, 'training-session')); });
+        if (isText(g.place)) facts.append(factLine(doc, 'pin', 'Sted:', g.place));
+        if (isText(g.price)) facts.append(factLine(doc, 'tag', 'Pris:', g.price));
+        if (facts.children.length) inner.append(facts);
+
+        const section = el(doc, 'section', 'training-group ' + colour + (i % 2 ? '' : ' training-group-alt'));
+        section.id = id;
+        section.append(inner);
+        mount.append(section);
+      });
+      if (count) count.textContent = COUNTS[valid.length] || valid.length + ' grupper';
+    }
+    mount.hidden = false;
+    nav.hidden = false;
   }
 
   const SPONSOR_SPEED = 40; // marquee px per second, whatever the logo count

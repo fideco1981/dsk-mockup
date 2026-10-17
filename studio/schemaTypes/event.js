@@ -2,6 +2,9 @@
 // (Renn → blue, Gratis → orange, Årsmøte → green, Medlemmer → blue); add to both together.
 export const CHIPS = ['Renn', 'Gratis', 'Årsmøte', 'Medlemmer'];
 
+// TT:MM, shared with Training group sessions.
+export const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 export const event = {
   name: 'event',
   title: 'Arrangement',
@@ -28,7 +31,7 @@ export const event = {
       type: 'string',
       description: 'Valgfritt. Skriv som TT:MM, for eksempel 18:00.',
       validation: (Rule) =>
-        Rule.regex(/^([01]\d|2[0-3]):[0-5]\d$/, { name: 'klokkeslett' }).error(
+        Rule.regex(TIME, { name: 'klokkeslett' }).error(
           'Skriv klokkeslettet som TT:MM, for eksempel 18:00.',
         ),
     },

@@ -26,9 +26,15 @@ const SPONSORS = ['A', 'B', 'C', 'D'].map((n) => ({
   name: `Sponsor ${n}`, url: 'https://example.org/s', logo: `https://cdn.sanity.io/images/p/d/${n}.png`,
 }));
 
+// One per colour, so every tag colour's contrast is scanned.
+const TRAINING_GROUPS = [['Grønn', 'Grønn'], ['Blå', 'Blå'], ['Rød', 'Rød'], ['Sort', 'Sort'], ['Fun', 'Orange']].map(([title, colour]) => ({
+  title, colour, age: 'U10', place: 'Haukåsløypa', price: '3 500 kr', description: 'Lek og mestring.',
+  sessions: [{ day: 'Mandag', from: '18:00', to: '19:30' }],
+}));
+
 // Sanity responses per CMS state. A function is a route handler (failure).
 const CMS = {
-  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS },
+  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS, trainingGroups: TRAINING_GROUPS },
   failure: (route) => route.fulfill({ status: 500, body: '{}' }),
   empty: { topbar: TOPBAR, events: [] },
   'topbar off': { topbar: { ...TOPBAR, show: false }, events: [EVENT] },
@@ -104,6 +110,7 @@ for (const { href } of NAV_MODEL.links) {
   test(href, async ({ page }) => {
     await open(page, href);
     await expect(page.locator('.topbar-pause')).toBeVisible();
+    if (href === 'treningsopplegg.html') await expect(page.locator('#rod .training-session')).toBeVisible();
     await expectNoViolations(page);
   });
 
@@ -119,6 +126,7 @@ for (const { href } of NAV_MODEL.links) {
     await open(page, href, CMS.success, { js: false });
     await expect(page.locator('.nav-fallback')).toBeVisible();
     if (href === 'index.html') await expect(page.locator('#events-list .event-card').first()).toBeVisible();
+    if (href === 'treningsopplegg.html') await expect(page.locator('#sort')).toBeVisible();
     await expectNoViolations(page);
   });
 }

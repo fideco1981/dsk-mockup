@@ -34,21 +34,12 @@
   <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 21v-2a4.002 4.002 0 0 0-3-3.874M15.5 3.291a4.001 4.001 0 0 1 0 7.418M17 21c0-1.864 0-2.796-.305-3.53a4 4 0 0 0-2.164-2.165C13.796 15 12.864 15 11 15H8c-1.864 0-2.796 0-3.53.305a4 4 0 0 0-2.166 2.164C2 18.204 2 19.136 2 21M13.5 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
   </symbol>
-  <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"/>
-  </symbol>
   <symbol id="icon-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
     <path d="M12 22c4-4 8-7.582 8-12a8 8 0 1 0-16 0c0 4.418 4 8 8 12Z"/>
   </symbol>
   <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 6v6l4 2m6-2c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.417 10 10Z"/>
-  </symbol>
-  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20 6 9 17l-5-5"/>
-  </symbol>
-  <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 2v4M16 2v4M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z"/>
   </symbol>
   <symbol id="icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="m20.59 13.41-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82ZM7 7h.01"/>
@@ -77,52 +68,55 @@
   <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="page-hero-inner">
-      <div class="section-tag">Fra Rekrutten til U16</div>
+      <div class="section-tag">Treningsgrupper</div>
       <h1 class="page-hero-title">Treningsopplegg</h1>
       <p class="page-hero-sub">
-        Fire treningsgrupper for ulike aldre og ambisjonsnivå — fra nybegynnersamlinger i barnebakken til seriøs alpintrening på Skimore Kongsberg.
+        Treningsgrupper for ulike aldre og ambisjonsnivå — fra nybegynnere i barnebakken til seriøs alpintrening.
       </p>
     </div>
   </section>
+
+  <!-- site.js replaces the quick nav and the group sections below with Training
+       groups from Sanity. Both are hidden until the CMS answers and revealed as-is
+       if it fails, returns no groups, or JS is off. -->
+  <noscript><style>#training-nav[hidden] { display: grid; } #training-groups[hidden] { display: block; }</style></noscript>
 
   <!-- IN-PAGE ANCHOR NAV -->
   <section class="training-quick-nav">
     <div class="section-inner">
       <div class="section-header">
         <div class="section-tag">Velg gruppe</div>
-        <h2 class="section-title">Fire grupper</h2>
+        <h2 class="section-title">Fem grupper</h2>
         <p class="section-sub">Hopp direkte til gruppen som passer ditt barns alder og nivå.</p>
       </div>
-      <ul class="quick-nav-grid">
+      <ul class="quick-nav-grid" id="training-nav" hidden>
         <li>
-          <a class="quick-nav-card" href="#rekrutten">
-            <span class="quick-nav-age">U8</span>
-            <span class="quick-nav-name">Rekrutten</span>
-            <span class="quick-nav-sub">Nybegynnere · barnebakken</span>
+          <a class="quick-nav-card group-gronn" href="#gronn">
+            <span class="quick-nav-name">Grønn</span>
             <svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
           </a>
         </li>
         <li>
-          <a class="quick-nav-card" href="#teknikeren">
-            <span class="quick-nav-age">U10</span>
-            <span class="quick-nav-name">Teknikeren</span>
-            <span class="quick-nav-sub">Teknikk · vei mot hovedbakken</span>
+          <a class="quick-nav-card group-bla" href="#bla">
+            <span class="quick-nav-name">Blå</span>
             <svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
           </a>
         </li>
         <li>
-          <a class="quick-nav-card" href="#dsk-fun">
-            <span class="quick-nav-age">10–13 år</span>
-            <span class="quick-nav-name">DSK Fun</span>
-            <span class="quick-nav-sub">Mestring · uten konkurranse</span>
+          <a class="quick-nav-card group-rod" href="#rod">
+            <span class="quick-nav-name">Rød</span>
             <svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
           </a>
         </li>
         <li>
-          <a class="quick-nav-card" href="#u12-u16">
-            <span class="quick-nav-age">U12–U16</span>
-            <span class="quick-nav-name">U12–U16 DSK</span>
-            <span class="quick-nav-sub">Eldste · konkurransenivå</span>
+          <a class="quick-nav-card group-sort" href="#sort">
+            <span class="quick-nav-name">Sort</span>
+            <svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
+          </a>
+        </li>
+        <li>
+          <a class="quick-nav-card group-orange" href="#fun">
+            <span class="quick-nav-name">Fun</span>
             <svg class="icon quick-nav-arrow" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
           </a>
         </li>
@@ -130,177 +124,48 @@
     </div>
   </section>
 
-  <!-- REKRUTTEN (U8) -->
-  <section class="training-group training-group-alt" id="rekrutten">
-    <div class="section-inner">
-
-      <div class="section-header">
-        <div class="section-tag training-tag-blue">U8 · Nybegynner</div>
-        <h2 class="section-title">Rekrutten</h2>
-        <p class="section-sub">Lek og mestring i barnebakken. Trygg introduksjon til alpinski for de aller yngste klubbmedlemmene.</p>
-      </div>
-
-      <ul class="course-facts training-facts">
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-          <span><strong>Dager:</strong> mandag og onsdag</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-          <span><strong>Tid:</strong> 18:00–19:30 · møt 15 min før</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>
-          <span><strong>Sted:</strong> hovedsakelig barnebakken — viderekomne kjører hovedbakken når den er åpen</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-          <span><strong>Pris:</strong> 300 kr medlemskap + <strong>3 500 kr</strong> treningsavgift</span>
-        </li>
-      </ul>
-
-      <div class="info-grid training-info-grid">
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-info"/></svg></div>
-          <h3>Følger skoleferiene</h3>
-          <p>Treningene legges til skolens skoleruter — ingen treninger på skolefri.</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-snowflake"/></svg></div>
-          <h3>Telenorkarusellen</h3>
-          <p>Rekruttene deltar i Telenorkarusellen — gratis lavterskelrenn for barn opp til 12 år: 19. januar, 18. februar og 9. mars.</p>
+  <div id="training-groups" hidden>
+    <section class="training-group group-gronn training-group-alt" id="gronn">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Grønn</h2>
+          <p class="section-sub">Tider og pris kommer — se Spond.</p>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <!-- TEKNIKEREN (U10) -->
-  <section class="training-group" id="teknikeren">
-    <div class="section-inner">
-
-      <div class="section-header">
-        <div class="section-tag training-tag-purple">U10 · Teknikkbygging</div>
-        <h2 class="section-title">Teknikeren</h2>
-        <p class="section-sub">Broen fra nybegynner til hovedbakken. Teknikk og fri kjøring med bredere terreng og flere økter i uken.</p>
-      </div>
-
-      <ul class="course-facts training-facts">
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-          <span><strong>Dager:</strong> mandag, onsdag og torsdag — i tillegg til økter på helg</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-          <span><strong>Tid:</strong> 18:00–19:30 hverdager · minimum 10 skidager per sesong</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>
-          <span><strong>Sted:</strong> Haukåsløypa, Skimore Drammen og av og til Skimore Kongsberg</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-          <span><strong>Pris:</strong> 300 kr medlemskap + <strong>4 500 kr</strong> treningsavgift</span>
-        </li>
-      </ul>
-
-      <div class="info-grid training-info-grid">
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-users"/></svg></div>
-          <h3>Modenhet for større anlegg</h3>
-          <p>Egnet for sterke U8 og U10. Stolheis krever minimum 10 år — yngre må kjøre sammen med voksen.</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-check"/></svg></div>
-          <h3>Utstyr</h3>
-          <p>FIS-godkjent hjelm (påbudt i konkurranser), velslipte kanter og ryggskinne anbefales sterkt.</p>
+    </section>
+    <section class="training-group group-bla" id="bla">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Blå</h2>
+          <p class="section-sub">Tider og pris kommer — se Spond.</p>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <!-- DSK FUN (10–13) -->
-  <section class="training-group training-group-alt" id="dsk-fun">
-    <div class="section-inner">
-
-      <div class="section-header">
-        <div class="section-tag training-tag-green">10–13 år · Uten konkurranse</div>
-        <h2 class="section-title">DSK Fun</h2>
-        <p class="section-sub">Et tilbud for de som vil videreutvikle alpinferdighetene uten konkurransefokus. Mestring, sikkerhet og vennskap i fjellet.</p>
-      </div>
-
-      <ul class="course-facts training-facts">
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-          <span><strong>Dager:</strong> tirsdag og torsdag — i tillegg til utvalgte helger med fri kjøring</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-          <span><strong>Tid:</strong> møt 15 min før hver økt · følger skoleferiene</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>
-          <span><strong>Sted:</strong> Haukåsløypa, Skimore Drammen og Skimore Kongsberg</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-          <span><strong>Pris:</strong> 300 kr medlemskap + <strong>3 000 kr</strong> treningsavgift</span>
-        </li>
-      </ul>
-
-      <div class="info-grid training-info-grid">
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-check"/></svg></div>
-          <h3>Forutsetninger</h3>
-          <p>Tidligere skierfaring og evne til å bruke heis selvstendig. Gruppen passer for de som vil videreutvikle alpine ferdigheter.</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-info"/></svg></div>
-          <h3>Utstyr</h3>
-          <p>Alpinski, hjelm (påbudt) og ryggskinne (anbefales). Eget utstyr — klubben har ikke utlån.</p>
+    </section>
+    <section class="training-group group-rod training-group-alt" id="rod">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Rød</h2>
+          <p class="section-sub">Tider og pris kommer — se Spond.</p>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <!-- U12–U16 DSK -->
-  <section class="training-group" id="u12-u16">
-    <div class="section-inner">
-
-      <div class="section-header">
-        <div class="section-tag training-tag-orange">U12–U16 · Konkurransenivå</div>
-        <h2 class="section-title">U12–U16 DSK</h2>
-        <p class="section-sub">Den eldste og mest erfarne treningsgruppen — for utøvere som vil videre i alpinløypa med tre eller flere økter i uka.</p>
+    </section>
+    <section class="training-group group-sort" id="sort">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Sort</h2>
+          <p class="section-sub">Tider og pris kommer — se Spond.</p>
+        </div>
       </div>
-
-      <ul class="course-facts training-facts">
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-          <span><strong>Dager:</strong> tirsdag, onsdag og torsdag — pluss økter på helg</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-          <span><strong>Tid:</strong> oppdatert økt-for-økt i Spond</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>
-          <span><strong>Sted:</strong> Skimore Kongsberg og Drammen skisenter — kjøring i samkjøring oppfordres</span>
-        </li>
-        <li>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-          <span><strong>Pris:</strong> kontakt for pris — avklares per gruppe</span>
-        </li>
-      </ul>
-
-      <p class="board-note training-price-note">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
-        Treningsavgift for U12–U16 er foreløpig ikke bekreftet — endelig sats settes til sesongen 2026/27 og publiseres til høsten. Inntil da oppgis pris per gruppe i Spond. Ta kontakt med foreldrekontakt for U12–U14 (Jon Sæther) for oppdatert sats.
-      </p>
-
-    </div>
-  </section>
+    </section>
+    <section class="training-group group-orange training-group-alt" id="fun">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2 class="section-title">Fun</h2>
+          <p class="section-sub">Tider og pris kommer — se Spond.</p>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <!-- SIGNUP CTA -->
   <section class="training-cta">

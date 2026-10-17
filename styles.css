@@ -1584,7 +1584,7 @@
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* any group count */
     gap: 20px;
   }
   .quick-nav-card {
@@ -1622,11 +1622,6 @@
     font-weight: 700;
     color: #fff;
   }
-  .quick-nav-sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
   .quick-nav-arrow {
     width: 18px;
     height: 18px;
@@ -1637,10 +1632,39 @@
 
   .training-group { background: var(--dark); scroll-margin-top: 80px; }
   .training-group-alt { background: var(--dark2); }
-  .training-tag-blue   { color: var(--blue-lt); }
-  .training-tag-purple { color: var(--accent-lt); }
-  .training-tag-green  { color: var(--green-lt); }
-  .training-tag-orange { color: #E8870A; }
+  .training-group .section-sub { white-space: pre-line; } /* editors' line breaks */
+  #training-nav[hidden], #training-groups[hidden] { display: none; }
+
+  /* Training group colours. Each class must match site.js's GROUP_CLASSES. */
+  .group-gronn  { --group-bg: var(--green); --group-ink: #fff; }
+  .group-bla    { --group-bg: var(--blue);  --group-ink: var(--on-blue); }
+  .group-rod    { --group-bg: #C62828;      --group-ink: #fff; }
+  .group-sort   { --group-bg: #000;         --group-ink: #fff; }
+  .group-orange { --group-bg: #E8870A;      --group-ink: var(--dark); }
+  .training-tag {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--group-bg);
+    color: var(--group-ink);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); /* keeps black visible on dark */
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .quick-nav-card[class*="group-"] { border-top: 4px solid var(--group-bg); }
+  .training-group[class*="group-"] .section-header { position: relative; padding-left: 22px; }
+  .training-group[class*="group-"] .section-header::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    border-radius: 3px;
+    background: var(--group-bg);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+  }
 
   .training-facts {
     max-width: 880px;
@@ -1651,12 +1675,6 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   .training-facts li:last-child { border-bottom: none; }
-
-  .training-info-grid {
-    max-width: 880px;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .training-price-note { margin-top: 8px; max-width: 880px; }
 
   .training-cta {
     background: linear-gradient(120deg, #0a1020 0%, #0d1e3a 40%, #130e28 100%);
@@ -1736,7 +1754,6 @@
     .course-grid { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .quick-nav-grid { grid-template-columns: 1fr; }
-    .training-info-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 480px) {
     .stats-inner { grid-template-columns: 1fr 1fr; }

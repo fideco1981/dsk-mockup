@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: ready-for-human
 
 ## Parent PRD
 
@@ -28,13 +28,22 @@ Move the training groups on `treningsopplegg.html` into Sanity. The club has ren
 
 ## Acceptance criteria
 
-- [ ] Schema: `trainingGroup` with the fields above, registered in `studio/schemaTypes/index.js`. `sanity schema validate` passes.
-- [ ] Studio rejects a session with a bad TT:MM, a missing day/from/to, or `to` not after `from`.
-- [ ] Test: groups render in order; quick-nav cards and sections match, and anchors link to the slugged ids.
-- [ ] Test: sessions are sorted Monday→Sunday, one line each.
-- [ ] Test: a group with only title and colour renders without empty place/price/age/session lines.
-- [ ] Test: a Sanity error and an empty result both leave the fallback in place.
-- [ ] `test/treningsopplegg.test.js` updated from the old anchors to `#gronn`, `#bla`, `#rod`, `#sort`, `#fun`.
-- [ ] New red and black tag colours pass the axe contrast scan.
-- [ ] CONTEXT.md updated.
+- [x] Schema: `trainingGroup` with the fields above, registered in `studio/schemaTypes/index.js`. `sanity schema validate` passes.
+- [x] Studio rejects a session with a bad TT:MM, a missing day/from/to, or `to` not after `from`.
+- [x] Test: groups render in order; quick-nav cards and sections match, and anchors link to the slugged ids.
+- [x] Test: sessions are sorted Monday→Sunday, one line each.
+- [x] Test: a group with only title and colour renders without empty place/price/age/session lines.
+- [x] Test: a Sanity error and an empty result both leave the fallback in place.
+- [x] `test/treningsopplegg.test.js` updated from the old anchors to `#gronn`, `#bla`, `#rod`, `#sort`, `#fun`.
+- [x] New red and black tag colours pass the axe contrast scan.
+- [x] CONTEXT.md updated.
 - [ ] (HITL) Studio deployed. Stein enters the five groups in Studio when the content is settled; until then the site shows the fallback.
+
+## Comments
+
+2026-10-17: Agent work done; only the HITL step is left (`cd studio && npx sanity deploy`, then enter the groups when the content is settled). Close and move to `done/` after that.
+
+- The section tag shows the age only and is left out when there's no age. Colour shows as a bar beside the section heading and a top border on the quick-nav card. This means the fallback doesn't show "Orange" for Fun.
+- Unknown colours fall back to blue, as Chips do. Two groups whose titles slug the same (e.g. "Blå" and "Bla") would share an anchor. This isn't handled; add a Studio check if it ever happens.
+- `TIME` is now exported from `event.js` and shared by both schemas.
+- The "N grupper" heading shows "Fem grupper" for a moment while Sanity loads, then updates.
