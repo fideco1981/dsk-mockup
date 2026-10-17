@@ -179,3 +179,52 @@ test('index: inline Cross-løypa track has no tunnel points (issue 019)', () => 
   assert.equal(elev[elev.length - 1], 111, 'ends at 111 m, top of barnebakken');
   assert.ok(elev.every((e) => e >= 111 && e <= 168), 'no point outside 111–168 m');
 });
+
+// ── Training group cards (Våre Treningsgrupper), from Sanity ──
+
+const { stubFetch } = require('./helpers');
+
+async function renderWith(cms) {
+  const doc = new JSDOM(HTML).window.document;
+  stubFetch(doc, cms);
+  await site.init(doc);
+  return doc;
+}
+const programCards = (doc) => [...doc.querySelectorAll('#programs-grid .program-card')];
+
+test('index: training group cards are hidden until the CMS answers, with a noscript reveal', () => {
+  const grid = new JSDOM(HTML).window.document.getElementById('programs-grid');
+  assert.ok(grid.hidden);
+  assert.match(HTML, /<noscript><style>[^<]*#programs-grid\[hidden\][^<]*<\/style><\/noscript>/);
+});
+
+test('index: the fallback cards are the five new groups, linking to their sections', async () => {
+  const doc = await renderWith(() => Promise.reject(new Error('offline')));
+  assert.ok(!doc.getElementById('programs-grid').hidden);
+  assert.deepEqual(programCards(doc).map((c) => c.querySelector('.program-name').textContent), ['Grønn', 'Blå', 'Rød', 'Sort', 'Fun']);
+  assert.deepEqual(programCards(doc).map((c) => c.querySelector('.program-link').getAttribute('href')),
+    ['gronn', 'bla', 'rod', 'sort', 'fun'].map((id) => 'treningsopplegg.html#' + id));
+});
+
+test('index: training group cards follow Sanity (order, colour, age, description, link)', async () => {
+  const doc = await renderWith({ trainingGroups: [
+    { title: 'Grønn', colour: 'Grønn', age: 'U8', description: 'Lek og mestring.' },
+    { title: 'Fun', colour: 'Orange' },
+  ] });
+  const [a, b] = programCards(doc);
+  assert.equal(programCards(doc).length, 2);
+  assert.ok(a.classList.contains('group-gronn') && b.classList.contains('group-orange'));
+  assert.ok(!a.classList.contains('fade-in'), 'not stuck in the fade-in hidden state');
+  assert.equal(a.querySelector('.program-age').textContent, 'U8');
+  assert.equal(a.querySelector('.program-desc').textContent, 'Lek og mestring.');
+  assert.equal(a.querySelector('.program-link').getAttribute('href'), 'treningsopplegg.html#gronn');
+  assert.equal(a.querySelector('.program-link').getAttribute('aria-label'), 'Les mer om Grønn');
+  assert.equal(b.querySelector('.program-age'), null, 'no empty age');
+  assert.equal(b.querySelector('.program-desc'), null, 'no empty description');
+});
+
+test('index: zero training groups keeps the fallback cards', async () => {
+  const doc = await renderWith({ trainingGroups: [] });
+  assert.equal(programCards(doc).length, 5);
+  assert.ok(!doc.getElementById('programs-grid').hidden);
+});

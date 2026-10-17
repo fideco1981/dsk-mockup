@@ -603,7 +603,7 @@
   .programs { background: var(--dark); padding-bottom: 60px; }
   .programs-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* any group count */
     gap: 20px;
   }
   .program-card {
@@ -616,25 +616,22 @@
     justify-content: flex-end;
     cursor: pointer;
     transition: transform 0.35s cubic-bezier(.2,.8,.3,1), box-shadow 0.35s;
+    /* Colours from the Training group's .group-* class */
+    background: linear-gradient(160deg, color-mix(in srgb, var(--group-bg) 35%, var(--dark)) 0%, var(--dark2) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
   }
+  .programs-grid[hidden] { display: none; }
   .program-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 24px 56px rgba(0,0,0,0.5);
   }
-  .program-card:nth-child(1) { background: linear-gradient(160deg, #1a5a78 0%, #0e3d55 60%, #0a2840 100%); }
-  .program-card:nth-child(2) { background: linear-gradient(160deg, #2e1f5e 0%, #1e1242 60%, #150e30 100%); }
-  .program-card:nth-child(3) { background: linear-gradient(160deg, #5a3800 0%, #3d2600 60%, #2a1a00 100%); }
-  .program-card:nth-child(4) { background: linear-gradient(160deg, #0f3d52 0%, #082a3d 60%, #051e2e 100%); }
 
   .program-card-top-border {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 4px;
+    background: var(--group-bg);
   }
-  .program-card:nth-child(1) .program-card-top-border { background: var(--blue); }
-  .program-card:nth-child(2) .program-card-top-border { background: var(--accent-lt); }
-  .program-card:nth-child(3) .program-card-top-border { background: #E8870A; }
-  .program-card:nth-child(4) .program-card-top-border { background: var(--blue-lt); }
 
   /* decorative ski slope shape */
   .program-card-art {
@@ -650,17 +647,7 @@
     width: 160px; height: 160px;
     border-radius: 50%;
     opacity: 0.08;
-  }
-  .program-card:nth-child(1) .program-card-art::before { background: var(--blue); }
-  .program-card:nth-child(2) .program-card-art::before { background: var(--accent); }
-  .program-card:nth-child(3) .program-card-art::before { background: #E8870A; }
-  .program-card:nth-child(4) .program-card-art::before { background: var(--blue-lt); }
-
-  .program-card-art svg {
-    position: absolute;
-    bottom: 0; right: 0;
-    opacity: 0.06;
-    width: 140px;
+    background: var(--group-bg);
   }
 
   .program-card-body {
@@ -679,11 +666,10 @@
     padding: 4px 10px;
     border-radius: 4px;
     margin-bottom: 10px;
+    background: var(--group-bg);
+    color: var(--group-ink);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); /* keeps black visible on dark */
   }
-  .program-card:nth-child(1) .program-age { background: rgba(0,159,227,0.2);  color: #6DD9F5; }
-  .program-card:nth-child(2) .program-age { background: rgba(74,58,154,0.25);  color: #B8ADEE; }
-  .program-card:nth-child(3) .program-age { background: rgba(232,135,10,0.22); color: #f5a030; }
-  .program-card:nth-child(4) .program-age { background: rgba(51,187,236,0.2); color: #9AEAF5; }
   .program-name {
     font-family: var(--font-head);
     font-size: 26px;
@@ -697,6 +683,11 @@
     color: rgba(255,255,255,0.6);
     line-height: 1.5;
     margin-bottom: 18px;
+    /* descriptions can be long (written for treningsopplegg.html) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .program-link {
     font-size: 13px;
@@ -1635,7 +1626,7 @@
   .training-group .section-sub { white-space: pre-line; } /* editors' line breaks */
   #training-nav[hidden], #training-groups[hidden] { display: none; }
 
-  /* Training group colours. Each class must match site.js's GROUP_CLASSES. */
+  /* Training group colours (also the landing page's .program-card). Each class must match site.js's GROUP_CLASSES. */
   .group-gronn  { --group-bg: var(--green); --group-ink: #fff; }
   .group-bla    { --group-bg: var(--blue);  --group-ink: var(--on-blue); }
   .group-rod    { --group-bg: #C62828;      --group-ink: #fff; }

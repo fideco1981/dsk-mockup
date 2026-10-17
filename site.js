@@ -205,8 +205,9 @@
 
   /**
    * One query to Sanity, then render the Topbar message, the Sponsor strip
-   * and, where their mounts exist, the upcoming Events and Training groups. Any failure (rejection,
-   * non-OK, malformed data, no fetch) reveals that part's fallback content.
+   * and, where their mounts exist, the upcoming Events and Training groups
+   * (sections on treningsopplegg.html, cards on the landing page). Any failure
+   * (rejection, non-OK, malformed data, no fetch) reveals that part's fallback.
    * Never rejects.
    */
   function loadCms(doc) {
@@ -217,6 +218,7 @@
     const groups = doc.getElementById('training-groups');
     const groupNav = doc.getElementById('training-nav');
     const groupCount = doc.querySelector('.training-quick-nav .section-title');
+    const programs = doc.getElementById('programs-grid');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -231,7 +233,9 @@
         else events.hidden = false;
       }
       if (sponsors && result && Array.isArray(result.sponsors)) renderSponsors(doc, sponsors, result.sponsors);
-      if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, result && result.trainingGroups);
+      const trainingGroups = validGroups(result && result.trainingGroups);
+      if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, trainingGroups);
+      if (programs) renderProgramCards(doc, programs, trainingGroups);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -403,21 +407,52 @@
     return li;
   }
 
+  /** Training groups from the CMS that can be shown (title with a usable slug), in CMS order. */
+  function validGroups(groups) {
+    return Array.isArray(groups)
+      ? groups.filter(function (g) { return g && isText(g.title) && slug(g.title); })
+      : [];
+  }
+
+  function groupClass(g) { return GROUP_CLASSES[g.colour] || 'group-bla'; }
+
+  /**
+   * Replace the landing page's fallback cards with one card per Training
+   * group, linking to its section. With none valid, reveal the fallback.
+   * CMS strings go in as text.
+   */
+  function renderProgramCards(doc, mount, groups) {
+    if (groups.length) {
+      mount.textContent = '';
+      groups.forEach(function (g) {
+        const body = el(doc, 'div', 'program-card-body');
+        if (isText(g.age)) body.append(el(doc, 'span', 'program-age', g.age));
+        body.append(el(doc, 'h3', 'program-name', g.title));
+        if (isText(g.description)) body.append(el(doc, 'p', 'program-desc', g.description));
+        const link = el(doc, 'a', 'program-link', 'Les mer →');
+        link.href = 'treningsopplegg.html#' + slug(g.title);
+        link.setAttribute('aria-label', 'Les mer om ' + g.title);
+        body.append(link);
+        const card = el(doc, 'div', 'program-card ' + groupClass(g));
+        card.append(el(doc, 'div', 'program-card-top-border'), el(doc, 'div', 'program-card-art'), body);
+        mount.append(card);
+      });
+    }
+    mount.hidden = false;
+  }
+
   /**
    * Replace the fallback quick-nav cards and group sections with Training
    * groups (in CMS order). With none valid, or on failure, reveal the
    * fallback as-is. CMS strings go in as text.
    */
-  function renderTrainingGroups(doc, mount, nav, count, groups) {
-    const valid = Array.isArray(groups)
-      ? groups.filter(function (g) { return g && isText(g.title) && slug(g.title); })
-      : [];
+  function renderTrainingGroups(doc, mount, nav, count, valid) {
     if (valid.length) {
       mount.textContent = '';
       nav.textContent = '';
       valid.forEach(function (g, i) {
         const id = slug(g.title);
-        const colour = GROUP_CLASSES[g.colour] || 'group-bla';
+        const colour = groupClass(g);
 
         const card = el(doc, 'a', 'quick-nav-card ' + colour);
         card.href = '#' + id;

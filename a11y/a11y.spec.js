@@ -45,6 +45,7 @@ const RENDERED = {
   success: async (page) => {
     await expect(page.locator('#events-list')).toContainText(EVENT.title);
     await expect(page.locator('.sponsor-strip')).toBeVisible();
+    await expect(page.locator('#programs-grid .program-age').first()).toBeVisible();
   },
   failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Sesong'),
   empty: (page) => expect(page.locator('.events-empty')).toBeVisible(),

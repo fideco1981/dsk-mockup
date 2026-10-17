@@ -152,53 +152,49 @@
       <h2 class="section-title fade-in fade-in-delay-1">Våre Treningsgrupper</h2>
       <p class="section-sub fade-in fade-in-delay-2">Fra første skyss ned til konkurransekjøring — vi har et program for alle nivåer og aldre.</p>
     </div>
-    <div class="programs-grid">
-      <div class="program-card fade-in">
+    <!-- site.js replaces these hand-written fallback cards with Training groups
+         from Sanity. Hidden until the CMS answers; revealed as-is if it fails,
+         returns no groups, or JS is off. -->
+    <noscript><style>#programs-grid[hidden] { display: grid; }</style></noscript>
+    <div class="programs-grid" id="programs-grid" hidden>
+      <div class="program-card group-gronn fade-in">
         <div class="program-card-top-border"></div>
-        <div class="program-card-art">
-          <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="80" fill="white"/></svg>
-        </div>
+        <div class="program-card-art"></div>
         <div class="program-card-body">
-          <span class="program-age">5-8 år</span>
-          <h3 class="program-name">Rekrutten</h3>
-          <p class="program-desc">Første møte med ski gjennom lek og moro. Trygt og gledelig for de minste.</p>
-          <a href="#" class="program-link">Les mer →</a>
+          <h3 class="program-name">Grønn</h3>
+          <a href="treningsopplegg.html#gronn" class="program-link" aria-label="Les mer om Grønn">Les mer →</a>
         </div>
       </div>
-      <div class="program-card fade-in fade-in-delay-1">
+      <div class="program-card group-bla fade-in fade-in-delay-1">
         <div class="program-card-top-border"></div>
-        <div class="program-card-art">
-          <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="80" fill="white"/></svg>
-        </div>
+        <div class="program-card-art"></div>
         <div class="program-card-body">
-          <span class="program-age">8-12 år</span>
-          <h3 class="program-name">Teknikeren</h3>
-          <p class="program-desc">Bygg solid teknikk og få selvtillit i bakken med erfarne trenere.</p>
-          <a href="#" class="program-link">Les mer →</a>
+          <h3 class="program-name">Blå</h3>
+          <a href="treningsopplegg.html#bla" class="program-link" aria-label="Les mer om Blå">Les mer →</a>
         </div>
       </div>
-      <div class="program-card fade-in fade-in-delay-2">
+      <div class="program-card group-rod fade-in fade-in-delay-2">
         <div class="program-card-top-border"></div>
-        <div class="program-card-art">
-          <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="80" fill="white"/></svg>
-        </div>
+        <div class="program-card-art"></div>
         <div class="program-card-body">
-          <span class="program-age">10-13 år</span>
-          <h3 class="program-name">DSK Fun</h3>
-          <p class="program-desc">Uformell og sosial skiaktivitet for de som vil ha glede og fellesskap.</p>
-          <a href="#" class="program-link">Les mer →</a>
+          <h3 class="program-name">Rød</h3>
+          <a href="treningsopplegg.html#rod" class="program-link" aria-label="Les mer om Rød">Les mer →</a>
         </div>
       </div>
-      <div class="program-card fade-in fade-in-delay-3">
+      <div class="program-card group-sort fade-in fade-in-delay-3">
         <div class="program-card-top-border"></div>
-        <div class="program-card-art">
-          <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="80" fill="white"/></svg>
-        </div>
+        <div class="program-card-art"></div>
         <div class="program-card-body">
-          <span class="program-age">U12-U16</span>
-          <h3 class="program-name">U12-U16 DSK</h3>
-          <p class="program-desc">Konkurransesatsing for unge talenter med ambisjoner om å kjøre fort.</p>
-          <a href="#" class="program-link">Les mer →</a>
+          <h3 class="program-name">Sort</h3>
+          <a href="treningsopplegg.html#sort" class="program-link" aria-label="Les mer om Sort">Les mer →</a>
+        </div>
+      </div>
+      <div class="program-card group-orange fade-in fade-in-delay-4">
+        <div class="program-card-top-border"></div>
+        <div class="program-card-art"></div>
+        <div class="program-card-body">
+          <h3 class="program-name">Fun</h3>
+          <a href="treningsopplegg.html#fun" class="program-link" aria-label="Les mer om Fun">Les mer →</a>
         </div>
       </div>
     </div>
