@@ -110,3 +110,12 @@ test('om-oss: Haukåsløypa is described as a multi-generation meeting place', (
     'frames it as a place for multiple generations',
   );
 });
+
+test('om-oss: Cross-løypa is mentioned and in the Bakker chip (issue 019)', () => {
+  const doc = renderOmOss();
+  assert.match(doc.querySelector('.about-haukos .about-prose').textContent, /Cross-løypa/);
+  const bakker = [...doc.querySelectorAll('.fact-chip')].find(
+    (c) => c.querySelector('.fact-label').textContent.trim() === 'Bakker',
+  );
+  assert.match(bakker.querySelector('.fact-value').textContent, /Cross-løypa/);
+});

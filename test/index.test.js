@@ -178,3 +178,25 @@ test('index: page has no absolute internal links (subpath-safe)', () => {
   }
   assert.deepEqual(bad, [], `index.html has absolute internal links: ${bad.join(', ')}`);
 });
+
+test('index: Haukåsløypa section presents Cross-løypa as new this season (issue 019)', () => {
+  const doc = renderIndex();
+  const section = doc.getElementById('haukos');
+  const text = section.textContent.replace(/\s+/g, ' ');
+  assert.match(text, /Cross-løypa, ca\. 250 meter med 57 meters fall/);
+  assert.match(text, /Ny denne sesongen/);
+  const chips = [...section.querySelectorAll('.fact-chip')].map((c) =>
+    c.textContent.replace(/\s+/g, ' ').trim(),
+  );
+  assert.ok(chips.some((c) => /Cross-løypa — lengde ≈250m/.test(c)), 'length chip');
+  assert.ok(chips.some((c) => /Cross-løypa — høydeforskjell 57m/.test(c)), 'drop chip');
+});
+
+test('index: inline Cross-løypa track has no tunnel points (issue 019)', () => {
+  const m = HTML.match(/const CROSS = '([^']+)'/);
+  assert.ok(m, 'CROSS coordinate string is inline in index.html');
+  const elev = m[1].trim().split(/\s+/).map((t) => +t.split(',')[2]);
+  assert.equal(elev[0], 168, 'starts at 168 m');
+  assert.equal(elev[elev.length - 1], 111, 'ends at 111 m, top of barnebakken');
+  assert.ok(elev.every((e) => e >= 111 && e <= 168), 'no point outside 111–168 m');
+});

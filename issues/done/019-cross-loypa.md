@@ -27,11 +27,19 @@ Out of scope: `index-v2.html` and `index-v3.html` (untracked old mockups), Sanit
 
 ## Acceptance criteria
 
-- [ ] The Haukåsløypa section shows the Cross-løypa text, the two new fact chips and the "Ny denne sesongen" badge.
-- [ ] The elevation SVG shows a Cross-løypa inset with no tunnel dip, labelled with its top and bottom height, its length and a computed gradient.
-- [ ] `om-oss.html` mentions Cross-løypa, and its "Bakker" chip includes it.
-- [ ] `docs/store.kml`, `docs/lille.kml` and `docs/crossloype.kml` are committed.
-- [ ] `CONTEXT.md` defines Cross-løypa.
-- [ ] Checked on localhost at desktop and phone width, and `npm run test:a11y` passes.
+- [x] The Haukåsløypa section shows the Cross-løypa text, the two new fact chips and the "Ny denne sesongen" badge.
+- [x] The elevation SVG shows a Cross-løypa inset with no tunnel dip, labelled with its top and bottom height, its length and a computed gradient.
+- [x] `om-oss.html` mentions Cross-løypa, and its "Bakker" chip includes it.
+- [x] `docs/store.kml`, `docs/lille.kml` and `docs/crossloype.kml` are committed.
+- [x] `CONTEXT.md` defines Cross-løypa.
+- [x] Checked on localhost at desktop and phone width, and `npm run test:a11y` passes.
 
 ## Comments
+
+### Closeout (2026-10-17)
+
+- Cross-løypa text, two chips and the "Ny denne sesongen" badge are in the Haukåsløypa section. The text sits in its own `<p>` under the main paragraph.
+- The barnebakke inset is now a shared `inset()` function used by both insets. Top/bottom height, length and gradient (23%) are computed from the data. Barnebakke still reads "130m · 14%", but its vertical scale moved from 26 m to 25.7 m.
+- Inline `CROSS` string: 60 points with both tunnel points removed.
+- Tests added in `test/index.test.js` and `test/om-oss.test.js`. Checked at 1280px and on Pixel 7. `npm test` and `npm run test:a11y` pass.
+- Open for Stein: the badge "Ny denne sesongen" sits right before the text "Nytt denne sesongen:", so it stutters. Also, the inset purple matches the "maks fall" box.
