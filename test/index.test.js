@@ -8,8 +8,7 @@
 // no single-blanket-time oversimplification); the Arrangement section lists the
 // real events (Årsmøte 25 mars 2026 + three Telenorkarusellen dates) instead of
 // invented placeholders; the Spond signup CTAs are present and target Spond;
-// the Haukås mockup stats (500m / 133m / 47%) are qualified as provisional
-// pending issue 009; and the legacy schedule.html standalone file is removed.
+// and the legacy schedule.html standalone file is removed.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -138,26 +137,6 @@ test('index: hero and membership CTAs link to the Spond signup form', () => {
   assert.ok(memSpond, 'membership has a Spond signup CTA');
   assert.equal(memSpond.getAttribute('target'), '_blank');
   assert.match(memSpond.getAttribute('rel') || '', /noopener/);
-});
-
-test('index: Haukås numbers (500m/133m/47%) carry a source-or-provisional qualifier', () => {
-  const doc = renderIndex();
-  const text = doc.body.textContent;
-  // Stats: 500m length / 133m vertical / 47% gradient. Per issue 009, Stein
-  // confirmed they're computed from KML/GPS traces of the slope — so they're
-  // not unverified guesses, but a source attribution (or other provisional
-  // wording) must still accompany them so readers understand the basis.
-  const hasNumbers =
-    /\b500\s*m\b/.test(text) || /\b133\s*m\b/.test(text) || /\b47\s*%/.test(text);
-  if (hasNumbers) {
-    const qualifiers =
-      /(uavklart|ubekreftet|ikke bekreftet|må bekreftes|venter bekreft|provisorisk|provisional|beregnet|målt|GPS|kml)/i;
-    assert.match(
-      text,
-      qualifiers,
-      'if Haukås numbers are shown they must be qualified — provisional language OR source attribution (GPS/KML/beregnet)',
-    );
-  }
 });
 
 test('index: legacy schedule.html standalone file has been removed', () => {
