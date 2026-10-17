@@ -29,3 +29,5 @@ Move the lift hours into one Sanity singleton and read it everywhere they appear
 - [ ] (HITL) Studio redeployed. Stein enters the hours and the note.
 
 ## Comments
+
+2026-10-17: Studio deployed with Heistider from main (6756f1b). What's left is entering the hours and the note in Heistider; then close the ticket. If the note is published with no hours, the pages keep the fallback hours.
