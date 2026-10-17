@@ -42,17 +42,27 @@ Move `skiskole.html` into Sanity. The source of truth for the content is the clu
 
 ## Acceptance criteria
 
-- [ ] Schemas `skiSchool` and `course` registered. `sanity schema validate` passes.
-- [ ] Studio rejects a course whose endDate is before startDate, a skipWeek outside 1–53, and bad sessions (same rules as Training group).
-- [ ] Both appear in the Studio left menu. Skiskole can't be created twice.
-- [ ] Test: courses that have ended (2000 fixture) aren't shown. The rest are sorted by startDate.
-- [ ] Test: a card shows its session lines Monday→Sunday, and leaves out empty price, note and deadline.
-- [ ] Test: the shared section renders from `skiSchool`, and includes is a list.
-- [ ] Test: a fetch error keeps the fallback. Zero unfinished courses shows the "Ingen kurs" message.
-- [ ] Test: CMS strings with markup render as text. The link is only rendered for http(s).
-- [ ] The hero button on `index.html` links to `skiskole.html`.
-- [ ] Fallback HTML matches the 2026/27 courses in `docs/skiskole.pdf`.
-- [ ] CONTEXT.md updated.
+- [x] Schemas `skiSchool` and `course` registered. `sanity schema validate` passes.
+- [x] Studio rejects a course whose endDate is before startDate, a skipWeek outside 1–53, and bad sessions (same rules as Training group).
+- [x] Both appear in the Studio left menu. Skiskole can't be created twice.
+- [x] Test: courses that have ended (2000 fixture) aren't shown. The rest are sorted by startDate.
+- [x] Test: a card shows its session lines Monday→Sunday, and leaves out empty price, note and deadline.
+- [x] Test: the shared section renders from `skiSchool`, and includes is a list.
+- [x] Test: a fetch error keeps the fallback. Zero unfinished courses shows the "Ingen kurs" message.
+- [x] Test: CMS strings with markup render as text. The link is only rendered for http(s).
+- [x] The hero button on `index.html` links to `skiskole.html`.
+- [x] Fallback HTML matches the 2026/27 courses in `docs/skiskole.pdf`.
+- [x] CONTEXT.md updated.
 - [ ] (HITL) Studio redeployed. Stein enters the Skiskole text and the five courses from Spond.
 
 ## Comments
+
+2026-10-17: Built on `integration/024-skiskole` (83c8170, f5253ef, 8fe75ae, review fixes 4b4451e). `npm test` 114/114, a11y 38 passed / 6 skipped, `sanity schema validate` clean. Still to do: redeploy the Studio, enter the Skiskole text first and then the five courses (courses only render once `skiSchool` exists), then close the ticket.
+
+- `session.js` now holds the `{day, from, to}` object; Training group and Course both use it.
+- The PDF contradicts itself on "uke 4-6": the title and dates (26 Jan–11 Feb) give weeks 4–6, but the text says "Uke 3, 4 og 5". The fallback follows the title and dates.
+- "Minst 6 deltakere" applies only to the afternoon courses, so `skiSchool.reservation` has no fallback text. Each course carries its own condition in `note`. Decide whether a shared reservation text is wanted.
+- The fallback intro is the afternoon one; the weekend courses have a different intro.
+- The fallback "Meld på" buttons all go to the Spond course list, because the PDF has no per-course signup URLs.
+- Removed from `skiskole.html` because none of it is in the PDF: the instructor note (Henrik Hagberg), the weather/Spond card, "Hjelm anbefales" and the "To kurstilbud" header. Confirm before release.
+- Still stale, outside this ticket: the `<noscript>` topbar ("Sesong 2025/26") and the `.skiskole-cta` button, which points to the membership form.
