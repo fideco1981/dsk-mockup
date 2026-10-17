@@ -89,12 +89,8 @@
   .topbar span { opacity: 0.85; margin: 0 6px; }
   .topbar a { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.5); }
   .topbar a:hover { text-decoration-color: #fff; }
-  .topbar-msg {
-    display: inline-block;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .topbar-msg.fade-out { opacity: 0; transform: translateY(-6px); }
-  .topbar-msg.fade-in-top { opacity: 0; transform: translateY(6px); }
+  .topbar-msg { display: inline-block; }
+  .topbar-msg[hidden] { display: none; }
 
   /* ─── NAV ─── */
   nav {

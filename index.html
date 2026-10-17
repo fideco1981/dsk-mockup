@@ -70,6 +70,7 @@
 <!-- Shared layout (topbar + nav + mobile menu) injected by site.js -->
 <div id="site-nav"></div>
 <noscript>
+  <div class="topbar"><span class="topbar-msg">Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a></span></div>
   <nav class="nav-fallback">
     <a href="index.html">Hjem</a>
     <a href="skiskole.html">Skiskole</a>
@@ -1039,30 +1040,6 @@ add(
 
 })();
 
-// ── TOPBAR ROTATOR ──
-(() => {
-  const messages = [
-    '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-snowflake"/></svg> Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a>',
-    '🕐 Åpningstider: man–tors 18–20, lør–søn 11–15',
-    '🎿 Åpent for alle — både medlemmer og ikke-medlemmer er velkomne. Betaling via Vipps #943468.',
-    '❤️ Støtt oss via Grasrotandelen — <a href="https://www.norsk-tipping.no/grasrotandelen/din-mottaker/883456912" target="_blank" rel="noopener">Legg til Drammen Slalåmklubb som din grasrotmottaker →</a>',
-  ];
-  let idx = 0;
-  setInterval(() => {
-    const el = document.querySelector('.topbar-msg');
-    if (!el) return;
-    el.classList.add('fade-out');
-    setTimeout(() => {
-      idx = (idx + 1) % messages.length;
-      el.innerHTML = messages[idx];
-      el.classList.remove('fade-out');
-      el.classList.add('fade-in-top');
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        el.classList.remove('fade-in-top');
-      }));
-    }, 500);
-  }, 5000);
-})();
 </script>
 <script src="site.js"></script>
 </body>

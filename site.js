@@ -14,6 +14,8 @@
  *   - inject the footer into #site-footer
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
+ *   - load the Topbar message from Sanity (test/cms.test.js); init(doc)
+ *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
  * CommonJS test runner it exports its functions and does NOT auto-run, so
@@ -39,6 +41,18 @@
 
   const SPOND_URL =
     'https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3';
+
+  // Public by design (issue 011): reads need no token. Never add one here.
+  const SANITY_PROJECT_ID = 'uoseskhv';
+  const SANITY_DATASET = 'production';
+  // Live API (not apicdn) so a publish in Studio shows on the next reload.
+  // Events are fetched now so issue 014 only adds rendering.
+  const CMS_QUERY =
+    '{"topbar": *[_type == "topbarMessage"][0]{text, link, show},' +
+    ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips}}';
+  const CMS_URL =
+    'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
+    SANITY_DATASET + '?query=' + encodeURIComponent(CMS_QUERY);
 
   // Single source of truth for navigation. `page` matches body[data-page].
   const NAV_MODEL = {
@@ -101,9 +115,11 @@
       "document.getElementById('mobileMenu').classList.remove('open')";
     return (
       '<div class="topbar">' +
-        '<span class="topbar-msg">' +
+        // Hidden until the CMS answers; this hand-written text is the fallback.
+        '<span class="topbar-msg" hidden>' +
           '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-snowflake"/></svg> ' +
-          'Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — <strong>meld deg på i dag!</strong>' +
+          'Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — ' +
+          '<a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a>' +
         '</span>' +
         paletteSwitcherHTML() +
       '</div>' +
@@ -198,6 +214,54 @@
 
     wireHamburger(doc);
     wirePaletteSwitcher(doc);
+    return loadCms(doc);
+  }
+
+  /**
+   * One query to Sanity, then render the Topbar message. Any failure
+   * (rejection, non-OK, malformed data, no fetch) reveals the fallback text.
+   * Never rejects.
+   */
+  function loadCms(doc) {
+    const win = doc.defaultView;
+    const msg = doc.querySelector('.topbar-msg');
+    if (!win || typeof win.fetch !== 'function') {
+      if (msg) msg.hidden = false;
+      return Promise.resolve();
+    }
+    // Promise.resolve().then so a synchronous throw from fetch also falls back.
+    return Promise.resolve()
+      .then(function () { return win.fetch(CMS_URL); })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Sanity HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (body) {
+        const topbar = body && body.result && body.result.topbar;
+        if (!topbar || typeof topbar.text !== 'string') throw new Error('malformed topbar');
+        if (msg) renderTopbar(doc, msg, topbar);
+      })
+      .catch(function () {
+        if (msg) msg.hidden = false;
+      });
+  }
+
+  /** Replace the fallback with the CMS message. CMS strings go in as text. */
+  function renderTopbar(doc, msg, topbar) {
+    const icon = msg.querySelector('svg.icon');
+    msg.textContent = '';
+    if (icon) msg.append(icon, ' ');
+    if (typeof topbar.link === 'string' && /^https?:\/\//i.test(topbar.link)) {
+      const a = doc.createElement('a');
+      a.href = topbar.link;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = topbar.text;
+      msg.append(a);
+    } else {
+      msg.append(topbar.text);
+    }
+    msg.hidden = topbar.show === false;
   }
 
   /** Apply the persisted palette and wire the topbar swatches. */

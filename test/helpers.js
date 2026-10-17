@@ -23,4 +23,20 @@ function makeDoc(page) {
   return dom.window.document;
 }
 
-module.exports = { makeDoc };
+/**
+ * Stub `fetch` on the document's window so init(doc) never calls the real
+ * Sanity. `respond` is either a Sanity `result` object (served as a 200 JSON
+ * response), or a function `(url) => Promise<Response-like>` for failures.
+ * Returns the list of URLs fetched.
+ */
+function stubFetch(doc, respond) {
+  const calls = [];
+  doc.defaultView.fetch = (url) => {
+    calls.push(String(url));
+    if (typeof respond === 'function') return respond(url);
+    return Promise.resolve({ ok: true, json: async () => ({ result: respond }) });
+  };
+  return calls;
+}
+
+module.exports = { makeDoc, stubFetch };
