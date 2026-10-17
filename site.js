@@ -14,7 +14,8 @@
  *   - inject the footer into #site-footer
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
- *   - load the Topbar message from Sanity (test/cms.test.js); init(doc)
+ *   - load the Topbar message and landing-page Events from Sanity
+ *     (test/cms.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -46,7 +47,6 @@
   const SANITY_PROJECT_ID = 'uoseskhv';
   const SANITY_DATASET = 'production';
   // Live API (not apicdn) so a publish in Studio shows on the next reload.
-  // Events are fetched now so issue 014 only adds rendering.
   const CMS_QUERY =
     '{"topbar": *[_type == "topbarMessage"][0]{text, link, show},' +
     ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips}}';
@@ -218,15 +218,28 @@
   }
 
   /**
-   * One query to Sanity, then render the Topbar message. Any failure
-   * (rejection, non-OK, malformed data, no fetch) reveals the fallback text.
+   * One query to Sanity, then render the Topbar message and (where the
+   * #events-list mount exists) the upcoming Events. Any failure (rejection,
+   * non-OK, malformed data, no fetch) reveals that part's fallback content.
    * Never rejects.
    */
   function loadCms(doc) {
     const win = doc.defaultView;
     const msg = doc.querySelector('.topbar-msg');
+    const events = doc.getElementById('events-list');
+    function apply(result) {
+      const topbar = result && result.topbar;
+      if (msg) {
+        if (topbar && typeof topbar.text === 'string') renderTopbar(doc, msg, topbar);
+        else msg.hidden = false;
+      }
+      if (events) {
+        if (result && Array.isArray(result.events)) renderEvents(doc, events, result.events);
+        else events.hidden = false;
+      }
+    }
     if (!win || typeof win.fetch !== 'function') {
-      if (msg) msg.hidden = false;
+      apply(null);
       return Promise.resolve();
     }
     // Promise.resolve().then so a synchronous throw from fetch also falls back.
@@ -236,14 +249,19 @@
         if (!res.ok) throw new Error('Sanity HTTP ' + res.status);
         return res.json();
       })
-      .then(function (body) {
-        const topbar = body && body.result && body.result.topbar;
-        if (!topbar || typeof topbar.text !== 'string') throw new Error('malformed topbar');
-        if (msg) renderTopbar(doc, msg, topbar);
-      })
-      .catch(function () {
-        if (msg) msg.hidden = false;
-      });
+      .then(function (body) { return body && body.result; }, function () { return null; })
+      .then(apply);
+  }
+
+  /** A new-tab link for an http(s) URL from the CMS; null for anything else. */
+  function externalLink(doc, href, text) {
+    if (typeof href !== 'string' || !/^https?:\/\//i.test(href)) return null;
+    const a = doc.createElement('a');
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = text;
+    return a;
   }
 
   /** Replace the fallback with the CMS message. CMS strings go in as text. */
@@ -251,17 +269,77 @@
     const icon = msg.querySelector('svg.icon');
     msg.textContent = '';
     if (icon) msg.append(icon, ' ');
-    if (typeof topbar.link === 'string' && /^https?:\/\//i.test(topbar.link)) {
-      const a = doc.createElement('a');
-      a.href = topbar.link;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = topbar.text;
-      msg.append(a);
-    } else {
-      msg.append(topbar.text);
-    }
+    msg.append(externalLink(doc, topbar.link, topbar.text) || topbar.text);
     msg.hidden = topbar.show === false;
+  }
+
+  // Chip value → colour class. Must match studio/schemaTypes' CHIPS.
+  const CHIP_COLOURS = { 'Renn': 'chip-blue', 'Gratis': 'chip-orange', 'Årsmøte': 'chip-green', 'Medlemmer': 'chip-blue' };
+  const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'];
+  const MONTHS = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'desember'];
+  const WEEKDAYS = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  function el(doc, tag, className, text) {
+    const e = doc.createElement(tag);
+    if (className) e.className = className;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  /**
+   * Replace the fallback cards with the next 3 Events dated today or later
+   * (visitor's local time), nearest first. CMS strings go in as text.
+   */
+  function renderEvents(doc, mount, events) {
+    const now = new Date();
+    const today = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+    const upcoming = events
+      .filter(function (e) {
+        return e && typeof e.title === 'string' &&
+          typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.date >= today;
+      })
+      .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; })
+      .slice(0, 3);
+    mount.textContent = '';
+    if (!upcoming.length) mount.append(el(doc, 'p', 'events-empty', 'Ingen kommende arrangementer akkurat nå.'));
+    upcoming.forEach(function (e) { mount.append(eventCard(doc, e)); });
+    mount.hidden = false;
+  }
+
+  /** One card, same markup as the hand-written ones in index.html, minus fade-in. */
+  function eventCard(doc, e) {
+    const parts = e.date.split('-').map(Number);
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    let title = e.title + ' — ' + WEEKDAYS[d.getDay()] + ' ' + parts[2] + '. ' + MONTHS[parts[1] - 1] + ' ' + parts[0];
+    if (typeof e.startTime === 'string' && e.startTime) title += ' kl. ' + e.startTime;
+
+    const card = el(doc, 'div', 'event-card');
+    const date = el(doc, 'div', 'event-date');
+    date.append(el(doc, 'div', 'day', pad2(parts[2])), el(doc, 'div', 'month', MONTHS_SHORT[parts[1] - 1]));
+
+    const info = el(doc, 'div', 'event-info');
+    if (Array.isArray(e.chips) && e.chips.length) {
+      const chips = el(doc, 'div', 'event-chips');
+      e.chips.forEach(function (c) {
+        if (typeof c === 'string') chips.append(el(doc, 'span', 'event-chip ' + (CHIP_COLOURS[c] || 'chip-blue'), c));
+      });
+      info.append(chips);
+    }
+    info.append(el(doc, 'h3', 'event-title', title));
+
+    const text = [e.location, e.description].filter(function (t) { return typeof t === 'string' && t; }).join(' — ');
+    const link = externalLink(doc, e.link, 'Mer info →');
+    if (text || link) {
+      const loc = el(doc, 'div', 'event-location');
+      loc.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>';
+      if (text) loc.append(text);
+      if (link) loc.append(link);
+      info.append(loc);
+    }
+    card.append(date, info);
+    return card;
   }
 
   /** Apply the persisted palette and wire the topbar swatches. */

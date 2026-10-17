@@ -415,7 +415,10 @@
       <h2 class="section-title fade-in fade-in-delay-1">Kommende Arrangement</h2>
       <p class="section-sub fade-in fade-in-delay-2">Hold deg oppdatert på det som skjer i klubben.</p>
     </div>
-    <div class="events-grid">
+    <!-- site.js replaces these hand-written fallback cards with Events from Sanity.
+         Hidden until the CMS answers; revealed as-is if it fails or JS is off. -->
+    <noscript><style>.events-grid[hidden] { display: grid; }</style></noscript>
+    <div class="events-grid" id="events-list" hidden>
       <div class="event-card fade-in">
         <div class="event-date">
           <div class="day">19</div>

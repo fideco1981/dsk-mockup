@@ -2,6 +2,13 @@
 
 const { JSDOM } = require('jsdom');
 
+// The landing page's events mount, hidden until the CMS answers, holding one
+// hand-written fallback card (as index.html does).
+const EVENTS_MOUNT =
+  '<div class="events-grid" id="events-list" hidden>' +
+  '<div class="event-card fade-in"><h3 class="event-title">Fallback-arrangement</h3></div>' +
+  '</div>';
+
 /**
  * Build a minimal page document with the mount points site.js expects,
  * plus the body[data-page] marker. Returns the jsdom `document`.
@@ -12,7 +19,7 @@ function makeDoc(page) {
     `<!DOCTYPE html><html lang="no"><body data-page="${page}">
        <noscript><nav><a href="index.html">Hjem</a></nav></noscript>
        <div id="site-nav"></div>
-       <main></main>
+       <main>${page === 'index' ? EVENTS_MOUNT : ''}</main>
        <div id="site-footer"></div>
      </body></html>`,
     // A real origin is required for window.localStorage to be available

@@ -133,3 +133,129 @@ test('cms: every page shows the fallback topbar to <noscript> visitors', () => {
     assert.ok(msg.textContent.includes(FALLBACK), `${page}: fallback text`);
   }
 });
+
+// ── Events (issue 014) ──
+
+function eventsList(doc) {
+  return doc.getElementById('events-list');
+}
+
+function cards(doc) {
+  return [...eventsList(doc).querySelectorAll('.event-card')];
+}
+
+test('cms events: only upcoming events, nearest first, at most 3', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, {
+    topbar: { text: 'x' },
+    events: [
+      { title: 'Gammelt', date: '2000-01-01' },
+      { title: 'D', date: '2999-04-01' },
+      { title: 'B', date: '2999-02-01' },
+      { title: 'A', date: '2999-01-15', startTime: '18:00' },
+      { title: 'C', date: '2999-03-01' },
+    ],
+  });
+  await site.init(doc);
+  assert.ok(!eventsList(doc).hidden);
+  const titles = cards(doc).map((c) => c.querySelector('h3.event-title').textContent);
+  assert.equal(titles.length, 3);
+  assert.match(titles[0], /^A — tirsdag 15\. januar 2999 kl\. 18:00$/);
+  assert.match(titles[1], /^B — fredag 1\. februar 2999$/);
+  assert.match(titles[2], /^C /);
+  assert.ok(!eventsList(doc).textContent.includes('Fallback-arrangement'));
+  const first = cards(doc)[0];
+  assert.equal(first.querySelector('.event-date .day').textContent, '15');
+  assert.equal(first.querySelector('.event-date .month').textContent, 'Jan');
+});
+
+test('cms events: rendered cards are not in the fade-in hidden state', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01' }] });
+  await site.init(doc);
+  const card = cards(doc)[0];
+  assert.ok(!card.classList.contains('fade-in') || card.classList.contains('visible'));
+});
+
+test('cms events: chips render with their mapped colours', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01', chips: ['Renn', 'Gratis', 'Årsmøte', 'Medlemmer'] }] });
+  await site.init(doc);
+  const chips = [...cards(doc)[0].querySelectorAll('.event-chips .event-chip')];
+  assert.deepEqual(
+    chips.map((c) => [c.textContent, c.classList.contains('chip-blue') ? 'blue' : c.classList.contains('chip-orange') ? 'orange' : c.classList.contains('chip-green') ? 'green' : '?']),
+    [['Renn', 'blue'], ['Gratis', 'orange'], ['Årsmøte', 'green'], ['Medlemmer', 'blue']],
+  );
+});
+
+test('cms events: location line has the decorative pin, description and an http(s) link', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01', location: 'Haukåsløypa', description: 'Åpent for alle.', link: 'https://example.org/p' }] });
+  await site.init(doc);
+  const loc = cards(doc)[0].querySelector('.event-location');
+  assert.equal(loc.querySelector('svg.icon').getAttribute('aria-hidden'), 'true');
+  assert.match(loc.textContent, /Haukåsløypa — Åpent for alle\./);
+  const a = loc.querySelector('a');
+  assert.equal(a.getAttribute('href'), 'https://example.org/p');
+  assert.equal(a.getAttribute('target'), '_blank');
+  assert.equal(a.getAttribute('rel'), 'noopener');
+});
+
+test('cms events: a non-http(s) event link is not rendered', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01', link: 'javascript:alert(1)' }] });
+  await site.init(doc);
+  assert.equal(cards(doc)[0].querySelector('a'), null);
+});
+
+test('cms events: markup in event fields is rendered as text', async () => {
+  const doc = makeDoc('index');
+  const evil = '<img src=x onerror=alert(1)><b>hei</b>';
+  stubFetch(doc, { events: [{ title: evil, date: '2999-01-01', location: evil, description: evil, chips: [evil] }] });
+  await site.init(doc);
+  assert.equal(eventsList(doc).querySelector('img, b'), null);
+  assert.ok(cards(doc)[0].textContent.includes('<b>hei</b>'));
+});
+
+test('cms events: an empty list shows the "no upcoming events" message, not the fallback', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'Gammelt', date: '2000-01-01' }] });
+  await site.init(doc);
+  assert.ok(!eventsList(doc).hidden);
+  assert.equal(cards(doc).length, 0);
+  assert.match(eventsList(doc).textContent, /Ingen kommende arrangementer/);
+});
+
+test('cms events: hidden while loading', () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, () => new Promise(() => {}));
+  site.init(doc);
+  assert.ok(eventsList(doc).hidden);
+});
+
+test('cms events: a fetch failure reveals the fallback cards', async () => {
+  for (const respond of [() => Promise.reject(new TypeError('offline')), () => Promise.resolve({ ok: false, status: 500, json: async () => ({}) }), { topbar: { text: 'x' }, events: 'nope' }]) {
+    const doc = makeDoc('index');
+    stubFetch(doc, respond);
+    await site.init(doc);
+    assert.ok(!eventsList(doc).hidden);
+    assert.ok(eventsList(doc).textContent.includes('Fallback-arrangement'));
+  }
+});
+
+test('cms events: malformed events are skipped, valid ones still render', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [null, { title: 'Uten dato' }, { title: 'X', date: 'snart' }, { title: 'OK', date: '2999-01-01', chips: 'Renn' }] });
+  await site.init(doc);
+  assert.deepEqual(cards(doc).map((c) => c.querySelector('h3').textContent.split(' — ')[0]), ['OK']);
+});
+
+test('cms events: index.html has the events mount, hidden, with fallback cards and a noscript reveal', () => {
+  const { JSDOM } = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const doc = new JSDOM(html).window.document;
+  const list = doc.getElementById('events-list');
+  assert.ok(list && list.hidden);
+  assert.ok(list.querySelectorAll('.event-card').length > 0);
+  assert.match(html, /<noscript><style>[^<]*\.events-grid\[hidden\][^<]*<\/style><\/noscript>/);
+});
