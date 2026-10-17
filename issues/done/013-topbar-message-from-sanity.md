@@ -21,12 +21,12 @@ See PRD: "Shared layout engine", "Loading behaviour and fallback content", "Rend
 
 ## Acceptance criteria
 
-- [ ] The shared test helper can stub `fetch` on the JSDOM window. No test calls the real Sanity.
-- [ ] Test: after `await init(doc)`, the topbar shows the CMS text.
-- [ ] Test: with the toggle off, the topbar message is hidden.
-- [ ] Test: a fetch rejection and a non-OK response both reveal the fallback text.
-- [ ] Test: a CMS string containing markup is rendered as text.
-- [ ] Test: a non-landing page (no events mount) gets the CMS topbar and doesn't break.
-- [ ] Test: source-text guard that `site.js` contains no token, modelled on the styret `LEAKED` guard.
-- [ ] The existing `site.js` tests still pass; real pages work without awaiting `init`.
-- [ ] Checked by hand on localhost against the real dataset.
+- [x] The shared test helper can stub `fetch` on the JSDOM window. No test calls the real Sanity.
+- [x] Test: after `await init(doc)`, the topbar shows the CMS text.
+- [x] Test: with the toggle off, the topbar message is hidden.
+- [x] Test: a fetch rejection and a non-OK response both reveal the fallback text.
+- [x] Test: a CMS string containing markup is rendered as text.
+- [x] Test: a non-landing page (no events mount) gets the CMS topbar and doesn't break.
+- [x] Test: source-text guard that `site.js` contains no token, modelled on the styret `LEAKED` guard.
+- [x] The existing `site.js` tests still pass; real pages work without awaiting `init`.
+- [x] Checked by hand on localhost against the real dataset.

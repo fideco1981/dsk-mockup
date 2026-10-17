@@ -20,11 +20,11 @@ See PRD: "Shared layout engine", "Loading behaviour", "Fade-in", "Rendering and 
 
 ## Acceptance criteria
 
-- [ ] `makeDoc` gains an events mount point.
-- [ ] Test: fixtures dated in 2000 and 2999 → only upcoming events are shown, nearest first, at most 3. No clock mocking.
-- [ ] Test: cards are not in the fade-in hidden state.
-- [ ] Test: chips render with their mapped colours.
-- [ ] Test: markup in event fields is rendered as text.
-- [ ] Test: an empty list shows the "no upcoming events" message, not the fallback.
-- [ ] Test: a fetch failure reveals the fallback cards.
-- [ ] Checked by hand on localhost: a card created in Studio appears after a reload, and looks the same as the hand-written ones.
+- [x] `makeDoc` gains an events mount point.
+- [x] Test: fixtures dated in 2000 and 2999 → only upcoming events are shown, nearest first, at most 3. No clock mocking.
+- [x] Test: cards are not in the fade-in hidden state.
+- [x] Test: chips render with their mapped colours.
+- [x] Test: markup in event fields is rendered as text.
+- [x] Test: an empty list shows the "no upcoming events" message, not the fallback.
+- [x] Test: a fetch failure reveals the fallback cards.
+- [x] Checked by hand on localhost: a card created in Studio appears after a reload, and looks the same as the hand-written ones.
