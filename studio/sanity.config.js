@@ -3,8 +3,12 @@ import { structureTool } from 'sanity/structure';
 import { schemaTypes } from './schemaTypes/index.js';
 import { projectId, dataset } from './project.js';
 import { topbarMessage } from './schemaTypes/topbarMessage.js';
+import { skiSchool } from './schemaTypes/skiSchool.js';
 
-const SINGLETON = topbarMessage.name;
+// One fixed document each, opened straight from the menu (documentId = type name).
+const SINGLETONS = [topbarMessage.name, skiSchool.name];
+const singleton = (S, type, title) =>
+  S.listItem().title(title).id(type).child(S.document().schemaType(type).documentId(type));
 
 export default defineConfig({
   name: 'default',
@@ -17,10 +21,7 @@ export default defineConfig({
         S.list()
           .title('Innhold')
           .items([
-            S.listItem()
-              .title('Toppmelding')
-              .id(SINGLETON)
-              .child(S.document().schemaType(SINGLETON).documentId(SINGLETON)),
+            singleton(S, topbarMessage.name, 'Toppmelding'),
             S.documentTypeListItem('event').title('Arrangementer'),
             S.listItem()
               .title('Sponsorer')
@@ -38,16 +39,25 @@ export default defineConfig({
                   .title('Treningsgrupper')
                   .defaultOrdering([{ field: 'order', direction: 'asc' }]),
               ),
+            singleton(S, skiSchool.name, 'Skiskole'),
+            S.listItem()
+              .title('Kurs')
+              .schemaType('course')
+              .child(
+                S.documentTypeList('course')
+                  .title('Kurs')
+                  .defaultOrdering([{ field: 'startDate', direction: 'asc' }]),
+              ),
           ]),
     }),
   ],
   schema: { types: schemaTypes },
   document: {
-    // Keep the singleton out of "Create new". Its template must stay, or initialValue never applies.
-    newDocumentOptions: (prev) => prev.filter((item) => item.templateId !== SINGLETON),
-    // No duplicate/delete on the singleton, so there is only ever one.
+    // Keep the singletons out of "Create new". Their templates must stay, or initialValue never applies.
+    newDocumentOptions: (prev) => prev.filter((item) => !SINGLETONS.includes(item.templateId)),
+    // No duplicate/delete on a singleton, so there is only ever one.
     actions: (actions, { schemaType }) =>
-      schemaType === SINGLETON
+      SINGLETONS.includes(schemaType)
         ? actions.filter(({ action }) => ['publish', 'discardChanges', 'restore'].includes(action))
         : actions,
   },
