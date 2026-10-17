@@ -139,6 +139,14 @@ test('index: hero and membership CTAs link to the Spond signup form', () => {
   assert.match(memSpond.getAttribute('rel') || '', /noopener/);
 });
 
+test('index: the hero "Se Skiskolen" button links to skiskole.html (issue 024)', () => {
+  const doc = renderIndex();
+  const btn = [...doc.querySelectorAll('.hero a')].find((a) => /Se Skiskolen/.test(a.textContent));
+  assert.ok(btn, 'hero has a Se Skiskolen button');
+  assert.equal(btn.getAttribute('href'), 'skiskole.html');
+  assert.equal(btn.textContent.trim(), 'Se Skiskolen');
+});
+
 test('index: legacy schedule.html standalone file has been removed', () => {
   assert.equal(
     fs.existsSync(path.join(ROOT, 'schedule.html')),
