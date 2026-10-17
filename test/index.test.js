@@ -183,7 +183,7 @@ test('index: Haukåsløypa section presents Cross-løypa as new this season (iss
   const doc = renderIndex();
   const section = doc.getElementById('haukos');
   const text = section.textContent.replace(/\s+/g, ' ');
-  assert.match(text, /Cross-løypa, ca\. 250 meter med 57 meters fall/);
+  assert.match(text, /Cross-løypa er ca\. 250 meter med 57 meters fall/);
   assert.match(text, /Ny denne sesongen/);
   const chips = [...section.querySelectorAll('.fact-chip')].map((c) =>
     c.textContent.replace(/\s+/g, ' ').trim(),
