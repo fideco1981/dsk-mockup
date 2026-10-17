@@ -15,9 +15,9 @@
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
  *   - load the Topbar message, landing-page Events, the footer's Sponsor
- *     strip, the Training groups, the Ski school, Courses and Lift hours from
- *     Sanity (test/cms.test.js, test/treningsopplegg.test.js,
- *     test/skiskole.test.js, test/lift-hours.test.js); init(doc)
+ *     strip, the Training groups, the Ski school, Courses, Lift hours and the
+ *     Treningsplan from Sanity (test/cms.test.js, test/treningsopplegg.test.js,
+ *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -55,7 +55,7 @@
     ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url},' +
     ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}},' +
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
-    ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, price, link, note},' +
+    ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}}}';
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
@@ -247,6 +247,8 @@
       if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
       const lift = result && result.liftHours;
       if (lift && typeof lift === 'object') renderLiftHours(doc, lift);
+      const schedule = doc.getElementById('schedule');
+      if (schedule && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -332,10 +334,22 @@
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
-  /** Today as YYYY-MM-DD in the visitor's local time. */
-  function todayISO() {
+  /** A Date as YYYY-MM-DD in the visitor's local time. */
+  function localISO(d) {
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+
+  function todayISO() { return localISO(new Date()); }
+
+  /** The current week, Monday–Sunday in local time, with its ISO week number. */
+  function currentWeek() {
     const now = new Date();
-    return now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+    const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
+    const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+    // The ISO week is the one holding this week's Thursday, counted from 1 January of its year.
+    const thursday = Date.UTC(monday.getFullYear(), monday.getMonth(), monday.getDate() + 3);
+    const jan1 = Date.UTC(new Date(thursday).getUTCFullYear(), 0, 1);
+    return { monday: localISO(monday), sunday: localISO(sunday), number: Math.floor((thursday - jan1) / 864e5 / 7) + 1 };
   }
 
   function isISODate(d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
@@ -539,8 +553,7 @@
       if (isText(lift.note)) m.textContent = lift.note;
       else m.parentNode.hidden = true;
     });
-    const byDay = {};
-    validSessions(lift.hours).forEach(function (s) { if (!byDay[s.day]) byDay[s.day] = { from: s.from, to: s.to }; });
+    const byDay = liftByDay(lift);
     if (!Object.keys(byDay).length) return;
     const runs = [];
     DAYS.forEach(function (d) {
@@ -563,6 +576,90 @@
       m.append(t ? 'Heis ' + t.from + ' – ' + t.to : 'Heis stengt');
       m.parentNode.classList.toggle('lift-closed', !t);
     });
+  }
+
+  /** Lift hours per day: { Mandag: {from, to}, … }; a closed day has no key. */
+  function liftByDay(lift) {
+    const byDay = {};
+    validSessions(lift && lift.hours).forEach(function (s) { if (!byDay[s.day]) byDay[s.day] = { from: s.from, to: s.to }; });
+    return byDay;
+  }
+
+  const SKI_SCHOOL_CLASS = 'group-skiskole';
+
+  /**
+   * Fill the landing page's Treningsplan from the Training groups' sessions
+   * and this week's Courses, keeping the lift labels. Per day: the sessions by
+   * `from`, a "Kun skiskole" piece when a course starts before the lift opens,
+   * and the lift tail after the last session. Lift parts need Lift hours; the
+   * fallback labels alone carry no times to compute with. CMS strings go in as text.
+   */
+  function renderSchedule(doc, mount, groups, courseList, lift) {
+    const week = currentWeek();
+    const courses = (Array.isArray(courseList) ? courseList : []).filter(function (c) {
+      return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate) &&
+        c.startDate <= week.sunday && c.endDate >= week.monday &&
+        !(Array.isArray(c.skipWeeks) && c.skipWeeks.indexOf(week.number) >= 0);
+    });
+    const entries = [];
+    groups.forEach(function (g) {
+      validSessions(g.sessions).forEach(function (s) { entries.push({ s: s, title: g.title, cls: groupClass(g), place: g.place }); });
+    });
+    courses.forEach(function (c) {
+      validSessions(c.sessions).forEach(function (s) { entries.push({ s: s, title: c.title, cls: SKI_SCHOOL_CLASS, href: 'skiskole.html' }); });
+    });
+    entries.sort(function (a, b) { return compareStr(a.s.from, b.s.from); });
+
+    const legend = mount.querySelector('.legend');
+    legend.querySelectorAll('.legend-item').forEach(function (i) { i.remove(); });
+    const items = groups.map(function (g) { return [g.title, groupClass(g)]; });
+    if (courses.length) items.push(['Skiskole', SKI_SCHOOL_CLASS]);
+    items.forEach(function (it) {
+      const item = el(doc, 'div', 'legend-item');
+      item.append(el(doc, 'span', 'legend-dot ' + it[1]), it[0]);
+      legend.append(item);
+    });
+
+    mount.querySelectorAll('.lift-header[data-day]').forEach(function (header) {
+      const wrapper = header.parentNode;
+      const today = entries.filter(function (e) { return e.s.day === header.dataset.day; });
+      const cards = wrapper.querySelector('.lift-cards');
+      cards.textContent = '';
+      today.forEach(function (e) { cards.append(scheduleCard(doc, e)); });
+      wrapper.querySelectorAll('.lift-pre, .lift-tail').forEach(function (p) { p.remove(); });
+      const open = lift[header.dataset.day];
+      if (!open || !today.length) return;
+      const course = today.filter(function (e) { return e.href; })[0];
+      if (course && course.s.from < open.from) {
+        wrapper.insertBefore(el(doc, 'div', 'lift-pre', 'Kun skiskole ' + course.s.from + ' – ' + open.from), header);
+      }
+      const last = today.map(function (e) { return e.s.to; }).sort().pop();
+      if (last < open.to) {
+        const tail = el(doc, 'div', 'lift-tail');
+        tail.append(el(doc, 'span', null, last + ' – ' + open.to), el(doc, 'div', 'tail-line'));
+        wrapper.append(tail);
+      }
+    });
+    const fallback = mount.querySelector('[data-schedule-fallback]');
+    if (fallback) fallback.remove();
+  }
+
+  /** One Treningsplan card; a course card links to skiskole.html. */
+  function scheduleCard(doc, e) {
+    const card = el(doc, e.href ? 'a' : 'div', 'session-card ' + e.cls);
+    if (e.href) card.href = e.href;
+    card.append(el(doc, 'span', 's-group', e.title));
+    if (isText(e.place)) {
+      const loc = el(doc, 'span', 's-loc');
+      loc.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-pin"/></svg>';
+      loc.append(e.place);
+      card.append(loc);
+    }
+    const time = el(doc, 'span', 's-time');
+    time.innerHTML = '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>';
+    time.append(e.s.from + ' – ' + e.s.to);
+    card.append(time);
+    return card;
   }
 
   /** An info card with a decorative icon, a heading and a body element. */

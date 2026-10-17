@@ -29,14 +29,14 @@ Render the landing page's `#schedule` "Treningsplan" (`index.html` around lines 
 
 ## Acceptance criteria
 
-- [ ] Test: group sessions show on the right day in the group's colour, sorted by `from`, in both the desktop and mobile views.
-- [ ] Test: a 2000–2999 course shows; a 2000 course doesn't; a course with skipWeeks 1–53 doesn't.
-- [ ] Test: the "Skiskole" legend entry only appears when a course is shown.
-- [ ] Test: course 17:30 with the lift at 18:00 gives a "Kun skiskole" piece 17:30–18:00; a course starting after opening gives no such piece.
-- [ ] Test: a day with no `liftHours` entry shows "Heis stengt".
-- [ ] Test: a Sanity error and zero groups both keep the fallback.
-- [ ] Fallback contains no old group names (Rekrutten, Teknikeren, DSK Fun) and no made-up times.
-- [ ] The axe scan passes for the ski-school colour and the "Kun skiskole" label.
-- [ ] CONTEXT.md updated.
+- [x] Test: group sessions show on the right day in the group's colour, sorted by `from`, in both the desktop and mobile views.
+- [x] Test: a 2000–2999 course shows; a 2000 course doesn't; a course with skipWeeks 1–53 doesn't.
+- [x] Test: the "Skiskole" legend entry only appears when a course is shown.
+- [x] Test: course 17:30 with the lift at 18:00 gives a "Kun skiskole" piece 17:30–18:00; a course starting after opening gives no such piece.
+- [x] Test: a day with no `liftHours` entry shows "Heis stengt".
+- [x] Test: a Sanity error and zero groups both keep the fallback.
+- [x] Fallback contains no old group names (Rekrutten, Teknikeren, DSK Fun) and no made-up times.
+- [x] The axe scan passes for the ski-school colour and the "Kun skiskole" label.
+- [x] CONTEXT.md updated.
 
 ## Comments

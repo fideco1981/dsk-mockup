@@ -1726,10 +1726,8 @@
   .legend-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
   .legend-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; padding: 6px 14px 6px 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .legend-dot.blue   { background: var(--blue); box-shadow: 0 0 8px rgba(0,159,227,0.5); }
-  .legend-dot.purple { background: var(--accent-lt); box-shadow: 0 0 8px rgba(74,58,154,0.5); }
-  .legend-dot.sched-pink  { background: #ec407a; box-shadow: 0 0 8px rgba(236,64,122,0.5); }
-  .legend-dot.orange { background: #E8870A; box-shadow: 0 0 8px rgba(232,135,10,0.5); }
+  /* Colours from the Training group's .group-* class; the outline keeps Sort visible on dark. */
+  .legend-dot { background: var(--group-bg); box-shadow: 0 0 0 1px rgba(255,255,255,0.35); }
 
   /* Weekly grid */
   .week-grid { display: grid; grid-template-columns: 64px repeat(7, 1fr); gap: 0; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; background: var(--dark2); }
@@ -1753,18 +1751,14 @@
   .session-card .s-group { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; display: block; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .session-card .s-loc { font-size: 11px; font-weight: 400; opacity: 0.7; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .session-card .s-time { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.85; display: flex; align-items: center; gap: 4px; }
-  .card-blue { background: rgba(0,159,227,0.13); border: 1px solid rgba(0,159,227,0.3); color: #cceeff; }
-  .card-blue::before { background: var(--blue); }
-  .card-blue .s-group { color: #5DD9F7; }
-  .card-purple { background: rgba(74,58,154,0.18); border: 1px solid rgba(102,85,187,0.35); color: #d4ccff; }
-  .card-purple::before { background: var(--accent-lt); }
-  .card-purple .s-group { color: #b8aaff; }
-  .card-green { background: rgba(194,24,91,0.13); border: 1px solid rgba(236,64,122,0.28); color: #ffc0d6; }
-  .card-green::before { background: #ec407a; }
-  .card-green .s-group { color: #f48fb1; }
-  .card-orange { background: rgba(232,135,10,0.13); border: 1px solid rgba(232,135,10,0.3); color: #fde5b8; }
-  .card-orange::before { background: #E8870A; }
-  .card-orange .s-group { color: #f5a030; }
+  /* Tinted by the .group-* colour; text stays white so every colour, Sort included, passes AA. */
+  .session-card { background: color-mix(in srgb, var(--group-bg) 22%, var(--dark2)); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+  .session-card::before { background: var(--group-bg); }
+  a.session-card { display: block; text-decoration: none; cursor: pointer; }
+  a.session-card:focus-visible { outline: 2px solid var(--blue-lt); outline-offset: 2px; }
+  .group-skiskole { --group-bg: #EC407A; --group-ink: var(--dark); } /* every Course in the Treningsplan */
+  /* The lift bar extended back to a course that starts before the lift opens */
+  .lift-pre { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; padding: 6px 9px; background: color-mix(in srgb, #EC407A 30%, var(--dark2)); border-bottom: 1px dashed rgba(236,64,122,0.5); }
 
   /* Lift wrapper */
   .lift-wrapper { border-radius: 8px; overflow: hidden; border: 1px solid rgba(58,154,74,0.3); background: rgba(45,122,58,0.07); display: flex; flex-direction: column; flex: 1; }

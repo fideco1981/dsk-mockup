@@ -3,12 +3,11 @@
 // Integration test for index.html — landing page content accuracy (issue 008).
 //
 // Loads the real HTML file, runs site.js against it, and asserts the corrections
-// from content-baseline.md: "Teknikern" → "Teknikeren" everywhere; the schedule
-// reflects real per-group days (Rekrutten Mon+Wed only; DSK Fun Tue+Thu only;
-// no single-blanket-time oversimplification); the Arrangement section lists the
+// from content-baseline.md: the Arrangement section lists the
 // real events (Årsmøte 25 mars 2026 + three Telenorkarusellen dates) instead of
 // invented placeholders; the Spond signup CTAs are present and target Spond;
-// and the legacy schedule.html standalone file is removed.
+// and the legacy schedule.html standalone file is removed. The Treningsplan
+// (#schedule) is covered by test/treningsplan.test.js (issue 026).
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -32,67 +31,6 @@ test('index: Hjem nav link is marked active after layout injection', () => {
   assert.equal(active.length, 1, 'exactly one active nav link');
   assert.equal(active[0].textContent.trim(), 'Hjem');
   assert.equal(active[0].getAttribute('aria-current'), 'page');
-});
-
-test('index: "Teknikeren" is spelled correctly (not "Teknikern") throughout', () => {
-  const doc = renderIndex();
-  const text = doc.body.textContent;
-  // The misspelling "Teknikern" (no trailing "e") should never appear.
-  assert.equal(
-    /Teknikern(?!e)/i.test(text),
-    false,
-    'misspelling "Teknikern" must not appear',
-  );
-  assert.ok(/Teknikeren/.test(text), 'correct spelling "Teknikeren" present');
-});
-
-test('index: schedule lists per-group days (not a single blanket time)', () => {
-  const doc = renderIndex();
-  // Per content-baseline.md: Rekrutten trains Mon + Wed only; DSK Fun trains
-  // Tue + Thu only. So Rekrutten must NOT appear on Tue/Thu day-cells, and
-  // DSK Fun must NOT appear on Mon/Wed day-cells. Read the desktop grid.
-  const grid = doc.querySelector('.week-grid');
-  assert.ok(grid, 'desktop week grid exists');
-  // The cells line up: day-headers first (7), then alternating time-slot/cells.
-  // Simpler: read by sibling structure — fetch every .day-cell and pair them
-  // with the day-header index.
-  const dayHeaders = [...grid.querySelectorAll('.day-header')].map((h) =>
-    h.textContent.trim().toLowerCase(),
-  );
-  const dayCells = [...grid.querySelectorAll('.day-cell')];
-  assert.equal(dayCells.length, dayHeaders.length, 'one cell per day-header');
-
-  function cellsFor(dayName) {
-    return dayCells.filter((_, i) => dayHeaders[i].includes(dayName));
-  }
-  function textOf(cells) {
-    return cells.map((c) => c.textContent).join(' ');
-  }
-
-  const mon = textOf(cellsFor('mandag'));
-  const tue = textOf(cellsFor('tirsdag'));
-  const wed = textOf(cellsFor('onsdag'));
-  const thu = textOf(cellsFor('torsdag'));
-
-  assert.match(mon, /Rekrutten/, 'Rekrutten trains on Monday');
-  assert.match(wed, /Rekrutten/, 'Rekrutten trains on Wednesday');
-  assert.equal(/Rekrutten/.test(tue), false, 'Rekrutten does NOT train on Tuesday');
-  assert.equal(/Rekrutten/.test(thu), false, 'Rekrutten does NOT train on Thursday');
-
-  assert.match(tue, /DSK Fun/, 'DSK Fun trains on Tuesday');
-  assert.match(thu, /DSK Fun/, 'DSK Fun trains on Thursday');
-  assert.equal(/DSK Fun/.test(mon), false, 'DSK Fun does NOT train on Monday');
-  assert.equal(/DSK Fun/.test(wed), false, 'DSK Fun does NOT train on Wednesday');
-
-  // The "all training is 18:00–19:30" oversimplification must be gone. The
-  // old note said exactly that; assert no blanket "alle treninger ... 18:00"
-  // sentence remains.
-  const text = doc.body.textContent.toLowerCase();
-  assert.equal(
-    /alle treninger\s+starter\s+18[:.]00/.test(text),
-    false,
-    'must not assert "alle treninger starter 18:00" — schedule varies per group',
-  );
 });
 
 test('index: arrangement section lists Årsmøte 25. mars 2026 kl. 18:00', () => {

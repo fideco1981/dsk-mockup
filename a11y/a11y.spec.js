@@ -40,12 +40,18 @@ const COURSES = [{
   title: 'Helgekurs', signupDeadline: '2999-01-10', startDate: '2999-01-16', endDate: '2999-01-17',
   sessions: [{ day: 'Lørdag', from: '10:00', to: '14:00' }], price: '2 500 kroner',
   link: 'https://example.org/kurs', note: 'Snøforbehold.',
+}, {
+  // Always in the current week and starting before the lift: scans the
+  // Treningsplan's ski-school colour and its "Kun skiskole" piece (issue 026).
+  title: 'Skiskole ettermiddag', startDate: '2000-01-01', endDate: '2999-12-31',
+  sessions: [{ day: 'Mandag', from: '17:30', to: '19:00' }],
 }];
+const LIFT_HOURS = { note: 'Stengt i høstferien.', hours: [{ day: 'Mandag', from: '18:00', to: '20:00' }] };
 
 // Sanity responses per CMS state. A function is a route handler (failure).
 const CMS = {
   success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS, trainingGroups: TRAINING_GROUPS,
-    skiSchool: SKI_SCHOOL, courses: COURSES },
+    skiSchool: SKI_SCHOOL, courses: COURSES, liftHours: LIFT_HOURS },
   failure: (route) => route.fulfill({ status: 500, body: '{}' }),
   empty: { topbar: TOPBAR, events: [] },
   'topbar off': { topbar: { ...TOPBAR, show: false }, events: [EVENT] },
@@ -57,6 +63,8 @@ const RENDERED = {
     await expect(page.locator('#events-list')).toContainText(EVENT.title);
     await expect(page.locator('.sponsor-strip')).toBeVisible();
     await expect(page.locator('#programs-grid .program-age').first()).toBeVisible();
+    await expect(page.locator('#schedule .lift-pre').filter({ visible: true })).toHaveText('Kun skiskole 17:30 – 18:00');
+    await expect(page.locator('#schedule .session-card.group-skiskole').filter({ visible: true })).toBeVisible();
   },
   failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Sesong'),
   empty: (page) => expect(page.locator('.events-empty')).toBeVisible(),

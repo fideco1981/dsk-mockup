@@ -1,7 +1,8 @@
 import { session } from './session.js';
 
 // A dated ski-school course. site.js shows it on skiskole.html until its
-// endDate has passed, sorted by startDate. Text shared by every course lives
+// endDate has passed, and in the landing page's Treningsplan in the weeks it
+// runs (minus skipWeeks). On skiskole.html it is sorted by startDate. Text shared by every course lives
 // in the Skiskole singleton (skiSchool).
 export const course = {
   name: 'course',
