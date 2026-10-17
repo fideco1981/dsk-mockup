@@ -47,3 +47,5 @@ Move the training groups on `treningsopplegg.html` into Sanity. The club has ren
 - Unknown colours fall back to blue, as Chips do. Two groups whose titles slug the same (e.g. "Blå" and "Bla") would share an anchor. This isn't handled; add a Studio check if it ever happens.
 - `TIME` is now exported from `event.js` and shared by both schemas.
 - The "N grupper" heading shows "Fem grupper" for a moment while Sanity loads, then updates.
+
+2026-10-17: Studio deployed with Treningsgrupper in the left menu (971e0b7). What's left is entering the five groups once the content is settled; then close the ticket.
