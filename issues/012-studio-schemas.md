@@ -39,3 +39,5 @@ There is no automated test for the schemas, because the PRD says "Not tested: th
 
 - **For 014:** `startTime` is validated as `TT:MM`.
 - **For 013:** treat an unset `show` as on.
+
+**Deployed 2026-10-17:** https://dsk-slalom.sanity.studio/ (appId pinned in `studio/sanity.cli.js`). Still to do: Stein logs in and publishes one event there.
