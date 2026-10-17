@@ -5,9 +5,13 @@
   "description": "Drammen Slalåmklubb MVP website — static multi-page site",
   "scripts": {
     "test": "node --test",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:a11y": "playwright test",
+    "test:a11y:setup": "playwright install chromium"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
     "jsdom": "^24.1.0",
     "typescript": "^5.5.0"
   }

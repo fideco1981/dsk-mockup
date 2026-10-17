@@ -426,6 +426,7 @@
 
   return {
     NAV_MODEL: NAV_MODEL,
+    PALETTES: PALETTES,
     init: init,
     currentPage: currentPage,
     navHTML: navHTML,

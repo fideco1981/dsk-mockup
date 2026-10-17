@@ -26,9 +26,18 @@ An automated accessibility check that runs every page in a real browser through 
 
 ## Acceptance criteria
 
-- [ ] `npm run test:a11y` installs nothing at runtime, documents the one-time `npx playwright install chromium`, and exits non-zero on any axe violation.
-- [ ] Every page is scanned at phone and desktop widths, including with the mobile menu open.
-- [ ] The landing page is scanned in all five CMS states listed above, and no test reaches the real Sanity.
-- [ ] Colour contrast is checked under all three palettes.
-- [ ] Every remaining exclusion names its rule or selector and links a follow-up ticket.
-- [ ] `npm test` is unchanged and still runs without a browser.
+- [x] `npm run test:a11y` installs nothing at runtime, documents the one-time `npx playwright install chromium`, and exits non-zero on any axe violation.
+- [x] Every page is scanned at phone and desktop widths, including with the mobile menu open.
+- [x] The landing page is scanned in all five CMS states listed above, and no test reaches the real Sanity.
+- [x] Colour contrast is checked under all three palettes.
+- [x] Every remaining exclusion names its rule or selector and links a follow-up ticket.
+- [x] `npm test` is unchanged and still runs without a browser.
+
+## Comments
+
+**Closeout (2026-10-17):** `npm run test:a11y` (`playwright test`, config `playwright.config.js`, spec `a11y/a11y.spec.js`) runs in about 1 minute: 62 scans, plus 6 desktop mobile-menu cases skipped. One-time setup is `npm run test:a11y:setup`.
+- Pages are served from disk via `page.route`. Sanity is stubbed and every other request is aborted, so the run is offline.
+- Each CMS state asserts what it rendered before it's scanned.
+- The no-JS state is served as a no-JS browser parses it (scripts dropped, `<noscript>` unwrapped), because axe can't run with `javaScriptEnabled: false`.
+- Fixed: the palette-independent contrast fails (events subtitle and empty text, event location, the green chip, the lift schedule labels), plus a real bug: without JS, `index.html`'s `.fade-in` content stayed at opacity 0.
+- Remaining: the palette accent contrast is a board call. It's filed as `issues/018-palette-accent-contrast.md`, with palette-scoped `color-contrast` exclusions in `KNOWN`.

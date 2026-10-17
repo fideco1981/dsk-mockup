@@ -5,3 +5,7 @@ node_modules/
 # the baseline values (e.g. test/styret.test.js) read it dynamically and skip
 # the PII-leak check when absent.
 content-baseline.md
+
+# Playwright a11y run output (npm run test:a11y)
+test-results/
+playwright-report/
