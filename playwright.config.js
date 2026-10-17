@@ -6,6 +6,8 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: 'a11y',
+  fullyParallel: true, // one spec file: without this, at most one worker per project
+  workers: '100%',
   reporter: 'list',
   use: { browserName: 'chromium', reducedMotion: 'reduce' },
   projects: [
