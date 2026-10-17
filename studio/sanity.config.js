@@ -30,6 +30,14 @@ export default defineConfig({
                   .title('Sponsorer')
                   .defaultOrdering([{ field: 'order', direction: 'asc' }]),
               ),
+            S.listItem()
+              .title('Treningsgrupper')
+              .schemaType('trainingGroup')
+              .child(
+                S.documentTypeList('trainingGroup')
+                  .title('Treningsgrupper')
+                  .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+              ),
           ]),
     }),
   ],
