@@ -12,7 +12,9 @@ Replace the note with the confirmed figures, or remove it if the page doesn't ne
 
 ## Acceptance criteria
 
-- [ ] `om-oss.html` no longer says the figures are unconfirmed.
-- [ ] Any figures shown match `index.html`.
+- [x] `om-oss.html` no longer says the figures are unconfirmed.
+- [x] Any figures shown match `index.html`.
 
 ## Comments
+
+Closeout: removed the `.board-note` from `om-oss.html`. The page never shows the stats, and the "beregnet fra GPS-spor" wording this ticket pointed to was deliberately removed from `index.html` in 0f4ecd1, so there was nothing to mirror. Replaced the old "numbers must be qualified" test with one asserting the page no longer calls them unconfirmed.

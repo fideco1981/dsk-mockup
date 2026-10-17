@@ -78,25 +78,10 @@ test('om-oss: three notable achievements/members are named', () => {
   }
 });
 
-test('om-oss: unconfirmed Haukås numbers are not stated as fact', () => {
-  const doc = renderOmOss();
-  const text = doc.body.textContent;
-  // The mockup-only stats are 500m length / 133m vertical / 47% gradient — not
-  // confirmed on the live site. If ANY of these appear, they must be qualified
-  // (provisional / pending / uavklart / ubekreftet / etc.) — verified by
-  // having one of those qualifying words in the body. Easiest pass: omit them
-  // entirely.
-  const hasNumbers =
-    /\b500\s*m\b/.test(text) || /\b133\s*m\b/.test(text) || /\b47\s*%/.test(text);
-  if (hasNumbers) {
-    const qualifiers =
-      /(uavklart|ubekreftet|provisional|pending|ikke bekreftet|må bekreftes|venter bekreft|beregnet|målt|GPS|kml)/i;
-    assert.match(
-      text,
-      qualifiers,
-      'if Haukås mockup numbers are present they must be qualified as unconfirmed',
-    );
-  }
+test('om-oss: Haukås stats are not described as unconfirmed (issue 020)', () => {
+  const text = renderOmOss().body.textContent;
+  // Issue 009 confirmed 500m / 133m / 47%; the old "not verified" note is gone.
+  assert.doesNotMatch(text, /ikke bekreftet|ubekreftet|uavklart/i);
 });
 
 test('om-oss: Haukåsløypa is described as a multi-generation meeting place', () => {
