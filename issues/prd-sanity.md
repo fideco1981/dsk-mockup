@@ -143,3 +143,79 @@ Everything else (history, Haukåsløypa, training groups, ski school, styret, co
 - **Stale content outside this slice:** fix the ski-school 2025–2026 course dates and the styret seating line in HTML before the demo, so nothing on the site shows last season. Also refresh the events and topbar fallback HTML, so no-JS visitors aren't shown 2026 spring dates.
 - **Demo script:** reload the site on a phone showing an event → edit it in Studio → publish → reload. Rehearse once to confirm that the live endpoint really reflects the publish on reload.
 - The legacy palette files and the hero animation are untouched.
+
+---
+
+# Extension — Skiskole, Heistider and Treningsplan from Sanity
+
+> Decided in a grilling session on 2026-10-17. Builds on Training group (023). Tickets: 024, 025, 026.
+
+## Problem Statement
+
+Three more pieces of content are hand-written and already wrong:
+- **Skiskole page:** `skiskole.html` is hardcoded. The club runs its courses in Spond (`https://club.spond.com/landing/courses/drammensk`; snapshot in `docs/skiskole.pdf`), and the site drifts from it every season.
+- **Lift hours:** they are copied into `index.html`, `om-oss.html` and `kontakt.html`, and the copies already disagree (om-oss leaves out "Fre stengt").
+- **Treningsplan:** the landing page's `#schedule` block is hardcoded with the old groups (Rekrutten, Teknikeren, DSK Fun) and doesn't show the ski school at all.
+
+## Solution
+
+- **Ski school:** the shared text and each course become editable in Studio.
+- **Lift hours:** they become one Sanity singleton, read everywhere they appear.
+- **Treningsplan:** it is rendered from Training group sessions, courses and lift hours. Nothing new is typed in for it.
+
+The existing patterns hold: browser fetch in `site.js`, the HTML stays as Fallback content, and CMS strings are inserted as text.
+
+## Implementation Decisions
+
+**Ski school (024)**
+- **Singleton `skiSchool` (Skiskole):** holds the text shared by every course. Fields:
+  - intro (text)
+  - age (string)
+  - includes (array of strings): membership, season pass, activity fee for Rekrutten
+  - equipment (text)
+  - meetup (text)
+  - reservation (text)
+- **Document type `course` (Kurs)**, with its own entry in the Studio menu. Fields:
+  - title (required)
+  - signupDeadline (date)
+  - startDate and endDate (both required; end on or after start)
+  - sessions (the same `{day, from, to}` shape and validation as Training group)
+  - skipWeeks: optional ISO week numbers, 1–53, with no session (e.g. winter break, week 9)
+  - price (free text, like Training group)
+  - link (Spond URL)
+  - note (optional text): course-specific lines such as the 450 kr supplement or the snow reservation
+- The page lists courses whose endDate is today or later, sorted by startDate. The signup deadline is shown as text only. There is no logic that hides the signup link after the deadline.
+- No unfinished courses gives a short Norwegian "no courses right now, see Spond" message, not the fallback. A failed fetch or a missing singleton shows the fallback.
+- The hero button "Se Skiskolen ↓" on `index.html` points to `skiskole.html` (today it points to `#programs`).
+
+**Lift hours (025)**
+- **Singleton `liftHours` (Heistider):**
+  - hours: an array of `{day, from, to}`, with one entry per day at most. A day with no entry means "Heis stengt".
+  - note (text): the slope runs on volunteer work and may be closed in holidays when nobody signs up as lift attendant; changes are announced on social media.
+- There are no seasonal periods and no date exceptions. The note covers them.
+- Read on `index.html` (Treningsplan), `om-oss.html` and `kontakt.html`. The compact form merges consecutive days that have the same hours: "Man–Tor 18:00–20:00 · Fre stengt · Lør–Søn 11:00–15:00".
+
+**Treningsplan (026)**
+- Keep today's layout: a week grid on desktop and a list on mobile, with a lift bar and a lift tail per day. Only the data source changes.
+- Sessions come from Training groups, in their colours.
+- Courses use one fixed ski-school colour and one legend entry. A course is shown only in weeks where its period overlaps the current week (Monday–Sunday, visitor's local time), and not when the current ISO week is in its skipWeeks.
+- **Lift bar:** the lift is open to everyone from its opening time. When a course session starts before the lift opens that day (ski school 17:30, lift 18:00), the lift bar is extended back to the session start, and the extra piece is labelled "Kun skiskole". This is derived from existing data; there is no new field.
+
+**Shared**
+- Reuse `DAYS`, `TIME` and the session validation from `trainingGroup`.
+- Add the new singletons and `course` to the Studio structure in `studio/sanity.config.js` (singletons the same way as `topbarMessage`).
+- `CONTEXT.md` gains **Ski school**, **Course**, **Lift hours** and **Treningsplan**.
+
+## Testing Decisions
+
+- Same approach as above: `await init(doc)` against JSDOM with stubbed fetch, asserting what a visitor perceives.
+- Date logic uses fixtures with no clock mocking:
+  - A course in 2000 never shows.
+  - A course spanning 2000–2999 always shows.
+  - Putting every week 1–53 in skipWeeks hides the course.
+
+## Out of Scope
+
+- Reading courses or lift hours from Spond or from the resort. Spond has no public API. Editors enter courses twice, in Spond and in Studio.
+- Seasonal lift-hour periods and per-date exceptions.
+- Deadline logic, spots left, and course images.
