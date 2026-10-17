@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 023, 024, 025
 
 ## Parent PRD
@@ -40,3 +40,5 @@ Render the landing page's `#schedule` "Treningsplan" (`index.html` around lines 
 - [x] CONTEXT.md updated.
 
 ## Comments
+
+2026-10-17: Closed. The Treningsplan is built from trainingGroup, course and liftHours (629d56b), with review fixes in a3bb95b. The fixes are: the ski-school colour in one variable, a shared `isValidCourse`, "Kun skiskole" only when the course runs up to lift opening, and an injectable date with week tests (week 42/43, 53/1). npm test 130/130, Playwright 38 passed / 6 skipped (phone-only), typecheck clean. Open for Stein: whether to keep the dropped line "U12–U16 DSK trener på Skimore Kongsberg og Drammen skisenter — tider i Spond", and whether the ski-school pink (#EC407A) is too close to Rød.
