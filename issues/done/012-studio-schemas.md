@@ -1,4 +1,4 @@
-Status: ready-for-human
+Status: done
 
 ## Parent PRD
 
@@ -20,12 +20,12 @@ See PRD: "Content model", "Studio".
 
 ## Acceptance criteria
 
-- [ ] `studio/` runs locally against the project from 011.
-- [ ] Every field matches the PRD, with Norwegian labels and help text.
-- [ ] The chip list in the schema matches the colour map that `site.js` will use (Renn → blue, Gratis → orange, Årsmøte → green, Medlemmer → blue).
-- [ ] The Topbar message is a singleton, and its toggle defaults to on.
-- [ ] `studio/` contains no token or secret.
-- [ ] (HITL) Studio is deployed, and Stein can log in and publish one event.
+- [x] `studio/` runs locally against the project from 011.
+- [x] Every field matches the PRD, with Norwegian labels and help text.
+- [x] The chip list in the schema matches the colour map that `site.js` will use (Renn → blue, Gratis → orange, Årsmøte → green, Medlemmer → blue).
+- [x] The Topbar message is a singleton, and its toggle defaults to on.
+- [x] `studio/` contains no token or secret.
+- [x] (HITL) Studio is deployed, and Stein can log in and publish one event.
 
 ## Comments
 
@@ -41,3 +41,5 @@ There is no automated test for the schemas, because the PRD says "Not tested: th
 - **For 013:** treat an unset `show` as on.
 
 **Deployed 2026-10-17:** https://dsk-slalom.sanity.studio/ (appId pinned in `studio/sanity.cli.js`). Still to do: Stein logs in and publishes one event there.
+
+**Verified 2026-10-17:** an anonymous query returns 2 events and the `topbarMessage` singleton (`show: true`), all published from the deployed Studio. Closed.
