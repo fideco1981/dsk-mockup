@@ -259,3 +259,89 @@ test('cms events: index.html has the events mount, hidden, with fallback cards a
   assert.ok(list.querySelectorAll('.event-card').length > 0);
   assert.match(html, /<noscript><style>[^<]*\.events-grid\[hidden\][^<]*<\/style><\/noscript>/);
 });
+
+// ── Sponsors (issue 021) ──
+
+function strip(doc) {
+  return doc.querySelector('#site-footer .sponsor-strip');
+}
+
+const SPONSORS = [
+  { name: 'Skue Sparebank', url: 'https://www.skuesparebank.no', logo: 'https://cdn.sanity.io/images/p/d/a.png' },
+  { name: 'Uten lenke', logo: 'https://cdn.sanity.io/images/p/d/b.png' },
+];
+
+test('cms sponsors: logos render in CMS order, linked in a new tab, alt = name', async () => {
+  const doc = makeDoc('styret');
+  stubFetch(doc, { sponsors: SPONSORS });
+  await site.init(doc);
+  assert.ok(!strip(doc).hidden);
+  assert.match(strip(doc).querySelector('h4').textContent, /Takk til våre sponsorer/);
+  const imgs = [...strip(doc).querySelectorAll('img')];
+  assert.deepEqual(imgs.map((i) => i.alt), ['Skue Sparebank', 'Uten lenke']);
+  assert.equal(imgs[0].getAttribute('src'), SPONSORS[0].logo + '?h=128&auto=format');
+  const a = imgs[0].closest('a');
+  assert.equal(a.getAttribute('href'), 'https://www.skuesparebank.no');
+  assert.equal(a.getAttribute('target'), '_blank');
+  assert.equal(a.getAttribute('rel'), 'noopener');
+  assert.equal(imgs[1].closest('a'), null);
+});
+
+test('cms sponsors: hidden while loading, on failure and with nothing valid', async () => {
+  const loading = makeDoc('index');
+  stubFetch(loading, () => new Promise(() => {}));
+  site.init(loading);
+  assert.ok(strip(loading).hidden);
+  for (const respond of [() => Promise.reject(new TypeError('offline')), {}, { sponsors: [] }, { sponsors: 'nope' },
+    { sponsors: [null, { name: 'Uten logo' }, { name: 'X', logo: 'javascript:alert(1)' }, { logo: 'https://cdn.sanity.io/x.png' }] }]) {
+    const doc = makeDoc('index');
+    stubFetch(doc, respond);
+    await site.init(doc);
+    assert.ok(strip(doc).hidden, String(respond));
+  }
+});
+
+test('cms sponsors: a non-http(s) url renders the logo without a link', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { sponsors: [{ ...SPONSORS[0], url: 'javascript:alert(1)' }] });
+  await site.init(doc);
+  assert.equal(strip(doc).querySelector('a'), null);
+  assert.ok(strip(doc).querySelector('img'));
+});
+
+test('cms sponsors: logos that fit stay a static row with no copy', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { sponsors: SPONSORS });
+  await site.init(doc); // JSDOM has no layout: every width is 0, so it "fits"
+  assert.ok(!strip(doc).classList.contains('is-scrolling'));
+  assert.equal(strip(doc).querySelectorAll('.sponsor-set').length, 1);
+});
+
+test('cms sponsors: overflowing logos scroll, and the copy is hidden from screen readers and Tab', async () => {
+  const doc = makeDoc('index');
+  const proto = doc.defaultView.HTMLElement.prototype;
+  Object.defineProperty(proto, 'offsetWidth', { get() { return this.classList.contains('sponsor-set') ? 800 : 0; } });
+  let viewport = 375;
+  Object.defineProperty(proto, 'clientWidth', { get() { return this.classList.contains('sponsor-viewport') ? viewport : 0; } });
+  stubFetch(doc, { sponsors: SPONSORS });
+  await site.init(doc);
+  assert.ok(strip(doc).classList.contains('is-scrolling'));
+  const sets = [...strip(doc).querySelectorAll('.sponsor-set')];
+  assert.equal(sets.length, 2);
+  assert.equal(sets[0].getAttribute('aria-hidden'), null);
+  assert.equal(sets[1].getAttribute('aria-hidden'), 'true');
+  assert.equal(sets[1].querySelector('a').tabIndex, -1);
+  assert.equal(strip(doc).querySelector('.sponsor-track').style.getPropertyValue('--sponsor-duration'), '20s');
+  // A resize back to "fits" drops the copy and the marquee.
+  viewport = 2000;
+  doc.defaultView.dispatchEvent(new doc.defaultView.Event('resize'));
+  assert.ok(!strip(doc).classList.contains('is-scrolling'));
+  assert.equal(strip(doc).querySelectorAll('.sponsor-set').length, 1);
+});
+
+test('cms sponsors: the query sorts sponsors by their order field', async () => {
+  const doc = makeDoc('index');
+  const calls = stubFetch(doc, {});
+  await site.init(doc);
+  assert.match(decodeURIComponent(calls[0]), /_type == "sponsor"\] \| order\(order asc\)/);
+});

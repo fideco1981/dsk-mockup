@@ -14,8 +14,8 @@
  *   - inject the footer into #site-footer
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
- *   - load the Topbar message and landing-page Events from Sanity
- *     (test/cms.test.js); init(doc)
+ *   - load the Topbar message, landing-page Events and the footer's Sponsor
+ *     strip from Sanity (test/cms.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -49,7 +49,8 @@
   // Live API (not apicdn) so a publish in Studio shows on the next reload.
   const CMS_QUERY =
     '{"topbar": *[_type == "topbarMessage"][0]{text, link, show},' +
-    ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips}}';
+    ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips},' +
+    ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url}}';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
     SANITY_DATASET + '?query=' + encodeURIComponent(CMS_QUERY);
@@ -155,6 +156,11 @@
       })
       .join('');
     return (
+      // Hidden until the CMS answers; no fallback copy (ADR 0002).
+      '<div class="sponsor-strip" hidden>' +
+        '<h4>Takk til våre sponsorer</h4>' +
+        '<div class="sponsor-viewport"><div class="sponsor-track"></div></div>' +
+      '</div>' +
       '<div class="footer-inner">' +
         '<div class="footer-brand">' +
           '<div class="nav-logo" style="margin-bottom:16px">' +
@@ -227,6 +233,7 @@
     const win = doc.defaultView;
     const msg = doc.querySelector('.topbar-msg');
     const events = doc.getElementById('events-list');
+    const sponsors = doc.querySelector('.sponsor-strip');
     function apply(result) {
       const topbar = result && result.topbar;
       if (msg) {
@@ -237,6 +244,7 @@
         if (result && Array.isArray(result.events)) renderEvents(doc, events, result.events);
         else events.hidden = false;
       }
+      if (sponsors && result && Array.isArray(result.sponsors)) renderSponsors(doc, sponsors, result.sponsors);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -340,6 +348,55 @@
     }
     card.append(date, info);
     return card;
+  }
+
+  const SPONSOR_SPEED = 40; // marquee px per second, whatever the logo count
+
+  /**
+   * Fill the footer strip with Sponsor logos (in CMS order) and show it if any
+   * are valid. Stays hidden on failure or an empty list. CMS strings go in as text.
+   */
+  function renderSponsors(doc, strip, sponsors) {
+    const set = el(doc, 'ul', 'sponsor-set');
+    sponsors.forEach(function (s) {
+      if (!s || typeof s.name !== 'string' || typeof s.logo !== 'string' || !/^https:\/\//i.test(s.logo)) return;
+      const img = el(doc, 'img');
+      img.src = s.logo + '?h=128&auto=format'; // 2x the 64px CSS height
+      img.alt = s.name;
+      img.addEventListener('load', function () { layoutSponsors(strip); });
+      const a = externalLink(doc, s.url, '');
+      if (a) a.append(img);
+      const li = el(doc, 'li', 'sponsor-card');
+      li.append(a || img);
+      set.append(li);
+    });
+    if (!set.children.length) return;
+    const track = strip.querySelector('.sponsor-track');
+    track.textContent = '';
+    track.append(set);
+    strip.hidden = false;
+    layoutSponsors(strip);
+    if (doc.defaultView) doc.defaultView.addEventListener('resize', function () { layoutSponsors(strip); });
+  }
+
+  /**
+   * Static centred row when the logos fit; otherwise a seamless marquee: the
+   * set plus one copy, animated by -50%. The copy is hidden from screen
+   * readers and Tab so each sponsor is announced and focused once.
+   */
+  function layoutSponsors(strip) {
+    const track = strip.querySelector('.sponsor-track');
+    const set = track.firstElementChild;
+    while (track.children.length > 1) track.lastElementChild.remove();
+    strip.classList.remove('is-scrolling');
+    const width = set.offsetWidth;
+    if (!width || width <= strip.querySelector('.sponsor-viewport').clientWidth) return;
+    const copy = set.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    copy.querySelectorAll('a').forEach(function (a) { a.tabIndex = -1; });
+    track.append(copy);
+    strip.classList.add('is-scrolling');
+    track.style.setProperty('--sponsor-duration', (width / SPONSOR_SPEED) + 's');
   }
 
   /** Apply the persisted palette and wire the topbar swatches. */

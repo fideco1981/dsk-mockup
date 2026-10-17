@@ -20,10 +20,14 @@ const EVENT = {
   chips: ['Renn', 'Gratis'],
 };
 const TOPBAR = { text: 'Renn på lørdag!', link: 'https://example.org/x', show: true };
+// Served from logo.png (see open()). Enough of them to scroll at phone width.
+const SPONSORS = ['A', 'B', 'C', 'D'].map((n) => ({
+  name: `Sponsor ${n}`, url: 'https://example.org/s', logo: `https://cdn.sanity.io/images/p/d/${n}.png`,
+}));
 
 // Sanity responses per CMS state. A function is a route handler (failure).
 const CMS = {
-  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }] },
+  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS },
   failure: (route) => route.fulfill({ status: 500, body: '{}' }),
   empty: { topbar: TOPBAR, events: [] },
   'topbar off': { topbar: { ...TOPBAR, show: false }, events: [EVENT] },
@@ -31,7 +35,10 @@ const CMS = {
 
 // Proof each state rendered, so a drifted stub can't quietly scan the fallback.
 const RENDERED = {
-  success: (page) => expect(page.locator('#events-list')).toContainText(EVENT.title),
+  success: async (page) => {
+    await expect(page.locator('#events-list')).toContainText(EVENT.title);
+    await expect(page.locator('.sponsor-strip')).toBeVisible();
+  },
   failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Sesong'),
   empty: (page) => expect(page.locator('.events-empty')).toBeVisible(),
   'topbar off': (page) => expect(page.locator('.topbar-msg')).toBeHidden(),
@@ -51,6 +58,7 @@ async function open(page, file, cms = CMS.success, { js = true } = {}) {
         ? cms(route)
         : route.fulfill({ json: { result: cms } });
     }
+    if (url.hostname === 'cdn.sanity.io') return route.fulfill({ path: path.join(ROOT, 'logo.png') });
     if (url.origin !== ORIGIN) return route.abort(); // fonts etc.: stay offline
     const diskPath = path.join(ROOT, url.pathname);
     if (!js && diskPath.endsWith('.html')) {

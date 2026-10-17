@@ -22,6 +22,14 @@ export default defineConfig({
               .id(SINGLETON)
               .child(S.document().schemaType(SINGLETON).documentId(SINGLETON)),
             S.documentTypeListItem('event').title('Arrangementer'),
+            S.listItem()
+              .title('Sponsorer')
+              .schemaType('sponsor')
+              .child(
+                S.documentTypeList('sponsor')
+                  .title('Sponsorer')
+                  .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+              ),
           ]),
     }),
   ],

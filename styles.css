@@ -1031,6 +1031,42 @@
     border-top: 1px solid rgba(255,255,255,0.06);
     padding: 72px 40px 0;
   }
+  .sponsor-strip {
+    max-width: 1200px;
+    margin: 0 auto 56px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .sponsor-viewport { overflow: hidden; }
+  .sponsor-track { display: flex; justify-content: center; }
+  .sponsor-set {
+    display: flex;
+    gap: 24px;
+    width: max-content;
+    list-style: none;
+  }
+  .sponsor-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 16px;
+  }
+  .sponsor-card img { display: block; height: 64px; width: auto; }
+  .sponsor-card a { display: block; border-radius: 3px; }
+  .sponsor-card a:focus-visible { outline: 2px solid var(--blue); outline-offset: 10px; }
+  .sponsor-strip.is-scrolling .sponsor-viewport {
+    mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+  }
+  .sponsor-strip.is-scrolling .sponsor-track {
+    justify-content: flex-start;
+    width: max-content;
+    animation: sponsor-scroll var(--sponsor-duration, 30s) linear infinite;
+  }
+  .sponsor-strip.is-scrolling .sponsor-set { padding-right: 24px; } /* = gap, so -50% is seamless */
+  .sponsor-strip:hover .sponsor-track,
+  .sponsor-strip:focus-within .sponsor-track { animation-play-state: paused; }
+  @keyframes sponsor-scroll { to { transform: translateX(-50%); } }
   .footer-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -1064,7 +1100,7 @@
   }
   .social-btn:hover { background: var(--accent); transform: translateY(-2px); }
   .social-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-  .footer-col h4 {
+  .footer-col h4, .sponsor-strip h4 {
     font-family: var(--font-head);
     font-size: 13px;
     font-weight: 700;
@@ -1827,4 +1863,9 @@
     .snow-particle { display: none; }
     #slalom-run    { display: none; }
     html { scroll-behavior: auto; }
+    /* No marquee: drop the copy and wrap the logos instead. */
+    .sponsor-strip.is-scrolling .sponsor-track { width: auto; justify-content: center; }
+    .sponsor-strip.is-scrolling .sponsor-set { flex-wrap: wrap; justify-content: center; width: auto; padding-right: 0; }
+    .sponsor-set[aria-hidden] { display: none; }
+    .sponsor-strip.is-scrolling .sponsor-viewport { mask-image: none; }
   }
