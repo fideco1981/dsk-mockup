@@ -82,133 +82,102 @@
     </div>
   </section>
 
+  <!-- site.js replaces the course cards and the shared Ski school text below
+       with Courses and the Ski school from Sanity. Both are hidden until the CMS
+       answers and revealed as-is if it fails or JS is off. Fallback content is
+       the 2026/27 courses in docs/skiskole.pdf (Spond). -->
+  <noscript><style>#courses[hidden] { display: grid; } #ski-school[hidden] { display: block; }</style></noscript>
+
   <!-- COURSE CARDS -->
   <section class="skiskole-courses">
     <div class="section-inner">
 
       <div class="section-header">
-        <div class="section-tag">Velg kurstype</div>
-        <h2 class="section-title">To kurstilbud</h2>
-        <p class="section-sub">Ettermiddagskurs gjennom tre uker, eller et helgekurs samlet på lørdag og søndag.</p>
+        <div class="section-tag">Velg kurs</div>
+        <h2 class="section-title">Kurs</h2>
       </div>
 
-      <div class="course-grid">
+      <div class="course-grid" id="courses" hidden>
 
         <article class="course-card">
-          <div class="course-badge">Ettermiddagskurs</div>
-          <h3 class="course-title">Tirsdag &amp; torsdag</h3>
-          <p class="course-lede">Korte, hyppige samlinger som bygger ferdigheter over tre uker.</p>
-
+          <h3 class="course-title">Skiskole ettermiddag uke 1-3 2027</h3>
           <ul class="course-facts">
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-              <span><strong>Dager:</strong> tirsdag og torsdag</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-              <span><strong>Tid:</strong> 17:30–18:45</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg>
-              <span><strong>Omfang:</strong> 6 kvelder over 3 uker (7,5 t totalt)</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-              <span><strong>Pris:</strong> 2 950 kr</span>
-            </li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><span><strong>Periode:</strong> 5. januar – 22. januar 2027</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span><strong>Påmeldingsfrist:</strong> 1. januar 2027</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Tirsdag 17:30–18:45</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Torsdag 17:30–18:45</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg><span><strong>Pris:</strong> 2 950 kroner</span></li>
           </ul>
-
-          <a class="btn-primary course-cta" href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Meld på via Spond →</a>
+          <p class="course-note">Kurset gjennomføres under forutsetning av at det er minst 6 deltakere.</p>
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener" aria-label="Meld på Skiskole ettermiddag uke 1-3 2027">Meld på →</a>
         </article>
 
         <article class="course-card">
-          <div class="course-badge course-badge-alt">Helgekurs</div>
-          <h3 class="course-title">Lørdag &amp; søndag</h3>
-          <p class="course-lede">Samlet helgekurs — to dager i strekk på fire timer hver dag.</p>
-
+          <h3 class="course-title">Helgekurs uke 2 2027</h3>
           <ul class="course-facts">
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg>
-              <span><strong>Dager:</strong> lørdag og søndag</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
-              <span><strong>Tid:</strong> 10:00–14:00 begge dager</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg>
-              <span><strong>Omfang:</strong> 2 dager, 3 t/dag (6 t totalt)</span>
-            </li>
-            <li>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg>
-              <span><strong>Pris:</strong> 2 500 kr</span>
-            </li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><span><strong>Periode:</strong> 16. januar – 17. januar 2027</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span><strong>Påmeldingsfrist:</strong> 10. januar 2027</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Lørdag 10:00–14:00</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Søndag 10:00–14:00</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg><span><strong>Pris:</strong> 2 500 kroner</span></li>
           </ul>
-
-          <a class="btn-primary course-cta" href="https://club.spond.com/landing/signup/drammensk/form/79B423729D544EBABC46631C0E5DB0F3" target="_blank" rel="noopener">Meld på via Spond →</a>
+          <p class="course-note">For deltakere som ønsker å fortsette i treningsgruppe etter helgekurset, kommer et tillegg på 450 kroner.
+          Snøforbehold: Ved manglende snø eller vanskelige forhold kan startdato justeres.</p>
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener" aria-label="Meld på Helgekurs uke 2 2027">Meld på →</a>
         </article>
 
+        <article class="course-card">
+          <h3 class="course-title">Skiskole ettermiddag uke 4-6 2027</h3>
+          <ul class="course-facts">
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><span><strong>Periode:</strong> 26. januar – 11. februar 2027</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span><strong>Påmeldingsfrist:</strong> 24. januar 2027</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Tirsdag 17:30–18:45</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Torsdag 17:30–18:45</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg><span><strong>Pris:</strong> 2 950 kroner</span></li>
+          </ul>
+          <p class="course-note">Kurset gjennomføres under forutsetning av at det er minst 6 deltakere.</p>
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener" aria-label="Meld på Skiskole ettermiddag uke 4-6 2027">Meld på →</a>
+        </article>
+
+        <article class="course-card">
+          <h3 class="course-title">Helgekurs uke 4 2027</h3>
+          <ul class="course-facts">
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><span><strong>Periode:</strong> 30. januar – 31. januar 2027</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span><strong>Påmeldingsfrist:</strong> 24. januar 2027</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Lørdag 10:00–14:00</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Søndag 10:00–14:00</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg><span><strong>Pris:</strong> 2 500 kroner</span></li>
+          </ul>
+          <p class="course-note">For deltakere som ønsker å fortsette i treningsgruppe etter helgekurset, kommer et tillegg på 450 kroner.
+          Snøforbehold: Ved manglende snø eller vanskelige forhold kan startdato justeres.</p>
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener" aria-label="Meld på Helgekurs uke 4 2027">Meld på →</a>
+        </article>
+
+        <article class="course-card">
+          <h3 class="course-title">Skiskole ettermiddag uke 7,8 og 10, 2027</h3>
+          <ul class="course-facts">
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-calendar"/></svg><span><strong>Periode:</strong> 16. februar – 11. mars 2027</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span><strong>Påmeldingsfrist:</strong> 11. februar 2027</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Tirsdag 17:30–18:45</span></li>
+            <li class="course-session"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg><span>Torsdag 17:30–18:45</span></li>
+            <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tag"/></svg><span><strong>Pris:</strong> 2 950 kroner</span></li>
+          </ul>
+          <p class="course-note">Kurset gjennomføres under forutsetning av at det er minst 6 deltakere.</p>
+          <a class="btn-primary course-cta" href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener" aria-label="Meld på Skiskole ettermiddag uke 7,8 og 10, 2027">Meld på →</a>
+        </article>
       </div>
 
     </div>
   </section>
 
-  <!-- WHAT'S INCLUDED -->
-  <section class="skiskole-included">
-    <div class="section-inner">
-
-      <div class="section-header">
-        <div class="section-tag">I prisen</div>
-        <h2 class="section-title">Hva som er inkludert</h2>
-        <p class="section-sub">Begge kurs gir tilgang til klubbens fasiliteter og videre treningstilbud gjennom sesongen.</p>
-      </div>
-
-      <ul class="included-list">
-        <li>
-          <span class="included-bullet" aria-hidden="true">
-            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
-          </span>
-          <div>
-            <h3>Medlemskap sesongen 2025–2026</h3>
-            <p>Klubbmedlemskap i Drammen Slalåmklubb gjeldende ut inneværende sesong.</p>
-          </div>
-        </li>
-        <li>
-          <span class="included-bullet" aria-hidden="true">
-            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
-          </span>
-          <div>
-            <h3>Sesongkort i Haukåsløypa</h3>
-            <p>Fri bruk av heisen i Haukåsløypa hele sesongen — også utenfor kurstid.</p>
-          </div>
-        </li>
-        <li>
-          <span class="included-bullet" aria-hidden="true">
-            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
-          </span>
-          <div>
-            <h3>Aktivitetsavgift Rekrutten</h3>
-            <p>Avgiften som dekker treninger i Rekrutten-gruppen (U8) ut sesongen.</p>
-          </div>
-        </li>
-      </ul>
-
-      <p class="board-note skiskole-450-note">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
-        Helgekursbarn som ønsker å fortsette i en av klubbens treningsgrupper etter kurset betaler et tilleggsgebyr på +450 kr.
-      </p>
-
-    </div>
-  </section>
-
-  <!-- PRACTICAL INFO -->
+  <!-- SKI SCHOOL: shared by every course -->
   <section class="skiskole-info">
-    <div class="section-inner">
+    <div class="section-inner" id="ski-school" hidden>
 
       <div class="section-header">
         <div class="section-tag">Praktisk</div>
-        <h2 class="section-title">Krav, utstyr og oppmøte</h2>
-        <p class="section-sub">Det viktigste å vite før dere kommer på første samling.</p>
+        <h2 class="section-title">Om skiskolen</h2>
+        <p class="section-sub">Kurset passer for barn som har litt erfaring med ski og som ønsker å utvikle ferdighetene sine videre i trygge og lekpregede rammer.</p>
       </div>
 
       <div class="info-grid">
@@ -217,40 +186,39 @@
           <div class="info-icon" aria-hidden="true">
             <svg class="icon" focusable="false"><use href="#icon-users"/></svg>
           </div>
-          <h3>Alder 4–10 år</h3>
-          <p>Kursene passer for barn i alderen 4–10 år. Barnet må ha fylt 4 år innen <strong>1. januar 2026</strong> for å delta.</p>
+          <h3>Alder</h3>
+          <p>4–10 år (fylte 4 år per 1. januar 2027)</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon" aria-hidden="true">
+            <svg class="icon" focusable="false"><use href="#icon-check"/></svg>
+          </div>
+          <h3>Kursavgiften inkluderer</h3>
+          <ul>
+            <li>Medlemskap i Drammen Slalåmklubb for sesongen 2026–2027</li>
+            <li>Sesongkort i Haukåsløypa (gjelder hele anlegget og aktiveres ved påmelding)</li>
+            <li>Aktivitetskontingent for treningsgruppen Rekrutten ut skisesongen</li>
+          </ul>
         </div>
 
         <div class="info-card">
           <div class="info-icon" aria-hidden="true">
             <svg class="icon" focusable="false"><use href="#icon-snowflake"/></svg>
           </div>
-          <h3>Egne ski</h3>
-          <p>Barnet må ta med egne alpinski — klubben har ikke utlånsutstyr. Hjelm anbefales (og kreves i konkurranser).</p>
+          <h3>Utstyr</h3>
+          <p>Deltakerne må ha eget skiutstyr.</p>
         </div>
 
         <div class="info-card">
           <div class="info-icon" aria-hidden="true">
             <svg class="icon" focusable="false"><use href="#icon-clock"/></svg>
           </div>
-          <h3>Møt opp 15 min før</h3>
-          <p>Vær på plass <strong>15 minutter før</strong> samlingen starter — skiene må være klare og barnet ferdig påkledd.</p>
-        </div>
-
-        <div class="info-card">
-          <div class="info-icon" aria-hidden="true">
-            <svg class="icon" focusable="false"><use href="#icon-info"/></svg>
-          </div>
-          <h3>Vær- og tidsendringer</h3>
-          <p>Ved spesielle værforhold kan klubben justere oppstartstidspunktene. Endringer varsles via Spond.</p>
+          <h3>Oppmøte</h3>
+          <p>Møt opp 15 minutter før kursstart.</p>
         </div>
 
       </div>
-
-      <p class="board-note skiskole-instructor-note">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>
-        Hovedinstruktør er <strong>Henrik Hagberg</strong>. Resten av instruktørstaben er tidligere aktive alpinister med konkurranseerfaring.
-      </p>
 
     </div>
   </section>

@@ -15,8 +15,8 @@
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
  *   - load the Topbar message, landing-page Events, the footer's Sponsor
- *     strip and the Training groups from Sanity (test/cms.test.js,
- *     test/treningsopplegg.test.js); init(doc)
+ *     strip, the Training groups, the Ski school and Courses from Sanity
+ *     (test/cms.test.js, test/treningsopplegg.test.js, test/skiskole.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -52,7 +52,10 @@
     '{"topbar": *[_type == "topbarMessage"][0]{show, messages[]{text, link}},' +
     ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips},' +
     ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url},' +
-    ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}}}';
+    ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}},' +
+    ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
+    ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, price, link, note}}';
+  const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
     SANITY_DATASET + '?query=' + encodeURIComponent(CMS_QUERY);
@@ -206,7 +209,8 @@
   /**
    * One query to Sanity, then render the Topbar message, the Sponsor strip
    * and, where their mounts exist, the upcoming Events and Training groups
-   * (sections on treningsopplegg.html, cards on the landing page). Any failure
+   * (sections on treningsopplegg.html, cards on the landing page) and the
+   * Ski school with its Courses (skiskole.html). Any failure
    * (rejection, non-OK, malformed data, no fetch) reveals that part's fallback.
    * Never rejects.
    */
@@ -219,6 +223,8 @@
     const groupNav = doc.getElementById('training-nav');
     const groupCount = doc.querySelector('.training-quick-nav .section-title');
     const programs = doc.getElementById('programs-grid');
+    const courses = doc.getElementById('courses');
+    const school = doc.getElementById('ski-school');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -236,6 +242,7 @@
       const trainingGroups = validGroups(result && result.trainingGroups);
       if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, trainingGroups);
       if (programs) renderProgramCards(doc, programs, trainingGroups);
+      if (courses && school) renderSkiSchool(doc, school, courses, result && result.skiSchool, result && result.courses);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -321,6 +328,20 @@
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
+  /** Today as YYYY-MM-DD in the visitor's local time. */
+  function todayISO() {
+    const now = new Date();
+    return now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+  }
+
+  function isISODate(d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d); }
+
+  /** "2027-01-05" → "5. januar 2027" (or "5. januar" without the year). */
+  function longDate(iso, withYear) {
+    const p = iso.split('-').map(Number);
+    return p[2] + '. ' + MONTHS[p[1] - 1] + (withYear === false ? '' : ' ' + p[0]);
+  }
+
   function el(doc, tag, className, text) {
     const e = doc.createElement(tag);
     if (className) e.className = className;
@@ -333,12 +354,11 @@
    * (visitor's local time), nearest first. CMS strings go in as text.
    */
   function renderEvents(doc, mount, events) {
-    const now = new Date();
-    const today = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+    const today = todayISO();
     const upcoming = events
       .filter(function (e) {
         return e && typeof e.title === 'string' &&
-          typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.date >= today;
+          isISODate(e.date) && e.date >= today;
       })
       .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; })
       .slice(0, 3);
@@ -407,6 +427,14 @@
     return li;
   }
 
+  /** One facts line per valid session, sorted Monday→Sunday: "Mandag 18:00–19:30". */
+  function sessionLines(doc, sessions, className) {
+    return (Array.isArray(sessions) ? sessions : [])
+      .filter(function (s) { return s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to); })
+      .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || (a.from < b.from ? -1 : a.from > b.from ? 1 : 0); })
+      .map(function (s) { return factLine(doc, 'clock', null, s.day + ' ' + s.from + '–' + s.to, className); });
+  }
+
   /** Training groups from the CMS that can be shown (title with a usable slug), in CMS order. */
   function validGroups(groups) {
     return Array.isArray(groups)
@@ -471,10 +499,7 @@
         inner.append(header);
 
         const facts = el(doc, 'ul', 'course-facts training-facts');
-        (Array.isArray(g.sessions) ? g.sessions : [])
-          .filter(function (s) { return s && DAYS.indexOf(s.day) >= 0 && isText(s.from) && isText(s.to); })
-          .sort(function (a, b) { return DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || (a.from < b.from ? -1 : a.from > b.from ? 1 : 0); })
-          .forEach(function (s) { facts.append(factLine(doc, 'clock', null, s.day + ' ' + s.from + '–' + s.to, 'training-session')); });
+        facts.append.apply(facts, sessionLines(doc, g.sessions, 'training-session'));
         if (isText(g.place)) facts.append(factLine(doc, 'pin', 'Sted:', g.place));
         if (isText(g.price)) facts.append(factLine(doc, 'tag', 'Pris:', g.price));
         if (facts.children.length) inner.append(facts);
@@ -488,6 +513,81 @@
     }
     mount.hidden = false;
     nav.hidden = false;
+  }
+
+  /** An info card with a decorative icon, a heading and a body element. */
+  function infoCard(doc, icon, heading, body) {
+    const card = el(doc, 'div', 'info-card');
+    card.innerHTML = '<div class="info-icon" aria-hidden="true"><svg class="icon" focusable="false"><use href="#icon-' + icon + '"/></svg></div>';
+    card.append(el(doc, 'h3', null, heading), body);
+    return card;
+  }
+
+  /**
+   * Replace the fallback Ski school text and course cards with the CMS ones.
+   * Without a Ski school (failure or not entered yet), reveal the fallback
+   * as-is. Courses whose endDate has passed are left out; none left gives a
+   * short message. CMS strings go in as text.
+   */
+  function renderSkiSchool(doc, mount, courses, school, list) {
+    if (school && typeof school === 'object') {
+      const sub = mount.querySelector('.section-sub');
+      if (isText(school.intro)) sub.textContent = school.intro;
+      else sub.remove();
+      const grid = mount.querySelector('.info-grid');
+      grid.textContent = '';
+      if (isText(school.age)) grid.append(infoCard(doc, 'users', 'Alder', el(doc, 'p', null, school.age)));
+      const includes = (Array.isArray(school.includes) ? school.includes : []).filter(isText);
+      if (includes.length) {
+        const ul = el(doc, 'ul');
+        includes.forEach(function (t) { ul.append(el(doc, 'li', null, t)); });
+        grid.append(infoCard(doc, 'check', 'Kursavgiften inkluderer', ul));
+      }
+      if (isText(school.equipment)) grid.append(infoCard(doc, 'snowflake', 'Utstyr', el(doc, 'p', null, school.equipment)));
+      if (isText(school.meetup)) grid.append(infoCard(doc, 'clock', 'Oppmøte', el(doc, 'p', null, school.meetup)));
+      if (isText(school.reservation)) grid.append(infoCard(doc, 'info', 'Forbehold', el(doc, 'p', null, school.reservation)));
+    }
+    mount.hidden = false;
+    if (school && typeof school === 'object') renderCourses(doc, courses, list);
+    courses.hidden = false;
+  }
+
+  /** Courses that haven't ended, by startDate; with none, a pointer to Spond. */
+  function renderCourses(doc, mount, list) {
+    const today = todayISO();
+    const upcoming = (Array.isArray(list) ? list : [])
+      .filter(function (c) {
+        return c && isText(c.title) && isISODate(c.startDate) && isISODate(c.endDate) && c.endDate >= today;
+      })
+      .sort(function (a, b) { return a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0; });
+    mount.textContent = '';
+    if (!upcoming.length) {
+      const p = el(doc, 'p', 'courses-empty', 'Ingen kurs akkurat nå — ');
+      p.append(externalLink(doc, SPOND_COURSES_URL, 'følg med på Spond'));
+      mount.append(p);
+    }
+    upcoming.forEach(function (c) { mount.append(courseCard(doc, c)); });
+  }
+
+  /** One course card, same markup as the fallback cards in skiskole.html. */
+  function courseCard(doc, c) {
+    const card = el(doc, 'article', 'course-card');
+    card.append(el(doc, 'h3', 'course-title', c.title));
+    const facts = el(doc, 'ul', 'course-facts');
+    const sameYear = c.startDate.slice(0, 4) === c.endDate.slice(0, 4);
+    facts.append(factLine(doc, 'calendar', 'Periode:', longDate(c.startDate, !sameYear) + ' – ' + longDate(c.endDate)));
+    if (isISODate(c.signupDeadline)) facts.append(factLine(doc, 'info', 'Påmeldingsfrist:', longDate(c.signupDeadline)));
+    facts.append.apply(facts, sessionLines(doc, c.sessions, 'course-session'));
+    if (isText(c.price)) facts.append(factLine(doc, 'tag', 'Pris:', c.price));
+    card.append(facts);
+    if (isText(c.note)) card.append(el(doc, 'p', 'course-note', c.note));
+    const link = externalLink(doc, c.link, 'Meld på →');
+    if (link) {
+      link.className = 'btn-primary course-cta';
+      link.setAttribute('aria-label', 'Meld på ' + c.title);
+      card.append(link);
+    }
+    return card;
   }
 
   const SPONSOR_SPEED = 40; // marquee px per second, whatever the logo count

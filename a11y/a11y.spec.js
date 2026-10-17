@@ -32,9 +32,20 @@ const TRAINING_GROUPS = [['Grønn', 'Grønn'], ['Blå', 'Blå'], ['Rød', 'Rød'
   sessions: [{ day: 'Mandag', from: '18:00', to: '19:30' }],
 }));
 
+const SKI_SCHOOL = {
+  intro: 'Lek og mestring.', age: '4–10 år', includes: ['Medlemskap', 'Sesongkort'],
+  equipment: 'Eget skiutstyr.', meetup: 'Møt opp 15 minutter før.', reservation: 'Minst 6 deltakere.',
+};
+const COURSES = [{
+  title: 'Helgekurs', signupDeadline: '2999-01-10', startDate: '2999-01-16', endDate: '2999-01-17',
+  sessions: [{ day: 'Lørdag', from: '10:00', to: '14:00' }], price: '2 500 kroner',
+  link: 'https://example.org/kurs', note: 'Snøforbehold.',
+}];
+
 // Sanity responses per CMS state. A function is a route handler (failure).
 const CMS = {
-  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS, trainingGroups: TRAINING_GROUPS },
+  success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS, trainingGroups: TRAINING_GROUPS,
+    skiSchool: SKI_SCHOOL, courses: COURSES },
   failure: (route) => route.fulfill({ status: 500, body: '{}' }),
   empty: { topbar: TOPBAR, events: [] },
   'topbar off': { topbar: { ...TOPBAR, show: false }, events: [EVENT] },
@@ -112,6 +123,7 @@ for (const { href } of NAV_MODEL.links) {
     await open(page, href);
     await expect(page.locator('.topbar-pause')).toBeVisible();
     if (href === 'treningsopplegg.html') await expect(page.locator('#rod .training-session')).toBeVisible();
+    if (href === 'skiskole.html') await expect(page.locator('#courses .course-note')).toHaveText('Snøforbehold.');
     await expectNoViolations(page);
   });
 

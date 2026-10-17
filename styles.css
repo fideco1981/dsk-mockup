@@ -1427,12 +1427,6 @@
     margin: 0 0 10px;
     letter-spacing: -0.01em;
   }
-  .course-lede {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin: 0 0 24px;
-  }
   .course-facts {
     list-style: none;
     padding: 0;
@@ -1457,49 +1451,15 @@
   }
   .course-facts strong { color: #fff; font-weight: 600; margin-right: 4px; }
   .course-cta { align-self: flex-start; margin-top: auto; }
-
-  .skiskole-included { background: var(--dark2); }
-  .included-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-width: 880px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  .included-list > li {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 22px 24px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-  }
-  .included-bullet {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: rgba(0,159,227,0.18);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .included-bullet .icon { width: 18px; height: 18px; color: var(--blue-lt); }
-  .included-list h3 {
-    font-family: var(--font-head);
-    font-size: 17px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 6px;
-    letter-spacing: -0.005em;
-  }
-  .included-list p {
+  .course-note {
     font-size: 14px;
     color: var(--muted);
-    line-height: 1.55;
-    margin: 0;
+    line-height: 1.6;
+    margin: 0 0 24px;
+    white-space: pre-line;
   }
-  .skiskole-450-note { margin-top: 32px; }
+  .courses-empty { grid-column: 1 / -1; color: var(--muted); }
+  .courses-empty a { color: var(--blue-lt); }
 
   .skiskole-info { background: var(--dark); }
   .info-grid {
@@ -1534,9 +1494,13 @@
     line-height: 1.6;
     margin: 0;
   }
-  .info-card strong { color: #fff; font-weight: 600; }
-  .skiskole-instructor-note { margin-top: 32px; }
-  .skiskole-instructor-note strong { color: #fff; }
+  .info-card ul {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 18px;
+  }
 
   .skiskole-cta {
     background: linear-gradient(120deg, #0a1020 0%, #0d1e3a 40%, #130e28 100%);
