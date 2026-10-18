@@ -170,6 +170,36 @@ test('cms events: only upcoming events, nearest first, at most 3', async () => {
   assert.equal(cards(doc)[1].querySelector('.event-date .day').textContent, '1', 'no leading zero');
 });
 
+test('cms events: a multi-day event shows its date range and stays until its end date', async () => {
+  const doc = makeDoc('index');
+  const today = new Date();
+  const iso = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const yesterday = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1));
+  stubFetch(doc, {
+    events: [
+      { title: 'Pågår', date: yesterday, endDate: iso(today) },
+      { title: 'BAMA', date: '2999-01-18', endDate: '2999-01-20', startTime: '17:00' },
+      { title: 'Over månedsskiftet', date: '2999-01-30', endDate: '2999-02-01' },
+    ],
+  });
+  await site.init(doc);
+  const [ongoing, bama, cross] = cards(doc);
+  assert.match(ongoing.querySelector('h3.event-title').textContent, /^Pågår — /, 'still shown on its last day');
+  assert.equal(bama.querySelector('h3.event-title').textContent, 'BAMA — fredag 18.–søndag 20. januar 2999 kl. 17:00');
+  assert.equal(bama.querySelector('.event-date .day').textContent, '18–20');
+  assert.equal(bama.querySelector('.event-date .month').textContent, 'Jan');
+  assert.equal(cross.querySelector('h3.event-title').textContent, 'Over månedsskiftet — onsdag 30. januar–fredag 1. februar 2999');
+  assert.equal(cross.querySelector('.event-date .day').textContent, '30–1');
+  assert.equal(cross.querySelector('.event-date .month').textContent, 'Jan–Feb');
+});
+
+test('cms events: an end date before or equal to the start date is ignored', async () => {
+  const doc = makeDoc('index');
+  stubFetch(doc, { events: [{ title: 'A', date: '2999-01-18', endDate: '2999-01-10' }, { title: 'B', date: '2999-01-19', endDate: '2999-01-19' }] });
+  await site.init(doc);
+  assert.deepEqual(cards(doc).map((c) => c.querySelector('.event-date .day').textContent), ['18', '19']);
+});
+
 test('cms events: rendered cards are not in the fade-in hidden state', async () => {
   const doc = makeDoc('index');
   stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01' }] });

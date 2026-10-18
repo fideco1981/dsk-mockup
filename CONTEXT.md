@@ -2,7 +2,7 @@
 
 Glossary for the club website. Decisions live in `docs/adr/`.
 
-- **Event** (Arrangement, Sanity type `event`): a dated club happening shown on the landing page. Only upcoming ones are shown, nearest first, at most three.
+- **Event** (Arrangement, Sanity type `event`): a dated club happening shown on the landing page. Has a date and an optional end date for multi-day events (e.g. BAMA, Friday–Sunday). Only upcoming ones are shown (until their last day), nearest first, at most three.
 - **Topbar message** (Sanity type `topbarMessage`): the site-wide announcement line at the top of every page. A singleton holding an ordered list of messages (text and optional link) and one show/hide toggle. Several messages rotate every 5 s, with a pause button.
 - **Sponsor** (Sanity type `sponsor`): a club sponsor shown as a logo in the strip at the top of every page's footer, sorted by its order field. One of two Sanity types with an image (ADR 0002, 0003). It has no Fallback content: the strip is hidden when Sanity fails.
 - **Training group** (Treningsgruppe, Sanity type `trainingGroup`): a training group on `treningsopplegg.html` (Grønn, Blå, Rød, Sort, Fun), sorted by its order field. Has a colour, optional age, description, place, price and weekly sessions (day, from, to), shown one per line Monday→Sunday. Its anchor is a slug of the title (`#gronn`). The quick-nav cards, the sections and the landing page's "Våre Treningsgrupper" cards all come from the same groups. Sanity failing or returning no groups shows the Fallback content.

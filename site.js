@@ -54,7 +54,7 @@
   // Live API (not apicdn) so a publish in Studio shows on the next reload.
   const CMS_QUERY =
     '{"topbar": *[_type == "topbarMessage"][0]{show, messages[]{text, link}},' +
-    ' "events": *[_type == "event"]{title, date, startTime, location, description, link, chips},' +
+    ' "events": *[_type == "event"]{title, date, endDate, startTime, location, description, link, chips},' +
     ' "sponsors": *[_type == "sponsor"] | order(order asc){name, url, "logo": logo.asset->url},' +
     ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}},' +
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
@@ -459,7 +459,7 @@
   }
 
   /**
-   * Replace the fallback cards with the next 3 Events dated today or later
+   * Replace the fallback cards with the next 3 Events whose last day is today or later
    * (visitor's local time), nearest first. CMS strings go in as text.
    */
   function renderEvents(doc, mount, events) {
@@ -467,7 +467,7 @@
     const upcoming = events
       .filter(function (e) {
         return e && typeof e.title === 'string' &&
-          isISODate(e.date) && e.date >= today;
+          isISODate(e.date) && lastDay(e) >= today;
       })
       .sort(function (a, b) { return compareStr(a.date, b.date); })
       .slice(0, 3);
@@ -477,16 +477,32 @@
     mount.hidden = false;
   }
 
+  /** An Event's last day: its endDate when that is a later valid date, else its date. */
+  function lastDay(e) {
+    return isISODate(e.endDate) && e.endDate > e.date ? e.endDate : e.date;
+  }
+
   /** One card, same markup as the hand-written ones in index.html, minus fade-in. */
   function eventCard(doc, e) {
-    const parts = e.date.split('-').map(Number);
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
-    let title = e.title + ' — ' + WEEKDAYS[d.getDay()] + ' ' + parts[2] + '. ' + MONTHS[parts[1] - 1] + ' ' + parts[0];
+    const start = e.date.split('-').map(Number);
+    const end = lastDay(e).split('-').map(Number);
+    const weekday = function (p) { return WEEKDAYS[new Date(p[0], p[1] - 1, p[2]).getDay()]; };
+    let when = weekday(start) + ' ' + start[2] + '.';
+    let day = String(start[2]);
+    let month = MONTHS_SHORT[start[1] - 1];
+    if (lastDay(e) !== e.date) {
+      const sameMonth = start[0] === end[0] && start[1] === end[1];
+      if (!sameMonth) when += ' ' + MONTHS[start[1] - 1] + (start[0] !== end[0] ? ' ' + start[0] : '');
+      when += '–' + weekday(end) + ' ' + end[2] + '.';
+      day += '–' + end[2];
+      if (!sameMonth) month += '–' + MONTHS_SHORT[end[1] - 1];
+    }
+    let title = e.title + ' — ' + when + ' ' + MONTHS[end[1] - 1] + ' ' + end[0];
     if (typeof e.startTime === 'string' && e.startTime) title += ' kl. ' + e.startTime;
 
     const card = el(doc, 'div', 'event-card');
     const date = el(doc, 'div', 'event-date');
-    date.append(el(doc, 'div', 'day', String(parts[2])), el(doc, 'div', 'month', MONTHS_SHORT[parts[1] - 1]));
+    date.append(el(doc, 'div', 'day', day), el(doc, 'div', 'month', month));
 
     const info = el(doc, 'div', 'event-info');
     if (Array.isArray(e.chips) && e.chips.length) {

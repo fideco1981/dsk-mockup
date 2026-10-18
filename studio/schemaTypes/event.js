@@ -21,9 +21,20 @@ export const event = {
       name: 'date',
       title: 'Dato',
       type: 'date',
-      description: 'Arrangementet vises på forsiden fram til og med denne datoen.',
+      description: 'Første (eller eneste) dag. Arrangementet vises på forsiden fram til og med siste dag.',
       options: { dateFormat: 'DD.MM.YYYY' },
       validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'endDate',
+      title: 'Sluttdato',
+      type: 'date',
+      description: 'Valgfritt. Siste dag for arrangementer over flere dager, for eksempel BAMA fredag–søndag.',
+      options: { dateFormat: 'DD.MM.YYYY' },
+      validation: (Rule) =>
+        Rule.custom((end, { document }) =>
+          !end || !document?.date || end > document.date ? true : 'Sluttdatoen må være etter startdatoen.',
+        ),
     },
     {
       name: 'startTime',
