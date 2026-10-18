@@ -48,11 +48,15 @@ const COURSES = [{
   sessions: [{ day: 'Mandag', from: '17:30', to: '19:00' }],
 }];
 const LIFT_HOURS = { note: 'Stengt i høstferien.', hours: [{ day: 'Mandag', from: '18:00', to: '20:00' }] };
+// Featured posts (ticket 033), also served from logo.png.
+const FEATURED_POSTS = [1, 2, 3].map((n) => ({
+  image: `https://cdn.sanity.io/images/p/d/post${n}.jpg`, alt: `Innlegg ${n}`, link: 'https://example.org/p', order: n,
+}));
 
 // Sanity responses per CMS state. A function is a route handler (failure).
 const CMS = {
   success: { topbar: TOPBAR, events: [EVENT, { ...EVENT, title: 'Årsmøte', date: '2099-03-01', chips: ['Årsmøte'] }], sponsors: SPONSORS, trainingGroups: TRAINING_GROUPS,
-    skiSchool: SKI_SCHOOL, courses: COURSES, liftHours: LIFT_HOURS },
+    skiSchool: SKI_SCHOOL, courses: COURSES, liftHours: LIFT_HOURS, featuredPosts: FEATURED_POSTS },
   failure: (route) => route.fulfill({ status: 500, body: '{}' }),
   empty: { topbar: TOPBAR, events: [] },
   'topbar off': { topbar: { ...TOPBAR, show: false }, events: [EVENT] },
@@ -63,6 +67,7 @@ const RENDERED = {
   success: async (page) => {
     await expect(page.locator('#events-list')).toContainText(EVENT.title);
     await expect(page.locator('.sponsor-strip')).toBeVisible();
+    await expect(page.locator('[data-featured-posts] img').first()).toBeVisible();
     await expect(page.locator('#programs-grid .program-age').first()).toBeVisible();
     await expect(page.locator('#schedule .lift-pre').filter({ visible: true })).toHaveText('Kun skiskole 17:30 – 18:00');
     await expect(page.locator('#schedule .session-card.group-skiskole').filter({ visible: true })).toBeVisible();

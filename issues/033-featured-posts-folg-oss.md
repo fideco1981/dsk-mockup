@@ -20,12 +20,12 @@ Real, hand-picked posts replace the emoji tiles on the landing page, under a "FÃ
 
 ## Acceptance criteria
 
-- [ ] Schema `featuredPost` registered with `image` and `alt` required. `sanity schema validate` passes. It appears in the Studio left menu.
-- [ ] Test: posts render sorted by order and capped at six, each a link with an image carrying the alt text.
-- [ ] Test: with zero posts, and on a rejected fetch, the grid is hidden and the network buttons stay.
-- [ ] Test: tiles are not in the fade-in hidden state.
-- [ ] Test: the handle is derived from the Instagram URL. A TikTok button appears in the section.
-- [ ] Test: a non-http(s) link is not rendered as a link.
-- [ ] No emoji placeholder tiles remain.
-- [ ] `CONTEXT.md` Studio entry updated.
+- [x] Schema `featuredPost` registered with `image` and `alt` required. `sanity schema validate` passes. It appears in the Studio left menu.
+- [x] Test: posts render sorted by order and capped at six, each a link with an image carrying the alt text.
+- [x] Test: with zero posts, and on a rejected fetch, the grid is hidden and the network buttons stay.
+- [x] Test: tiles are not in the fade-in hidden state.
+- [x] Test: the handle is derived from the Instagram URL. A TikTok button appears in the section.
+- [x] Test: a non-http(s) link is not rendered as a link.
+- [x] No emoji placeholder tiles remain.
+- [x] `CONTEXT.md` Studio entry updated.
 - [ ] (By eye) Tile crop looks right.

@@ -60,7 +60,8 @@
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position}},' +
-    ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}}}';
+    ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}},' +
+    ' "featuredPosts": *[_type == "featuredPost"] | order(order asc)[0...6]{alt, link, order, "image": image.asset->url}}';
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
@@ -263,6 +264,8 @@
       if (board && typeof board === 'object') renderBoard(doc, board);
       const club = result && result.clubInfo;
       if (club && typeof club === 'object') renderClubInfo(doc, club);
+      const posts = doc.querySelector('[data-featured-posts]');
+      if (posts && result && Array.isArray(result.featuredPosts)) renderFeaturedPosts(doc, posts, result.featuredPosts);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -285,6 +288,7 @@
    *   data-club="<field>"   text from a Club info field (e.g. visitAddress)
    *   data-social="<field>" a link to instagram/facebook/tiktok, removed
    *                         when that URL is empty or not http(s)
+   *   data-instagram-handle "@handle" from the Instagram URL, removed without one
    *   data-spond-signup     a link whose href follows spondSignup
    *   data-club-points="<field>" a list of text lines, each after a check
    *                         icon, "·"-separated; hidden when the list is empty
@@ -299,6 +303,12 @@
       const url = club[a.dataset.social];
       if (isHttp(url)) a.href = url;
       else a.remove();
+    });
+    // "@handle" from the Instagram URL's last path segment; removed with its button.
+    doc.querySelectorAll('[data-instagram-handle]').forEach(function (n) {
+      const handle = isHttp(club.instagram) && club.instagram.split(/[?#]/)[0].split('/').filter(Boolean).pop();
+      if (handle && !/\./.test(handle)) n.textContent = '@' + handle.replace(/^@/, '');
+      else n.remove();
     });
     if (isHttp(club.spondSignup)) {
       doc.querySelectorAll('[data-spond-signup]').forEach(function (a) { a.href = club.spondSignup; });
@@ -891,6 +901,32 @@
     strip.hidden = false;
     layoutSponsors(strip);
     if (doc.defaultView) doc.defaultView.addEventListener('resize', function () { layoutSponsors(strip); });
+  }
+
+  /**
+   * Fill the landing grid with up to six Featured posts, lowest order first,
+   * each a square tile linking to the post. Stays hidden on failure or with
+   * none valid (ADR 0003: no fallback tiles). No fade-in on tiles, so they
+   * show without the page's observer. CMS strings go in as text.
+   */
+  function renderFeaturedPosts(doc, grid, posts) {
+    const rank = function (p) { return typeof p.order === 'number' ? p.order : Infinity; };
+    posts
+      .filter(function (p) { return p && isText(p.alt) && typeof p.image === 'string' && /^https:\/\//i.test(p.image); })
+      .sort(function (a, b) { return rank(a) - rank(b); })
+      .slice(0, 6)
+      .forEach(function (p) {
+        const img = el(doc, 'img');
+        img.src = p.image + '?w=480&h=480&fit=crop&auto=format'; // ~2x the widest tile, centre crop
+        img.alt = p.alt;
+        img.loading = 'lazy';
+        const a = externalLink(doc, p.link, '');
+        if (a) a.append(img);
+        const tile = el(doc, 'div', 'insta-tile');
+        tile.append(a || img);
+        grid.append(tile);
+      });
+    grid.hidden = !grid.children.length;
   }
 
   /**
