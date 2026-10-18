@@ -16,9 +16,9 @@ Prefactor for Club info: the social buttons show real brand logos and TikTok is 
 
 ## Acceptance criteria
 
-- [ ] Every page with the sprite has the three brand icons.
-- [ ] No social button uses `icon-camera` or `icon-users`.
-- [ ] Test: the footer has Instagram, Facebook and TikTok buttons, each with an `aria-label` naming the network.
-- [ ] Test: Kontakt has a TikTok social card.
-- [ ] Existing tests and the accessibility suite stay green.
+- [x] Every page with the sprite has the three brand icons.
+- [x] No social button uses `icon-camera` or `icon-users`.
+- [x] Test: the footer has Instagram, Facebook and TikTok buttons, each with an `aria-label` naming the network.
+- [x] Test: Kontakt has a TikTok social card.
+- [x] Existing tests and the accessibility suite stay green.
 - [ ] (By eye) Icon shapes look right.

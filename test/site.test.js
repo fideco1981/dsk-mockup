@@ -48,6 +48,44 @@ test('init injects the footer with the site links', () => {
   assert.ok(labels.includes('Styret'), 'footer lists Styret');
 });
 
+test('footer has Instagram, Facebook and TikTok buttons with brand icons', () => {
+  const doc = makeDoc('index');
+  site.init(doc);
+
+  const btns = [...doc.querySelectorAll('#site-footer .social-btn')];
+  assert.deepEqual(
+    btns.map((a) => a.getAttribute('aria-label')),
+    ['Instagram', 'Facebook', 'TikTok'],
+  );
+  const tiktok = btns[2];
+  assert.equal(tiktok.getAttribute('href'), 'https://www.tiktok.com/@drammen_slalomklubb');
+  for (const a of btns) {
+    const svg = a.querySelector('svg');
+    assert.equal(svg.getAttribute('aria-hidden'), 'true');
+    const icon = svg.querySelector('use').getAttribute('href');
+    assert.equal(icon, '#icon-' + a.getAttribute('aria-label').toLowerCase());
+  }
+});
+
+test('every page sprite carries the brand icons and resolves every icon it uses', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const { JSDOM } = require('jsdom');
+  for (const { href } of site.NAV_MODEL.links) {
+    const html = fs.readFileSync(path.join(__dirname, '..', href), 'utf8');
+    const doc = new JSDOM(html).window.document;
+    site.init(doc);
+    const ids = new Set([...doc.querySelectorAll('symbol')].map((s) => s.id));
+    for (const id of ['icon-instagram', 'icon-facebook', 'icon-tiktok']) {
+      assert.ok(ids.has(id), `${href} sprite has #${id}`);
+    }
+    for (const use of doc.querySelectorAll('use')) {
+      const ref = use.getAttribute('href');
+      assert.ok(ids.has(ref.slice(1)), `${href} resolves ${ref}`);
+    }
+  }
+});
+
 test('clicking the hamburger toggles the menu open and aria-expanded', () => {
   const doc = makeDoc('index');
   site.init(doc);

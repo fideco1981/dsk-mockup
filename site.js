@@ -157,8 +157,9 @@
           '</div>' +
           '<p>Drammen Slalåmklubb — alpinsport for barn, unge og voksne i hjertet av Drammen siden 1936.</p>' +
           '<div class="footer-social">' +
-            '<a href="https://www.instagram.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-camera"/></svg></a>' +
-            '<a href="https://www.facebook.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-users"/></svg></a>' +
+            '<a href="https://www.instagram.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-instagram"/></svg></a>' +
+            '<a href="https://www.facebook.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-facebook"/></svg></a>' +
+            '<a href="https://www.tiktok.com/@drammen_slalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="TikTok"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tiktok"/></svg></a>' +
           '</div>' +
         '</div>' +
         '<div class="footer-col">' +
