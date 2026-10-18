@@ -7,7 +7,7 @@ const path = require('node:path');
 const { makeDoc, stubFetch } = require('./helpers');
 const site = require('../site');
 
-const FALLBACK = 'Sesong 2025/26 er i gang!';
+const FALLBACK = 'Vi venter i spenning på snøen!';
 
 function topbar(doc) {
   return doc.querySelector('.topbar-msg');
@@ -22,7 +22,7 @@ test('cms: after await init, the topbar shows the CMS text', async () => {
   const msg = topbar(doc);
   assert.ok(!msg.hidden);
   assert.match(msg.textContent, /Renn på lørdag!/);
-  assert.doesNotMatch(msg.textContent, /Sesong 2025\/26/);
+  assert.ok(!msg.textContent.includes(FALLBACK));
   assert.equal(msg.querySelector('svg.icon').getAttribute('aria-hidden'), 'true');
 });
 

@@ -3,10 +3,9 @@
 // Integration test for index.html — landing page content accuracy (issue 008).
 //
 // Loads the real HTML file, runs site.js against it, and asserts the corrections
-// from content-baseline.md: the Arrangement section lists the
-// real events (Årsmøte 25 mars 2026 + three Telenorkarusellen dates) instead of
-// invented placeholders; the Spond signup CTAs are present and target Spond;
-// and the legacy schedule.html standalone file is removed. The Treningsplan
+// from content-baseline.md: the Arrangement fallback shows only Bama 2027
+// (issue 016: other 2026/27 dates not known yet); the Spond signup CTAs are present
+// and target Spond; and the legacy schedule.html standalone file is removed. The Treningsplan
 // (#schedule) is covered by test/treningsplan.test.js (issue 026).
 
 const { test } = require('node:test');
@@ -33,27 +32,10 @@ test('index: Hjem nav link is marked active after layout injection', () => {
   assert.equal(active[0].getAttribute('aria-current'), 'page');
 });
 
-test('index: arrangement section lists Årsmøte 25. mars 2026 kl. 18:00', () => {
+test('index: the events fallback lists only Bama 2027, no stale or placeholder dates (issue 016)', () => {
   const doc = renderIndex();
-  const events = doc.getElementById('events');
-  assert.ok(events, 'events section exists');
-  const text = events.textContent;
-  assert.match(text, /Årsmøte/i, 'mentions Årsmøte');
-  // Allow "25 mars", "25. mars", "25/3", etc.
-  assert.match(text, /25\.?\s*mars|25\/3/i, 'mentions the 25 mars date');
-  assert.match(text, /2026/, 'mentions year 2026');
-  assert.match(text, /18[:.]00/, 'mentions 18:00 start time');
-});
-
-test('index: arrangement section lists all three Telenorkarusellen dates', () => {
-  const doc = renderIndex();
-  const events = doc.getElementById('events');
-  const text = events.textContent;
-  assert.match(text, /Telenorkarusellen/i, 'mentions Telenorkarusellen');
-  // 19. januar, 18. februar, 9. mars
-  assert.match(text, /19\.?\s*jan/i, 'mentions 19 jan');
-  assert.match(text, /18\.?\s*feb/i, 'mentions 18 feb');
-  assert.match(text, /9\.?\s*mars|9\.?\s*mar\b/i, 'mentions 9 mars');
+  const titles = [...doc.querySelectorAll('#events-list .event-title')].map((h) => h.textContent);
+  assert.deepEqual(titles, ['Bama skifestival — fredag 12.–søndag 14. mars 2027']);
 });
 
 test('index: hero and membership CTAs link to the Spond signup form', () => {

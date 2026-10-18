@@ -109,7 +109,7 @@
         // Hidden until the CMS answers; this hand-written text is the fallback.
         '<span class="topbar-msg" hidden>' +
           '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-snowflake"/></svg> ' +
-          'Sesong 2025/26 er i gang!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er nå åpen — ' +
+          'Vi venter i spenning på snøen!&nbsp;&nbsp;·&nbsp;&nbsp;Påmelding til skiskolen er åpen — ' +
           '<a href="https://club.spond.com/landing/courses/drammensk" target="_blank" rel="noopener"><strong>Meld deg på her →</strong></a>' +
         '</span>' +
         // Shown only when there are several messages to rotate (WCAG 2.2.2).
