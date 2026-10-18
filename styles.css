@@ -1131,6 +1131,7 @@
   /* ─── BOARD (styret) ─── */
   .board { background: var(--dark); }
   .board-subhead { margin-top: 72px; }
+  .board-grid[hidden] { display: none; }
   .board-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

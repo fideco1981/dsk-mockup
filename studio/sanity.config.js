@@ -5,9 +5,10 @@ import { projectId, dataset } from './project.js';
 import { topbarMessage } from './schemaTypes/topbarMessage.js';
 import { skiSchool } from './schemaTypes/skiSchool.js';
 import { liftHours } from './schemaTypes/liftHours.js';
+import { board } from './schemaTypes/board.js';
 
 // One fixed document each, opened straight from the menu (documentId = type name).
-const SINGLETONS = [topbarMessage.name, skiSchool.name, liftHours.name];
+const SINGLETONS = [topbarMessage.name, skiSchool.name, liftHours.name, board.name];
 const singleton = (S, type, title) =>
   S.listItem().title(title).id(type).child(S.document().schemaType(type).documentId(type));
 
@@ -50,6 +51,7 @@ export default defineConfig({
                   .title('Kurs')
                   .defaultOrdering([{ field: 'startDate', direction: 'asc' }]),
               ),
+            singleton(S, board.name, 'Styret'),
           ]),
     }),
   ],
