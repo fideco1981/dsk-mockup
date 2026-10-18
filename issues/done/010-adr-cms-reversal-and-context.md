@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 ## Parent PRD
 
@@ -17,6 +17,10 @@ See PRD: "Docs".
 
 ## Acceptance criteria
 
-- [ ] An ADR exists in `docs/adr/` and covers: the reversal, the alternatives rejected and why, the public dataset with no token, and live endpoint over CDN.
-- [ ] `CONTEXT.md` exists at the repo root and defines the five terms.
-- [ ] `issues/prd.md` stays unchanged; the ADR references it.
+- [x] An ADR exists in `docs/adr/` and covers: the reversal, the alternatives rejected and why, the public dataset with no token, and live endpoint over CDN.
+- [x] `CONTEXT.md` exists at the repo root and defines the five terms.
+- [x] `issues/prd.md` stays unchanged; the ADR references it.
+
+## Closeout
+
+Done in 812b4c1, closed late on 2026-10-18. `docs/adr/0001-sanity-browser-fetch-reverses-no-cms.md` covers the reversal, the rejected alternatives (Decap/Sveltia, Sanity build pipeline), the public dataset with no token, and the live endpoint over the CDN. `CONTEXT.md` defines Event, Topbar message, Studio, Fallback content and Chip. `issues/prd.md` is unchanged and referenced by the ADR.
