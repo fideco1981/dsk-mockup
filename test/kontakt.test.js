@@ -167,3 +167,96 @@ test('kontakt: page has no absolute internal links (subpath-safe)', () => {
   }
   assert.deepEqual(bad, [], `kontakt.html has absolute internal links: ${bad.join(', ')}`);
 });
+
+// Club info (ticket 032): Kontakt renders the facts, contact persons and
+// social cards from the clubInfo singleton; the HTML is the fallback.
+const { stubFetch } = require('./helpers');
+
+const CLUB = {
+  visitAddress: 'Skiveien 1',
+  postAddress: 'Postboks 1, 3000 Drammen',
+  orgNumber: '123 456 789',
+  instagram: 'https://www.instagram.com/dsk_test',
+  facebook: 'https://www.facebook.com/dsk_test',
+  tiktok: 'https://www.tiktok.com/@dsk_test',
+  spondSignup: 'https://club.spond.com/landing/signup/test',
+  contactPersons: [
+    { name: 'Kari Nordmann', role: 'Foreldrekontakt · U8' },
+    { name: 'Ola', role: 'Skiskole' },
+  ],
+};
+
+async function renderWith(respond) {
+  const doc = new JSDOM(HTML).window.document;
+  stubFetch(doc, respond);
+  await site.init(doc);
+  return doc;
+}
+
+const contactCards = (doc) =>
+  [...doc.querySelectorAll('.kontakt-grid .board-card')].map((c) => [
+    c.querySelector('.board-avatar').textContent,
+    c.querySelector('.board-name').textContent,
+    c.querySelector('.board-role').textContent,
+    c.querySelector('.board-contact').textContent.trim(),
+  ]);
+
+test('kontakt: contact persons render in order from Club info', async () => {
+  const doc = await renderWith({ clubInfo: CLUB });
+  assert.deepEqual(contactCards(doc), [
+    ['KN', 'Kari Nordmann', 'Foreldrekontakt · U8', 'kontakt via klubben'],
+    ['O', 'Ola', 'Skiskole', 'kontakt via klubben'],
+  ]);
+});
+
+const facts = (doc) =>
+  [...doc.querySelectorAll('.kontakt-facts .fact-value')].slice(0, 3).map((n) => n.textContent);
+
+test('kontakt: addresses and org number follow Club info', async () => {
+  const doc = await renderWith({ clubInfo: CLUB });
+  assert.deepEqual(facts(doc), ['Skiveien 1', 'Postboks 1, 3000 Drammen', '123 456 789']);
+});
+
+const socialCards = (doc) =>
+  [...doc.querySelectorAll('.kontakt-social-card')].map((a) => [
+    a.querySelector('.kontakt-social-label').textContent,
+    a.getAttribute('href'),
+  ]);
+
+test('kontakt: social cards render only for networks with a URL; Spond follows spondSignup', async () => {
+  const doc = await renderWith({ clubInfo: { ...CLUB, facebook: '', instagram: 'javascript:alert(1)' } });
+  assert.deepEqual(socialCards(doc), [
+    ['TikTok', 'https://www.tiktok.com/@dsk_test'],
+    ['Spond', 'https://club.spond.com/landing/signup/test'],
+  ]);
+  for (const a of doc.querySelectorAll('.kontakt-social-card')) {
+    assert.equal(a.getAttribute('target'), '_blank');
+    assert.equal(a.getAttribute('rel'), 'noopener');
+  }
+});
+
+test('kontakt: on a rejected fetch the fallback cards and values remain', async () => {
+  const fallback = renderKontakt();
+  const doc = await renderWith(() => Promise.reject(new Error('offline')));
+  assert.deepEqual(facts(doc), facts(fallback));
+  assert.equal(contactCards(doc).length, 6);
+  assert.deepEqual(contactCards(doc), contactCards(fallback));
+  assert.deepEqual(socialCards(doc), socialCards(fallback));
+  assert.equal(socialCards(doc).length, 4);
+});
+
+test('kontakt: a contact role containing markup renders as text', async () => {
+  const role = '<img src=x onerror="alert(1)">';
+  const doc = await renderWith({ clubInfo: { ...CLUB, contactPersons: [{ name: 'Kari Nordmann', role }] } });
+  assert.equal(doc.querySelector('.kontakt-grid .board-role').textContent, role);
+  assert.equal(doc.querySelector('.kontakt-grid img'), null);
+});
+
+test('kontakt: PII-leak guard holds on the page rendered from Club info', async (t) => {
+  const doc = await renderWith({ clubInfo: CLUB });
+  const leaked = loadLeakedPII();
+  if (!leaked) return t.diagnostic('content-baseline.md absent — PII leak check skipped');
+  const html = doc.documentElement.innerHTML;
+  for (const secret of leaked) assert.ok(!html.includes(secret), `does not leak "${secret}"`);
+  assert.match(doc.body.textContent, /kontakt via klubben/);
+});

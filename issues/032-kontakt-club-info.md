@@ -17,9 +17,9 @@ Kontakt renders the club's facts, contact persons and social links from Club inf
 
 ## Acceptance criteria
 
-- [ ] Test: contact persons render in array order from Club info, with name and role.
-- [ ] Test: addresses and org number follow Club info.
-- [ ] Test: social cards render only for networks with a URL, including TikTok. The Spond card follows `spondSignup`.
-- [ ] Test: on a rejected fetch, the fallback cards and values remain.
-- [ ] Test: a role containing markup renders as text.
-- [ ] The Kontakt PII-leak guard runs against the rendered page with CMS fixtures and stays green.
+- [x] Test: contact persons render in array order from Club info, with name and role.
+- [x] Test: addresses and org number follow Club info.
+- [x] Test: social cards render only for networks with a URL, including TikTok. The Spond card follows `spondSignup`.
+- [x] Test: on a rejected fetch, the fallback cards and values remain.
+- [x] Test: a role containing markup renders as text.
+- [x] The Kontakt PII-leak guard runs against the rendered page with CMS fixtures and stays green.
