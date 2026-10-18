@@ -61,7 +61,7 @@
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position}},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}},' +
-    ' "featuredPosts": *[_type == "featuredPost"] | order(order asc)[0...6]{alt, link, order, "image": image.asset->url}}';
+    ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
@@ -288,7 +288,8 @@
    *   data-club="<field>"   text from a Club info field (e.g. visitAddress)
    *   data-social="<field>" a link to instagram/facebook/tiktok, removed
    *                         when that URL is empty or not http(s)
-   *   data-instagram-handle "@handle" from the Instagram URL, removed without one
+   *   data-instagram-handle / data-tiktok-handle "@handle" from that URL,
+   *                         removed without one
    *   data-spond-signup     a link whose href follows spondSignup
    *   data-club-points="<field>" a list of text lines, each after a check
    *                         icon, "·"-separated; hidden when the list is empty
@@ -305,11 +306,14 @@
       if (isHttp(url)) a.href = url;
       else a.remove();
     });
-    // "@handle" from the Instagram URL's last path segment; removed with its button.
-    doc.querySelectorAll('[data-instagram-handle]').forEach(function (n) {
-      const handle = isHttp(club.instagram) && club.instagram.split(/[?#]/)[0].split('/').filter(Boolean).pop();
-      if (handle && !/\./.test(handle)) n.textContent = '@' + handle.replace(/^@/, '');
-      else n.remove();
+    // "@handle" from the URL's last path segment (TikTok's already has the "@").
+    ['instagram', 'tiktok'].forEach(function (net) {
+      doc.querySelectorAll('[data-' + net + '-handle]').forEach(function (n) {
+        const url = club[net];
+        const handle = isHttp(url) && url.split(/[?#]/)[0].split('/').filter(Boolean).pop();
+        if (handle && !/\./.test(handle)) n.textContent = '@' + handle.replace(/^@/, '');
+        else n.remove();
+      });
     });
     if (isHttp(club.spondSignup)) {
       doc.querySelectorAll('[data-spond-signup]').forEach(function (a) { a.href = club.spondSignup; });

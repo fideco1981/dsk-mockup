@@ -31,8 +31,8 @@ const post = (n, order) => ({
   order,
 });
 
-test('featured posts: render sorted by order, capped at six, each a new-tab link around an image with the alt text', async () => {
-  const posts = [post(3, 30), post(1, 10), post(7, 70), post(2, 20), post(6, 60), post(5, 50), post(4, 40)];
+test('featured posts: render sorted by order (unranked last), capped at six, each a new-tab link around an image with the alt text', async () => {
+  const posts = [post(8, null), post(3, 30), post(1, 10), post(7, 70), post(2, 20), post(6, 60), post(5, 50), post(4, 40)];
   const doc = await landing({ featuredPosts: posts });
   assert.ok(!grid(doc).hidden);
   const imgs = [...grid(doc).querySelectorAll('img')];
@@ -98,4 +98,9 @@ test('følg oss: fallback handle and TikTok button without the CMS', async () =>
   const tiktok = section(doc).querySelector('.social-btn[aria-label="TikTok"]');
   assert.match(tiktok.getAttribute('href'), /^https:\/\/www\.tiktok\.com\/@/);
   assert.ok(tiktok.querySelector('use[href="#icon-tiktok"]'));
+});
+
+test('featured posts: no breakpoint hides editor-picked tiles', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
+  assert.doesNotMatch(css, /\.insta-tile:nth-child\([^)]*\)\s*\{[^}]*display:\s*none/);
 });
