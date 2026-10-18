@@ -122,6 +122,16 @@ test('kontakt: Facebook and Instagram links are present', () => {
   );
 });
 
+test('kontakt: a TikTok social card links the club and shows the brand icon', () => {
+  const doc = renderKontakt();
+  const card = [...doc.querySelectorAll('.kontakt-social-card')].find(
+    (a) => a.querySelector('.kontakt-social-label')?.textContent.trim() === 'TikTok',
+  );
+  assert.ok(card, 'has a TikTok card');
+  assert.equal(card.getAttribute('href'), 'https://www.tiktok.com/@drammen_slalomklubb');
+  assert.equal(card.querySelector('use').getAttribute('href'), '#icon-tiktok');
+});
+
 test('kontakt: personal phone numbers and emails are masked', (t) => {
   const doc = renderKontakt();
   const html = doc.documentElement.innerHTML;
