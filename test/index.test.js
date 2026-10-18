@@ -34,8 +34,9 @@ test('index: Hjem nav link is marked active after layout injection', () => {
 
 test('index: the events fallback lists only Bama 2027, no stale or placeholder dates (issue 016)', () => {
   const doc = renderIndex();
-  const titles = [...doc.querySelectorAll('#events-list .event-title')].map((h) => h.textContent);
-  assert.deepEqual(titles, ['Bama skifestival — fredag 12.–søndag 14. mars 2027']);
+  const cards = [...doc.querySelectorAll('#events-list .event-card')];
+  assert.deepEqual(cards.map((c) => [c.querySelector('.event-title').textContent, c.querySelector('.event-when').textContent]),
+    [['Bama skifestival', 'fredag 12.–søndag 14. mars 2027']]);
 });
 
 test('index: hero and membership CTAs link to the Spond signup form', () => {

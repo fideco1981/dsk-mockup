@@ -160,9 +160,10 @@ test('cms events: only upcoming events, nearest first, at most 3', async () => {
   assert.ok(!eventsList(doc).hidden);
   const titles = cards(doc).map((c) => c.querySelector('h3.event-title').textContent);
   assert.equal(titles.length, 3);
-  assert.match(titles[0], /^A — tirsdag 15\. januar 2999 kl\. 18:00$/);
-  assert.match(titles[1], /^B — fredag 1\. februar 2999$/);
-  assert.match(titles[2], /^C /);
+  assert.deepEqual(titles, ['A', 'B', 'C']);
+  const when = cards(doc).map((c) => c.querySelector('.event-when').textContent);
+  assert.equal(when[0], 'tirsdag 15. januar 2999 kl. 18:00');
+  assert.equal(when[1], 'fredag 1. februar 2999');
   assert.ok(!eventsList(doc).textContent.includes('Fallback-arrangement'));
   const first = cards(doc)[0];
   assert.equal(first.querySelector('.event-date .day').textContent, '15');
@@ -184,11 +185,11 @@ test('cms events: a multi-day event shows its date range and stays until its end
   });
   await site.init(doc);
   const [ongoing, bama, cross] = cards(doc);
-  assert.match(ongoing.querySelector('h3.event-title').textContent, /^Pågår — /, 'still shown on its last day');
-  assert.equal(bama.querySelector('h3.event-title').textContent, 'BAMA — fredag 18.–søndag 20. januar 2999 kl. 17:00');
+  assert.equal(ongoing.querySelector('h3.event-title').textContent, 'Pågår', 'still shown on its last day');
+  assert.equal(bama.querySelector('.event-when').textContent, 'fredag 18.–søndag 20. januar 2999 kl. 17:00');
   assert.equal(bama.querySelector('.event-date .day').textContent, '18–20');
   assert.equal(bama.querySelector('.event-date .month').textContent, 'Jan');
-  assert.equal(cross.querySelector('h3.event-title').textContent, 'Over månedsskiftet — onsdag 30. januar–fredag 1. februar 2999');
+  assert.equal(cross.querySelector('.event-when').textContent, 'onsdag 30. januar–fredag 1. februar 2999');
   assert.equal(cross.querySelector('.event-date .day').textContent, '30–1');
   assert.equal(cross.querySelector('.event-date .month').textContent, 'Jan–Feb');
 });
@@ -228,7 +229,7 @@ test('cms events: pin line with the location, then the description, then the htt
   assert.equal(loc.querySelector('svg.icon').getAttribute('aria-hidden'), 'true');
   assert.equal(loc.textContent, 'Haukåsløypa');
   assert.equal(info.querySelector('p.event-desc').textContent, 'Åpent for alle.');
-  assert.deepEqual([...info.children].map((c) => c.className), ['event-title', 'event-location', 'event-desc', 'event-more']);
+  assert.deepEqual([...info.children].map((c) => c.className), ['event-title', 'event-when', 'event-location', 'event-desc', 'event-more']);
   const a = info.querySelector('.event-more a');
   assert.equal(a.textContent, 'Mer info →');
   assert.equal(a.getAttribute('href'), 'https://example.org/p');
@@ -282,7 +283,7 @@ test('cms events: malformed events are skipped, valid ones still render', async 
   const doc = makeDoc('index');
   stubFetch(doc, { events: [null, { title: 'Uten dato' }, { title: 'X', date: 'snart' }, { title: 'OK', date: '2999-01-01', chips: 'Renn' }] });
   await site.init(doc);
-  assert.deepEqual(cards(doc).map((c) => c.querySelector('h3').textContent.split(' — ')[0]), ['OK']);
+  assert.deepEqual(cards(doc).map((c) => c.querySelector('h3').textContent), ['OK']);
 });
 
 test('cms events: index.html has the events mount, hidden, with fallback cards and a noscript reveal', () => {

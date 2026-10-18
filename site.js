@@ -501,8 +501,8 @@
       day += '–' + end[2];
       if (!sameMonth) month += '–' + MONTHS_SHORT[end[1] - 1];
     }
-    let title = e.title + ' — ' + when + ' ' + MONTHS[end[1] - 1] + ' ' + end[0];
-    if (typeof e.startTime === 'string' && e.startTime) title += ' kl. ' + e.startTime;
+    when += ' ' + MONTHS[end[1] - 1] + ' ' + end[0];
+    if (typeof e.startTime === 'string' && e.startTime) when += ' kl. ' + e.startTime;
 
     const card = el(doc, 'div', 'event-card');
     const date = el(doc, 'div', 'event-date');
@@ -516,7 +516,7 @@
       });
       info.append(chips);
     }
-    info.append(el(doc, 'h3', 'event-title', title));
+    info.append(el(doc, 'h3', 'event-title', e.title), el(doc, 'p', 'event-when', when));
 
     if (isText(e.location)) {
       const loc = el(doc, 'div', 'event-location');
