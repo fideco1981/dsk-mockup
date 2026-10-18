@@ -40,7 +40,7 @@ export const trainers = {
               description: 'Kryss av bare når treneren har samtykket til bildet. Selve samtykket oppbevarer klubben utenfor nettsiden.',
               validation: (Rule) =>
                 Rule.custom((consent, { parent }) =>
-                  !parent?.photo || consent === true ? true : 'Bildet kan bare publiseres med samtykke. Kryss av, eller fjern bildet.',
+                  !parent?.photo?.asset || consent === true ? true : 'Bildet kan bare publiseres med samtykke. Kryss av, eller fjern bildet.',
                 ),
             },
             {
@@ -49,7 +49,7 @@ export const trainers = {
               type: 'date',
               options: { dateFormat: 'DD.MM.YYYY' },
               validation: (Rule) =>
-                Rule.custom((date, { parent }) => (!parent?.photo || date ? true : 'Fyll inn datoen for bildesamtykket.')),
+                Rule.custom((date, { parent }) => (!parent?.photo?.asset || date ? true : 'Fyll inn datoen for bildesamtykket.')),
             },
             {
               name: 'role',

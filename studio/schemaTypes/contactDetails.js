@@ -1,4 +1,4 @@
-// Phone, email and consent for a person (Board member, Contact person). The
+// Phone, email and consent for a person (Board member, Contact person, Trainer). The
 // dataset is public, so Studio refuses to publish details without a ticked and
 // dated consent (ADR 0004). site.js isPhone uses the same phone regex; keep them together.
 const needsConsent = (parent) => Boolean(parent?.phone || parent?.email);

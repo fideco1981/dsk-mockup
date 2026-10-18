@@ -689,8 +689,8 @@
     mount.textContent = '';
     trainers.forEach(function (t) {
       const body = [];
-      const tags = validGroups(t.groups).map(function (g) { return tag(doc, g.title, 'treningsopplegg.html#' + slug(g.title), groupClass(g)); });
-      if (t.skiSchool === true) tags.push(tag(doc, 'Skiskole', 'skiskole.html', SKI_SCHOOL_CLASS));
+      const tags = validGroups(t.groups).map(function (g) { return trainerTag(doc, g.title, 'treningsopplegg.html#' + slug(g.title), groupClass(g)); });
+      if (t.skiSchool === true) tags.push(trainerTag(doc, 'Skiskole', 'skiskole.html', SKI_SCHOOL_CLASS));
       if (tags.length) {
         const ul = el(doc, 'ul', 'trainer-tags');
         ul.setAttribute('aria-label', 'Ansvarlig for');
@@ -712,7 +712,7 @@
   }
 
   /** A responsibility tag on a trainer card: a link in a .group-* colour. */
-  function tag(doc, text, href, cls) {
+  function trainerTag(doc, text, href, cls) {
     const a = el(doc, 'a', 'trainer-tag ' + cls, text);
     a.href = href;
     return a;

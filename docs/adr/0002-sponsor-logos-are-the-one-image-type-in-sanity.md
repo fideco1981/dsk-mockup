@@ -1,6 +1,6 @@
 # Sponsor logos are the one image type in Sanity
 
-Status: accepted (2026-10-17), amended by 0003 (2026-10-18)
+Status: accepted (2026-10-17), amended by 0003 (2026-10-18) and 0005 (2026-10-18)
 
 ## Context
 
