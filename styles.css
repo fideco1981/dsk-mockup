@@ -1180,6 +1180,8 @@
   }
   .trainer-tag:hover { background: color-mix(in srgb, var(--group-bg) 50%, var(--dark2)); }
   .trainer-tag:focus-visible { outline: 2px solid var(--blue-lt); outline-offset: 2px; }
+  .trainer-grid .board-avatar { width: 112px; height: 112px; font-size: 34px; }
+  .trainer-photo { display: block; object-fit: cover; }
   .board-note {
     display: flex;
     align-items: flex-start;

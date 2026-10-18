@@ -19,6 +19,8 @@ Stein and the club take contact details from fake placeholders to real, consente
 - Check the consent wording against Datatilsynet's or NIF's guidance.
 - Publish a privacy statement (`personvern.html`, linked from the footer): what is published, on what basis (consent), how to withdraw. Agent can draft; the club approves.
 - Replace every placeholder in Studio with real details, or clear it.
+- Collect photo consent from each trainer whose photo is published (separate from phone/email consent, ADR 0005), and keep the evidence outside the site.
+- Replace the Trenere page's placeholders (fake trainers, placeholder photos) with real, consented trainers, or remove them; delete placeholder photo files in the media library.
 
 ## Acceptance criteria
 
@@ -27,3 +29,5 @@ Stein and the club take contact details from fake placeholders to real, consente
 - [ ] Consent collected and stored by the club for every published person.
 - [ ] Privacy statement published and linked from the footer.
 - [ ] No `example.no` or `000 00 000` left in published Sanity content.
+- [ ] Photo consent collected and stored by the club for every trainer with a published photo.
+- [ ] No placeholder trainers or photos left on Trenere.

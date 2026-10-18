@@ -174,3 +174,31 @@ test('trenere: markup in a group title renders as text', async () => {
   assert.equal(tags(doc)[0][0][0], evil);
   assert.equal(doc.querySelector('main img, main b'), null);
 });
+
+// Photos only with photo consent (ADR 0005), separate from the contact consent.
+const PHOTO = 'https://cdn.sanity.io/images/x/y/abc-400x600.jpg';
+const withPhoto = (extra) => ({ ...TRAINERS[0], photo: PHOTO, size: { width: 400, height: 600 }, hotspot: { x: 0.5, y: 0.25 }, ...extra });
+
+test('trenere: with photo consent, the photo replaces the initials, alt="" and a square from the crop/hotspot', async () => {
+  const doc = await renderWithCms({ trainers: [withPhoto({ photoConsent: true })] });
+  const card = doc.querySelector('[data-trainers-grid] .board-card');
+  const img = card.querySelector('img.board-avatar');
+  assert.equal(img.getAttribute('alt'), '');
+  assert.equal(img.getAttribute('src'), PHOTO + '?rect=0,0,400,400&w=224&h=224&fit=crop&auto=format');
+  assert.equal(card.querySelectorAll('.board-avatar').length, 1, 'no initials beside the photo');
+});
+
+test('trenere: without photo consent, initials show and the photo URL appears nowhere', async () => {
+  const doc = await renderWithCms({ trainers: [withPhoto({ photoConsent: false }), withPhoto({ consent: true })] });
+  assert.deepEqual(cards(doc).map((c) => c.initials), ['KN', 'KN']);
+  assert.ok(!doc.documentElement.innerHTML.includes('abc-400x600'));
+});
+
+test('trenere: a non-https photo is not rendered, even with consent', async () => {
+  const doc = await renderWithCms({ trainers: [
+    withPhoto({ photoConsent: true, photo: 'http://cdn.sanity.io/x.jpg' }),
+    withPhoto({ photoConsent: true, photo: 'javascript:alert(1)' }),
+  ] });
+  assert.equal(doc.querySelector('[data-trainers-grid] img'), null);
+  assert.deepEqual(cards(doc).map((c) => c.initials), ['KN', 'KN']);
+});

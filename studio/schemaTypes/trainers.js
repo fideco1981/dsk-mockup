@@ -21,6 +21,36 @@ export const trainers = {
           title: 'Trener',
           fields: [
             { name: 'name', title: 'Navn', type: 'string', validation: (Rule) => Rule.required() },
+            // A photo is published only with a ticked, dated photo consent, separate
+            // from the phone/email consent (ADR 0005).
+            {
+              name: 'photo',
+              title: 'Bilde',
+              type: 'image',
+              options: { hotspot: true },
+              description:
+                'Valgfritt. Vises rundt, så beskjær og sett fokuspunkt på ansiktet. Krever bildesamtykke. ' +
+                'Trekker treneren samtykket: fjern bildet, fjern krysset og publiser, og slett så filen i mediebiblioteket ' +
+                '(bare å fjerne bildet fra dokumentet lar filen ligge tilgjengelig på nettet).',
+            },
+            {
+              name: 'photoConsent',
+              title: 'Samtykker til publisering av bilde',
+              type: 'boolean',
+              description: 'Kryss av bare når treneren har samtykket til bildet. Selve samtykket oppbevarer klubben utenfor nettsiden.',
+              validation: (Rule) =>
+                Rule.custom((consent, { parent }) =>
+                  !parent?.photo || consent === true ? true : 'Bildet kan bare publiseres med samtykke. Kryss av, eller fjern bildet.',
+                ),
+            },
+            {
+              name: 'photoConsentDate',
+              title: 'Dato for bildesamtykke',
+              type: 'date',
+              options: { dateFormat: 'DD.MM.YYYY' },
+              validation: (Rule) =>
+                Rule.custom((date, { parent }) => (!parent?.photo || date ? true : 'Fyll inn datoen for bildesamtykket.')),
+            },
             {
               name: 'role',
               title: 'Rolle',
