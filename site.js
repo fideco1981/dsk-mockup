@@ -19,7 +19,8 @@
  *     Treningsplan and the Board from Sanity (test/cms.test.js, test/treningsopplegg.test.js,
  *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js,
  *     test/styret.test.js), and Club info into any data-club / data-social /
- *     data-spond-signup element (test/club-info.test.js); init(doc)
+ *     data-spond-signup element (test/club-info.test.js), and the landing
+ *     page's Featured posts (test/featured-posts.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -331,16 +332,17 @@
       n.hidden = !n.childNodes.length;
     });
     // Contact persons (Kontakt), in array order; with none valid the HTML cards stay.
-    const persons = (Array.isArray(club.contactPersons) ? club.contactPersons : [])
-      .filter(function (p) { return p && isText(p.name) && isText(p.role); });
+    const persons = namedPeople(club.contactPersons, 'role');
     const grid = doc.querySelector('[data-contact-persons]');
     if (grid && persons.length) {
       grid.textContent = '';
-      persons.forEach(function (p) { grid.append(boardCard(doc, p.name, p.role, 'klubben')); });
+      persons.forEach(function (p) { grid.append(personCard(doc, p.name, p.role, 'klubben')); });
     }
   }
 
   function isHttp(url) { return typeof url === 'string' && /^https?:\/\//i.test(url); }
+  /** CMS image URLs (Sanity CDN) must be https, so no mixed content. */
+  function isHttpsImage(url) { return typeof url === 'string' && /^https:\/\//i.test(url); }
 
   /** A new-tab link for an http(s) URL from the CMS; null for anything else. */
   function externalLink(doc, href, text) {
@@ -642,24 +644,29 @@
       term.textContent = board.term;
       term.hidden = false;
     }
-    const members = (Array.isArray(board.members) ? board.members : [])
-      .filter(function (m) { return m && isText(m.name) && isText(m.position); });
-    [['[data-board-grid]', false], ['[data-vara-grid]', true]].forEach(function (g) {
-      const mount = doc.querySelector(g[0]);
+    const members = namedPeople(board.members, 'position');
+    const isVara = function (m) { return m.position === 'Vara'; };
+    const fill = function (selector, list) {
+      const mount = doc.querySelector(selector);
       if (!mount) return;
-      const list = members.filter(function (m) { return (m.position === 'Vara') === g[1]; });
       mount.textContent = '';
-      list.forEach(function (m) { mount.append(boardCard(doc, m.name, m.position, 'styret', m.position === 'Vara')); });
+      list.forEach(function (m) { mount.append(personCard(doc, m.name, m.position, 'styret', isVara(m))); });
       mount.hidden = !list.length;
-      if (g[1]) {
-        const head = doc.querySelector('[data-vara-head]');
-        if (head) head.hidden = !list.length;
-      }
-    });
+    };
+    const vara = members.filter(isVara);
+    fill('[data-board-grid]', members.filter(function (m) { return !isVara(m); }));
+    fill('[data-vara-grid]', vara);
+    const head = doc.querySelector('[data-vara-head]');
+    if (head) head.hidden = !vara.length;
+  }
+
+  /** Entries of a CMS list with a text name and a text <key> (role, position). */
+  function namedPeople(list, key) {
+    return (Array.isArray(list) ? list : []).filter(function (p) { return p && isText(p.name) && isText(p[key]); });
   }
 
   /** A person card (Styret, Kontakt): initials avatar, name, role, "kontakt via <via>". */
-  function boardCard(doc, name, role, via, vara) {
+  function personCard(doc, name, role, via, vara) {
     const words = name.trim().split(/\s+/);
     const initials = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0];
     const card = el(doc, 'article', 'board-card');
@@ -897,7 +904,7 @@
   function renderSponsors(doc, strip, sponsors) {
     const set = el(doc, 'ul', 'sponsor-set');
     sponsors.forEach(function (s) {
-      if (!s || typeof s.name !== 'string' || typeof s.logo !== 'string' || !/^https:\/\//i.test(s.logo)) return;
+      if (!s || typeof s.name !== 'string' || !isHttpsImage(s.logo)) return;
       const img = el(doc, 'img');
       img.src = s.logo + '?h=128&auto=format'; // 2x the 64px CSS height
       img.alt = s.name;
@@ -926,7 +933,7 @@
   function renderFeaturedPosts(doc, grid, posts) {
     const rank = function (p) { return typeof p.order === 'number' ? p.order : Infinity; };
     posts
-      .filter(function (p) { return p && isText(p.alt) && typeof p.image === 'string' && /^https:\/\//i.test(p.image); })
+      .filter(function (p) { return p && isText(p.alt) && isHttpsImage(p.image); })
       .sort(function (a, b) { return rank(a) - rank(b); })
       .slice(0, 6)
       .forEach(function (p) {
