@@ -292,6 +292,7 @@
    *   data-spond-signup     a link whose href follows spondSignup
    *   data-club-points="<field>" a list of text lines, each after a check
    *                         icon, "·"-separated; hidden when the list is empty
+   *   data-contact-persons  a grid of contactPersons cards (Kontakt)
    * CMS strings go in as text.
    */
   function renderClubInfo(doc, club) {
@@ -325,6 +326,14 @@
       });
       n.hidden = !n.childNodes.length;
     });
+    // Contact persons (Kontakt), in array order; with none valid the HTML cards stay.
+    const persons = (Array.isArray(club.contactPersons) ? club.contactPersons : [])
+      .filter(function (p) { return p && isText(p.name) && isText(p.role); });
+    const grid = doc.querySelector('[data-contact-persons]');
+    if (grid && persons.length) {
+      grid.textContent = '';
+      persons.forEach(function (p) { grid.append(boardCard(doc, p.name, p.role, 'klubben')); });
+    }
   }
 
   function isHttp(url) { return typeof url === 'string' && /^https?:\/\//i.test(url); }
@@ -636,7 +645,7 @@
       if (!mount) return;
       const list = members.filter(function (m) { return (m.position === 'Vara') === g[1]; });
       mount.textContent = '';
-      list.forEach(function (m) { mount.append(boardCard(doc, m)); });
+      list.forEach(function (m) { mount.append(boardCard(doc, m.name, m.position, 'styret', m.position === 'Vara')); });
       mount.hidden = !list.length;
       if (g[1]) {
         const head = doc.querySelector('[data-vara-head]');
@@ -645,16 +654,17 @@
     });
   }
 
-  function boardCard(doc, m) {
-    const words = m.name.trim().split(/\s+/);
+  /** A person card (Styret, Kontakt): initials avatar, name, role, "kontakt via <via>". */
+  function boardCard(doc, name, role, via, vara) {
+    const words = name.trim().split(/\s+/);
     const initials = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0];
     const card = el(doc, 'article', 'board-card');
-    const avatar = el(doc, 'div', 'board-avatar' + (m.position === 'Vara' ? ' board-avatar-vara' : ''), initials.toUpperCase());
+    const avatar = el(doc, 'div', 'board-avatar' + (vara ? ' board-avatar-vara' : ''), initials.toUpperCase());
     avatar.setAttribute('aria-hidden', 'true');
     const contact = el(doc, 'span', 'board-contact');
     setIcon(contact, 'info');
-    contact.append(' kontakt via styret');
-    card.append(avatar, el(doc, 'h3', 'board-name', m.name), el(doc, 'p', 'board-role', m.position), contact);
+    contact.append(' kontakt via ' + via);
+    card.append(avatar, el(doc, 'h3', 'board-name', name), el(doc, 'p', 'board-role', role), contact);
     return card;
   }
 
