@@ -1,4 +1,4 @@
-Status: ready-for-human
+Status: done
 
 ## Parent PRD
 
@@ -37,7 +37,7 @@ Move the training groups on `treningsopplegg.html` into Sanity. The club has ren
 - [x] `test/treningsopplegg.test.js` updated from the old anchors to `#gronn`, `#bla`, `#rod`, `#sort`, `#fun`.
 - [x] New red and black tag colours pass the axe contrast scan.
 - [x] CONTEXT.md updated.
-- [ ] (HITL) Studio deployed. Stein enters the five groups in Studio when the content is settled; until then the site shows the fallback.
+- [x] (HITL) Studio deployed. Stein enters the five groups in Studio when the content is settled; until then the site shows the fallback.
 
 ## Comments
 
@@ -49,3 +49,5 @@ Move the training groups on `treningsopplegg.html` into Sanity. The club has ren
 - The "N grupper" heading shows "Fem grupper" for a moment while Sanity loads, then updates.
 
 2026-10-17: Studio deployed with Treningsgrupper in the left menu (971e0b7). What's left is entering the five groups once the content is settled; then close the ticket.
+
+2026-10-17: Closed. All five groups (Grønn, Blå, Rød, Sort, Fun) are published in Sanity, each with two sessions, so the live site now renders from Sanity instead of the fallback. Optional fields still empty: age on Blå, price on Blå, Rød, Sort and Fun. These are left out of the page until editors fill them in.

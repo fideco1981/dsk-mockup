@@ -11,9 +11,8 @@ Nothing on the site shows last season, including for visitors who see the fallba
 - Refresh the events fallback HTML on the landing page to the 2026/27 events.
 - Refresh the topbar fallback text (in the shared layout) to the 2026/27 season.
 - Fix the ski-school 2025–2026 course dates (HTML, outside the CMS slice).
-- Fix the styret seating line (HTML, outside the CMS slice).
 
-**Needs info (Stein, from the club):** the 2026/27 Telenorkarusellen dates, the next årsmøte date, the topbar text, the 2026–27 ski-school course dates and the current styret seating. Move this ticket to `ready-for-agent` once those are written under `## Comments`.
+**Needs info (Stein, from the club):** the 2026/27 Telenorkarusellen dates, the next årsmøte date, the topbar text and the 2026–27 ski-school course dates. (The styret seating line moved to Sanity: see `issues/map-sanity-rest.md`.) Move this ticket to `ready-for-agent` once those are written under `## Comments`.
 
 See PRD: "Further Notes → Stale content outside this slice".
 
