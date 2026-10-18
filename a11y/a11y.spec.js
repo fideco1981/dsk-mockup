@@ -73,7 +73,7 @@ const RENDERED = {
     await expect(page.locator('#schedule .session-card.group-skiskole').filter({ visible: true })).toBeVisible();
     await expect(page.locator('#schedule .lift-post').filter({ visible: true })).toHaveText('Kun Fun 20:00 – 20:30');
   },
-  failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Sesong'),
+  failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Vi venter i spenning'),
   empty: (page) => expect(page.locator('.events-empty')).toBeVisible(),
   'topbar off': (page) => expect(page.locator('.topbar-msg')).toBeHidden(),
 };
