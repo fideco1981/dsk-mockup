@@ -16,6 +16,7 @@ test('init injects the nav with every link from the nav model', () => {
     'Hjem',
     'Skiskole',
     'Treningsopplegg',
+    'Trenere',
     'Om oss',
     'Styret',
     'Kontakt',

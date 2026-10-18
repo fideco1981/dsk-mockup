@@ -125,7 +125,7 @@ test('cms: a synchronous fetch throw reveals the fallback text', async () => {
 
 test('cms: every page shows the fallback topbar to <noscript> visitors', () => {
   const { JSDOM } = require('jsdom');
-  for (const page of ['index', 'skiskole', 'treningsopplegg', 'om-oss', 'styret', 'kontakt']) {
+  for (const page of ['index', 'skiskole', 'treningsopplegg', 'trenere', 'om-oss', 'styret', 'kontakt']) {
     const html = fs.readFileSync(path.join(__dirname, '..', `${page}.html`), 'utf8');
     // JSDOM without runScripts parses <noscript> content as a no-JS browser does.
     const msg = new JSDOM(html).window.document.querySelector('noscript .topbar .topbar-msg');

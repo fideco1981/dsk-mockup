@@ -61,6 +61,7 @@
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position, phone, email, consent}},' +
+    ' "trainers": *[_type == "trainers"][0].trainers[]{name, role, presentation, merits, phone, email, consent},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role, phone, email, consent}},' +
     ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url, "crop": image.crop, "hotspot": image.hotspot, "size": image.asset->metadata.dimensions{width, height}}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
@@ -74,6 +75,7 @@
       { page: 'index', href: 'index.html', label: 'Hjem' },
       { page: 'skiskole', href: 'skiskole.html', label: 'Skiskole' },
       { page: 'treningsopplegg', href: 'treningsopplegg.html', label: 'Treningsopplegg' },
+      { page: 'trenere', href: 'trenere.html', label: 'Trenere' },
       { page: 'om-oss', href: 'om-oss.html', label: 'Om oss' },
       { page: 'styret', href: 'styret.html', label: 'Styret' },
       { page: 'kontakt', href: 'kontakt.html', label: 'Kontakt' },
@@ -263,6 +265,8 @@
       if (schedule && result && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
       const board = result && result.board;
       if (board && typeof board === 'object') renderBoard(doc, board);
+      const trainers = doc.querySelector('[data-trainers-grid]');
+      if (trainers && result) renderTrainers(doc, trainers, result.trainers);
       const club = result && result.clubInfo;
       if (club && typeof club === 'object') renderClubInfo(doc, club);
       const posts = doc.querySelector('[data-featured-posts]');
@@ -676,31 +680,55 @@
     if (head) head.hidden = !vara.length;
   }
 
+  /**
+   * Fill Trenere's grid from the CMS, in Studio order: entries need a text
+   * name. With none the grid stays hidden (no fallback). CMS strings go in as text.
+   */
+  function renderTrainers(doc, mount, list) {
+    const trainers = (Array.isArray(list) ? list : []).filter(function (t) { return t && isText(t.name); });
+    mount.textContent = '';
+    trainers.forEach(function (t) {
+      const body = [];
+      if (isText(t.presentation)) body.push(el(doc, 'p', 'trainer-presentation', t.presentation));
+      const merits = (Array.isArray(t.merits) ? t.merits : []).filter(isText);
+      if (merits.length) {
+        const ul = el(doc, 'ul', 'trainer-merits');
+        merits.forEach(function (m) { ul.append(el(doc, 'li', null, m)); });
+        body.push(ul);
+      }
+      mount.append(personCard(doc, t, t.role, null, false, body));
+    });
+    mount.hidden = !trainers.length;
+  }
+
   /** Entries of a CMS list with a text name and a text <key> (role, position). */
   function namedPeople(list, key) {
     return (Array.isArray(list) ? list : []).filter(function (p) { return p && isText(p.name) && isText(p[key]); });
   }
 
   /**
-   * A person card (Styret, Kontakt): initials avatar, name, role, then phone
-   * and email links when the person has consented (ADR 0004) and the values
-   * are well-formed, else "kontakt via <via>".
+   * A person card (Styret, Kontakt, Trenere): initials avatar, name, role
+   * (when given), the `body` nodes, then phone and email links when the person
+   * has consented (ADR 0004) and the values are well-formed, else
+   * "kontakt via <via>" (nothing without a `via`).
    */
-  function personCard(doc, person, role, via, vara) {
+  function personCard(doc, person, role, via, vara, body) {
     const name = person.name;
     const words = name.trim().split(/\s+/);
     const initials = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0];
     const card = el(doc, 'article', 'board-card');
     const avatar = el(doc, 'div', 'board-avatar' + (vara ? ' board-avatar-vara' : ''), initials.toUpperCase());
     avatar.setAttribute('aria-hidden', 'true');
-    card.append(avatar, el(doc, 'h3', 'board-name', name), el(doc, 'p', 'board-role', role));
+    card.append(avatar, el(doc, 'h3', 'board-name', name));
+    if (isText(role)) card.append(el(doc, 'p', 'board-role', role));
+    if (body) card.append.apply(card, body);
     const links = [];
     if (person.consent === true) {
       if (isPhone(person.phone)) links.push(contactLine(doc, 'phone', 'tel:' + person.phone.replace(/[^\d+]/g, ''), person.phone));
       if (isEmail(person.email)) links.push(contactLine(doc, 'mail', 'mailto:' + person.email.trim(), person.email));
     }
     if (links.length) card.append.apply(card, links);
-    else card.append(contactLine(doc, 'info', null, 'kontakt via ' + via));
+    else if (via) card.append(contactLine(doc, 'info', null, 'kontakt via ' + via));
     return card;
   }
 

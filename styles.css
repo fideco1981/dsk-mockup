@@ -1166,6 +1166,11 @@
   a.board-contact { color: var(--snow); text-decoration: none; overflow-wrap: anywhere; }
   a.board-contact:hover { border-color: rgba(0,159,227,0.4); }
   .board-contact + .board-contact { margin-top: 8px; }
+  /* Trenere: wider cards for the presentation and merits. */
+  .board-grid.trainer-grid { grid-template-columns: repeat(3, 1fr); }
+  .trainer-presentation { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 6px 0 14px; }
+  .trainer-merits { list-style: none; padding: 0; margin: 0 0 16px; font-size: 13px; line-height: 1.5; }
+  .trainer-merits li + li { margin-top: 4px; }
   .board-note {
     display: flex;
     align-items: flex-start;
@@ -1648,7 +1653,7 @@
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 1024px) {
-    .board-grid { grid-template-columns: repeat(2, 1fr); }
+    .board-grid, .board-grid.trainer-grid { grid-template-columns: repeat(2, 1fr); }
     .programs-grid { grid-template-columns: repeat(2, 1fr); }
     .insta-grid { grid-template-columns: repeat(3, 1fr); }
     .footer-inner { grid-template-columns: 1fr 1fr; }
@@ -1693,6 +1698,7 @@
     .course-grid { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .quick-nav-grid { grid-template-columns: 1fr; }
+    .board-grid.trainer-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 480px) {
     .haukos-facts { grid-template-columns: 1fr; }
