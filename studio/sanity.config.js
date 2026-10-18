@@ -5,9 +5,10 @@ import { projectId, dataset } from './project.js';
 import { topbarMessage } from './schemaTypes/topbarMessage.js';
 import { skiSchool } from './schemaTypes/skiSchool.js';
 import { liftHours } from './schemaTypes/liftHours.js';
+import { clubInfo } from './schemaTypes/clubInfo.js';
 
 // One fixed document each, opened straight from the menu (documentId = type name).
-const SINGLETONS = [topbarMessage.name, skiSchool.name, liftHours.name];
+const SINGLETONS = [topbarMessage.name, skiSchool.name, liftHours.name, clubInfo.name];
 const singleton = (S, type, title) =>
   S.listItem().title(title).id(type).child(S.document().schemaType(type).documentId(type));
 
@@ -24,6 +25,7 @@ export default defineConfig({
           .items([
             singleton(S, topbarMessage.name, 'Toppmelding'),
             singleton(S, liftHours.name, 'Heistider'),
+            singleton(S, clubInfo.name, 'Klubbinfo'),
             S.documentTypeListItem('event').title('Arrangementer'),
             S.listItem()
               .title('Sponsorer')
