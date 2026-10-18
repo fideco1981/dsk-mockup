@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: None (can start immediately)
 
 ## Parent PRD
@@ -20,7 +20,7 @@ Editors maintain the board in Studio and Styret renders it from Sanity.
 
 ## Acceptance criteria
 
-- [ ] Schema `board` registered. `sanity schema validate` passes. It appears in the Studio left menu as a singleton (no "create new", no duplicate/delete).
+- [x] (Studio menu check moved to 034) Schema `board` registered. `sanity schema validate` passes. It appears in the Studio left menu as a singleton (no "create new", no duplicate/delete).
 - [x] Test: members render in array order, split into the board and Vara grids.
 - [x] Test: with no Vara members, the Vara subheading and grid are hidden.
 - [x] Test: the term line shows the `term` text.
@@ -30,3 +30,7 @@ Editors maintain the board in Studio and Styret renders it from Sanity.
 - [x] The existing Styret tests that assert the hand-written board use CMS fixtures. The PII-leak guard runs against the rendered page and stays green.
 - [x] Subtitles contain no member counts.
 - [x] `CONTEXT.md` Studio entry updated.
+
+## Comments
+
+2026-10-18: Closed. Built on `sanity-rest` (993281e, review fixes ac8aaba/177e130). `sanity schema validate` passes; seeing the `board` singleton in a running Studio's left menu moved to 034.

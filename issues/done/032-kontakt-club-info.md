@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 031
 
 ## Parent PRD
@@ -23,3 +23,7 @@ Kontakt renders the club's facts, contact persons and social links from Club inf
 - [x] Test: on a rejected fetch, the fallback cards and values remain.
 - [x] Test: a role containing markup renders as text.
 - [x] The Kontakt PII-leak guard runs against the rendered page with CMS fixtures and stays green.
+
+## Comments
+
+2026-10-18: Closed. Built on `sanity-rest` (e1d1a2c, review fix 072300b/c3da243: Kontakt handles follow the Club info URLs). `visitAddress` is shown as entered.

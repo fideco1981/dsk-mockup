@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: None (can start immediately)
 
 ## Parent PRD
@@ -21,4 +21,8 @@ Prefactor for Club info: the social buttons show real brand logos and TikTok is 
 - [x] Test: the footer has Instagram, Facebook and TikTok buttons, each with an `aria-label` naming the network.
 - [x] Test: Kontakt has a TikTok social card.
 - [x] Existing tests and the accessibility suite stay green.
-- [ ] (By eye) Icon shapes look right.
+- [x] (By eye, moved to 034) Icon shapes look right.
+
+## Comments
+
+2026-10-18: Closed. Built on `sanity-rest` (4957dc3). Simple Icons paths (CC0). Kontakt social grid is now 2×2. By-eye icon check moved to 034.

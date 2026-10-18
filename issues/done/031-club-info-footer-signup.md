@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 030
 
 ## Parent PRD
@@ -34,3 +34,7 @@ Editors change the club's addresses, social links, Spond signup link and members
 - [x] Test: on a rejected fetch, the footer and CTAs keep the fallback values.
 - [x] The no-token guard stays green.
 - [x] `CONTEXT.md` Studio entry updated.
+
+## Comments
+
+2026-10-18: Closed. Built on `sanity-rest` (8c0a8b1, 6699dcd). Pages opt in via `data-club`, `data-social`, `data-spond-signup`, `data-club-points`, all handled by `renderClubInfo` in `site.js`. If Sanity answers with an empty field or list, the fallback stays.

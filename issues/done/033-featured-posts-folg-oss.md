@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 031
 
 ## Parent PRD
@@ -28,8 +28,10 @@ Real, hand-picked posts replace the emoji tiles on the landing page, under a "FÃ
 - [x] Test: a non-http(s) link is not rendered as a link.
 - [x] No emoji placeholder tiles remain.
 - [x] `CONTEXT.md` Studio entry updated.
-- [ ] (By eye) Tile crop looks right.
+- [x] (By eye, moved to 034) Tile crop looks right.
 
 ## Comments
 
 - Images are requested with `?w=480&h=480&fit=crop&auto=format`, so the Sanity CDN does a center crop to the square tile. The hotspot is still ignored, deliberately. CSS `object-fit: cover` stays as a safety net.
+
+2026-10-18: Closed. Built on `sanity-rest` (0d13af8, c848dd5, review fixes 6fcd7b3/c3da243: all tiles show at every width; sort and cap happen only in `site.js`). By-eye crop check moved to 034.
