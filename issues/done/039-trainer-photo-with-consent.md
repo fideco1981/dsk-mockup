@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 037
 
 ## Parent PRD
@@ -18,9 +18,13 @@ Trainer cards show a round photo, published only with a ticked, dated photo cons
 
 ## Acceptance criteria
 
-- [ ] ADR 0005 written.
-- [ ] `sanity schema validate` passes.
-- [ ] Test: with photo consent, the photo renders with `alt=""` and a URL using the crop/hotspot square.
-- [ ] Test: without photo consent, initials show and the image URL appears nowhere on the page.
-- [ ] Test: a non-https image URL is not rendered.
-- [ ] Privacy note and ticket 036 updated.
+- [x] ADR 0005 written.
+- [x] `sanity schema validate` passes.
+- [x] Test: with photo consent, the photo renders with `alt=""` and a URL using the crop/hotspot square.
+- [x] Test: without photo consent, initials show and the image URL appears nowhere on the page.
+- [x] Test: a non-https image URL is not rendered.
+- [x] Privacy note and ticket 036 updated.
+
+## Closeout
+
+Done on branch `trainers` (dc2f046, merged in 9b70b62). ADR 0005 written (EXIF/GPS left open for 040), ADR 0002 status updated. `photo`/`photoConsent`/`photoConsentDate` with photo ⇒ consent + date; withdrawal help text. Photo via `squareRect` at 224 px for the 112 px avatar, `alt=""`, only with `photoConsent === true` and https. Privacy note covers photos; ticket 036 has the photo-consent and placeholder steps. Studio validation still to be checked by hand in 040.

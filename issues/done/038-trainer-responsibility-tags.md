@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: 037
 
 ## Parent PRD
@@ -15,8 +15,12 @@ Each trainer card shows which Training groups and/or the ski school the trainer 
 
 ## Acceptance criteria
 
-- [ ] `sanity schema validate` passes.
-- [ ] Test: group tags in the group's colour, linking to the matching anchor on Treningsopplegg.
-- [ ] Test: "Skiskole" tag in the ski-school colour, linking to Skiskole.
-- [ ] Test: an unresolved (deleted) group reference is skipped without breaking the card.
-- [ ] Test: markup in a group title renders as text.
+- [x] `sanity schema validate` passes.
+- [x] Test: group tags in the group's colour, linking to the matching anchor on Treningsopplegg.
+- [x] Test: "Skiskole" tag in the ski-school colour, linking to Skiskole.
+- [x] Test: an unresolved (deleted) group reference is skipped without breaking the card.
+- [x] Test: markup in a group title renders as text.
+
+## Closeout
+
+Done on branch `trainers` (47e3c4c). `groups` (weak refs) and `skiSchool` on the trainer; query resolves `groups[]->{title, colour}`. Tags reuse `validGroups`/`slug`/`groupClass`/`SKI_SCHOOL_CLASS` in an `<ul aria-label="Ansvarlig for">`; tinted background with white text for AA contrast. 4 tests added.

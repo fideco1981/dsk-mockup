@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 Blocked by: None (can start immediately)
 
 ## Parent PRD
@@ -17,11 +17,15 @@ A Trenere page in the main menu, where editors keep the club's trainers in Studi
 
 ## Acceptance criteria
 
-- [ ] Schema added and in the Studio menu; `sanity schema validate` passes; `test/studio.test.js` and `test/deploy.test.js` pass unchanged.
-- [ ] Test: trainers render in Studio order with name, role, presentation and merits.
-- [ ] Test: the menu marks Trenere active, after Treningsopplegg, on every page.
-- [ ] Test: empty merits render no list.
-- [ ] Test: phone/email consent cases as for Styret (consent false hides both; malformed values are not links); no "kontakt via" line.
-- [ ] Test: markup in every text field renders as text.
-- [ ] Test: grid hidden before Sanity answers, on a rejected fetch and with an empty list; intro and privacy note still shown.
-- [ ] `CONTEXT.md` has **Trainer**.
+- [x] Schema added and in the Studio menu; `sanity schema validate` passes; `test/studio.test.js` and `test/deploy.test.js` pass unchanged.
+- [x] Test: trainers render in Studio order with name, role, presentation and merits.
+- [x] Test: the menu marks Trenere active, after Treningsopplegg, on every page.
+- [x] Test: empty merits render no list.
+- [x] Test: phone/email consent cases as for Styret (consent false hides both; malformed values are not links); no "kontakt via" line.
+- [x] Test: markup in every text field renders as text.
+- [x] Test: grid hidden before Sanity answers, on a rejected fetch and with an empty list; intro and privacy note still shown.
+- [x] `CONTEXT.md` has **Trainer**.
+
+## Closeout
+
+Done on branch `trainers` (3a25f3c, review follow-ups d33e256). `trainers` singleton in `studio/schemaTypes/trainers.js` and the Studio menu; `trenere.html` with "Trenere" after Treningsopplegg on every page (noscript menus too); `renderTrainers` in `site.js` reuses `personCard` (role optional, `via = null` drops the "kontakt via" line). Tests in `test/trenere.test.js`; `CONTEXT.md` has **Trainer**.
