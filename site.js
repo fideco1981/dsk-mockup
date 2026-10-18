@@ -228,6 +228,7 @@
     const coursesMount = doc.getElementById('courses');
     const schoolMount = doc.getElementById('ski-school');
     const schedule = doc.getElementById('schedule');
+    const statGroups = doc.querySelector('[data-group-count]');
     function apply(result) {
       const topbar = result && result.topbar;
       const messages = topbar && Array.isArray(topbar.messages)
@@ -245,6 +246,10 @@
       const trainingGroups = validGroups(result && result.trainingGroups);
       if (groups && groupNav) renderTrainingGroups(doc, groups, groupNav, groupCount, trainingGroups);
       if (programs) renderProgramCards(doc, programs, trainingGroups);
+      if (statGroups && trainingGroups.length) {
+        // data-count is the stats counter's target (index.html), the text is what shows meanwhile.
+        statGroups.dataset.count = statGroups.textContent = String(trainingGroups.length);
+      }
       if (coursesMount && schoolMount) renderSkiSchool(doc, schoolMount, coursesMount, result && result.skiSchool, result && result.courses);
       const lift = result && result.liftHours;
       if (lift && typeof lift === 'object') renderLiftHours(doc, lift);

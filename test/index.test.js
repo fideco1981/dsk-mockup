@@ -174,3 +174,20 @@ test('index: zero training groups keeps the fallback cards', async () => {
   assert.equal(programCards(doc).length, 5);
   assert.ok(!doc.getElementById('programs-grid').hidden);
 });
+
+// ── Stats bar: number of Training groups, from Sanity ──
+
+const statGroups = (doc) => {
+  const em = doc.querySelector('[data-group-count]');
+  assert.equal(em.dataset.count, em.textContent, 'counter target matches');
+  return em.textContent;
+};
+
+test('index: the stats bar counts the Training groups from Sanity, falling back to the five groups', async () => {
+  const groups = ['Grønn', 'Blå', 'Rød'].map((title) => ({ title, colour: title }));
+  assert.equal(statGroups(await renderWith({ trainingGroups: groups })), '3');
+  assert.equal(statGroups(await renderWith({ trainingGroups: [] })), '5');
+  assert.equal(statGroups(await renderWith(() => Promise.reject(new Error('offline')))), '5');
+  const labels = [...new JSDOM(HTML).window.document.querySelectorAll('.stat-label')].map((l) => l.textContent);
+  assert.deepEqual(labels, ['Treningsgrupper', 'Alder', 'Lengde', 'Høydeforskjell', 'Bakker']);
+});

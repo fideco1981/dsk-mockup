@@ -126,7 +126,7 @@
 <div class="stats-bar">
   <div class="stats-inner">
     <div class="stat-item fade-in">
-      <div class="stat-num"><em>4</em></div>
+      <div class="stat-num"><em data-count="5" data-group-count>5</em></div>
       <div class="stat-label">Treningsgrupper</div>
     </div>
     <div class="stat-item fade-in fade-in-delay-1">
@@ -134,12 +134,16 @@
       <div class="stat-label">Alder</div>
     </div>
     <div class="stat-item fade-in fade-in-delay-2">
-      <div class="stat-num"><em>500</em> m</div>
+      <div class="stat-num"><em data-count="500">500</em> m</div>
       <div class="stat-label">Lengde</div>
     </div>
     <div class="stat-item fade-in fade-in-delay-3">
-      <div class="stat-num"><em>133</em> m</div>
+      <div class="stat-num"><em data-count="133">133</em> m</div>
       <div class="stat-label">Høydeforskjell</div>
+    </div>
+    <div class="stat-item fade-in fade-in-delay-4">
+      <div class="stat-num"><em data-count="3">3</em></div>
+      <div class="stat-label">Bakker</div>
     </div>
   </div>
 </div>
@@ -796,14 +800,15 @@ window.addEventListener('scroll', () => {
 });
 
 // ─── COUNTER ANIMATION ───
-function animateCounter(el, target, suffix='') {
+// Reads data-count every frame, so a Sanity update mid-animation still lands.
+function animateCounter(el) {
   let start = 0;
   const duration = 1600;
   const step = (timestamp) => {
     if (!start) start = timestamp;
     const progress = Math.min((timestamp - start) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(eased * target) + suffix;
+    el.textContent = Math.floor(eased * Number(el.dataset.count));
     if (progress < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
@@ -813,11 +818,7 @@ function animateCounter(el, target, suffix='') {
 const statsObs = new IntersectionObserver((entries) => {
   if (entries[0].isIntersecting) {
     statsObs.disconnect();
-    const nums = document.querySelectorAll('.stat-num em');
-    const configs = [{el: nums[0], val: 4}, {el: nums[1], val: 500}, {el: nums[2], val: 133}];
-    configs.forEach(({el, val}) => {
-      if (el) animateCounter(el, val);
-    });
+    document.querySelectorAll('.stat-num em[data-count]').forEach(animateCounter);
   }
 }, { threshold: 0.5 });
 const statsBar = document.querySelector('.stats-bar');
