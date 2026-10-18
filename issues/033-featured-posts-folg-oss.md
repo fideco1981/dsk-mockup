@@ -29,3 +29,7 @@ Real, hand-picked posts replace the emoji tiles on the landing page, under a "FÃ
 - [x] No emoji placeholder tiles remain.
 - [x] `CONTEXT.md` Studio entry updated.
 - [ ] (By eye) Tile crop looks right.
+
+## Comments
+
+- Images are requested with `?w=480&h=480&fit=crop&auto=format`, so the Sanity CDN does a center crop to the square tile. The hotspot is still ignored, deliberately. CSS `object-fit: cover` stays as a safety net.
