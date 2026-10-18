@@ -17,7 +17,9 @@
  *   - load the Topbar message, landing-page Events, the footer's Sponsor
  *     strip, the Training groups, the Ski school, Courses, Lift hours and the
  *     Treningsplan from Sanity (test/cms.test.js, test/treningsopplegg.test.js,
- *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js); init(doc)
+ *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js),
+ *     and Club info into any data-club / data-social / data-spond-signup
+ *     element (test/club-info.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -56,7 +58,8 @@
     ' "trainingGroups": *[_type == "trainingGroup"] | order(order asc){title, colour, age, place, price, description, sessions[]{day, from, to}},' +
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
-    ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}}}';
+    ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
+    ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}}}';
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
@@ -116,7 +119,7 @@
           '<div class="wordmark">Drammen <em>Slalåmklubb</em></div>' +
         '</div>' +
         '<ul class="nav-links">' + navLinksHTML(currentPage) + '</ul>' +
-        '<a href="' + NAV_MODEL.cta.href + '" target="_blank" rel="noopener" class="btn-nav">' +
+        '<a href="' + NAV_MODEL.cta.href + '" data-spond-signup target="_blank" rel="noopener" class="btn-nav">' +
           NAV_MODEL.cta.label +
         '</a>' +
         '<button class="hamburger" id="hamburger" aria-label="Åpne meny" aria-expanded="false" aria-controls="mobileMenu">' +
@@ -128,7 +131,7 @@
           '<svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-close"/></svg>' +
         '</button>' +
         '<ul class="nav-links">' + navLinksHTML(currentPage, { onClick: closeMobile }) + '</ul>' +
-        '<a href="' + NAV_MODEL.cta.href + '" target="_blank" rel="noopener" class="btn-primary" onclick="' +
+        '<a href="' + NAV_MODEL.cta.href + '" data-spond-signup target="_blank" rel="noopener" class="btn-primary" onclick="' +
           closeMobile + '">' + NAV_MODEL.cta.label + ' →</a>' +
       '</div>'
     );
@@ -155,9 +158,9 @@
           '</div>' +
           '<p>Drammen Slalåmklubb — alpinsport for barn, unge og voksne i hjertet av Drammen siden 1936.</p>' +
           '<div class="footer-social">' +
-            '<a href="https://www.instagram.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-instagram"/></svg></a>' +
-            '<a href="https://www.facebook.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-facebook"/></svg></a>' +
-            '<a href="https://www.tiktok.com/@drammen_slalomklubb" target="_blank" rel="noopener" class="social-btn" aria-label="TikTok"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tiktok"/></svg></a>' +
+            '<a href="https://www.instagram.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" data-social="instagram" aria-label="Instagram"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-instagram"/></svg></a>' +
+            '<a href="https://www.facebook.com/drammenslalomklubb" target="_blank" rel="noopener" class="social-btn" data-social="facebook" aria-label="Facebook"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-facebook"/></svg></a>' +
+            '<a href="https://www.tiktok.com/@drammen_slalomklubb" target="_blank" rel="noopener" class="social-btn" data-social="tiktok" aria-label="TikTok"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-tiktok"/></svg></a>' +
           '</div>' +
         '</div>' +
         '<div class="footer-col">' +
@@ -167,9 +170,9 @@
         '<div class="footer-col">' +
           '<h4>Kontakt</h4>' +
           '<ul>' +
-            '<li>Blektjernveien 18</li>' +
-            '<li>Postboks 2404, 3003 Drammen</li>' +
-            '<li><a href="' + NAV_MODEL.cta.href + '" target="_blank" rel="noopener">Bli Medlem</a></li>' +
+            '<li data-club="visitAddress">Blektjernveien 18</li>' +
+            '<li data-club="postAddress">Postboks 2404, 3003 Drammen</li>' +
+            '<li><a href="' + NAV_MODEL.cta.href + '" data-spond-signup target="_blank" rel="noopener">Bli Medlem</a></li>' +
           '</ul>' +
         '</div>' +
       '</div>' +
@@ -255,6 +258,8 @@
       const lift = result && result.liftHours;
       if (lift && typeof lift === 'object') renderLiftHours(doc, lift);
       if (schedule && result && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
+      const club = result && result.clubInfo;
+      if (club && typeof club === 'object') renderClubInfo(doc, club);
     }
     if (!win || typeof win.fetch !== 'function') {
       apply(null);
@@ -271,9 +276,49 @@
       .then(apply);
   }
 
+  /**
+   * Fill every Club info binding on the page from the CMS; anything missing
+   * keeps its hand-written fallback. Pages opt in with attributes:
+   *   data-club="<field>"   text from a Club info field (e.g. visitAddress)
+   *   data-social="<field>" a link to instagram/facebook/tiktok, removed
+   *                         when that URL is empty or not http(s)
+   *   data-spond-signup     a link whose href follows spondSignup
+   *   data-club-points="<field>" a list of text lines, each after a check
+   *                         icon, "·"-separated; hidden when the list is empty
+   * CMS strings go in as text.
+   */
+  function renderClubInfo(doc, club) {
+    doc.querySelectorAll('[data-club]').forEach(function (n) {
+      const t = club[n.dataset.club];
+      if (isText(t)) n.textContent = t;
+    });
+    doc.querySelectorAll('[data-social]').forEach(function (a) {
+      const url = club[a.dataset.social];
+      if (isHttp(url)) a.href = url;
+      else a.remove();
+    });
+    if (isHttp(club.spondSignup)) {
+      doc.querySelectorAll('[data-spond-signup]').forEach(function (a) { a.href = club.spondSignup; });
+    }
+    doc.querySelectorAll('[data-club-points]').forEach(function (n) {
+      const list = club[n.dataset.clubPoints];
+      if (!Array.isArray(list)) return;
+      n.textContent = '';
+      list.filter(isText).forEach(function (t, i) {
+        if (i) n.append(' ·  ');
+        const icon = el(doc, 'span');
+        setIcon(icon, 'check');
+        n.append(icon, ' ' + t);
+      });
+      n.hidden = !n.childNodes.length;
+    });
+  }
+
+  function isHttp(url) { return typeof url === 'string' && /^https?:\/\//i.test(url); }
+
   /** A new-tab link for an http(s) URL from the CMS; null for anything else. */
   function externalLink(doc, href, text) {
-    if (typeof href !== 'string' || !/^https?:\/\//i.test(href)) return null;
+    if (!isHttp(href)) return null;
     const a = doc.createElement('a');
     a.href = href;
     a.target = '_blank';

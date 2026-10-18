@@ -26,11 +26,11 @@ Editors change the club's addresses, social links, Spond signup link and members
 
 ## Acceptance criteria
 
-- [ ] Schema `clubInfo` registered with all fields above. `sanity schema validate` passes. It appears in the Studio left menu as a singleton.
-- [ ] Test: footer addresses follow Club info.
-- [ ] Test: footer social buttons render only for networks with a URL, each with an `aria-label`. A non-http(s) URL is not rendered as a link.
-- [ ] Test: nav CTA, hero CTA, membership CTA, footer "Bli Medlem" and the Treningsopplegg signup link all follow `spondSignup`.
-- [ ] Test: membership paragraph and points follow Club info.
-- [ ] Test: on a rejected fetch, the footer and CTAs keep the fallback values.
-- [ ] The no-token guard stays green.
-- [ ] `CONTEXT.md` Studio entry updated.
+- [x] Schema `clubInfo` registered with all fields above. `sanity schema validate` passes. It appears in the Studio left menu as a singleton.
+- [x] Test: footer addresses follow Club info.
+- [x] Test: footer social buttons render only for networks with a URL, each with an `aria-label`. A non-http(s) URL is not rendered as a link.
+- [x] Test: nav CTA, hero CTA, membership CTA, footer "Bli Medlem" and the Treningsopplegg signup link all follow `spondSignup`.
+- [x] Test: membership paragraph and points follow Club info.
+- [x] Test: on a rejected fetch, the footer and CTAs keep the fallback values.
+- [x] The no-token guard stays green.
+- [x] `CONTEXT.md` Studio entry updated.

@@ -937,6 +937,7 @@
     justify-content: center;
     gap: 6px;
   }
+  .membership-note[hidden] { display: none; }
 
   /* ─── INSTAGRAM ─── */
   .instagram { background: var(--dark); }
