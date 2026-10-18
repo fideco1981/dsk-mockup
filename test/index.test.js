@@ -189,5 +189,5 @@ test('index: the stats bar counts the Training groups from Sanity, falling back 
   assert.equal(statGroups(await renderWith({ trainingGroups: [] })), '5');
   assert.equal(statGroups(await renderWith(() => Promise.reject(new Error('offline')))), '5');
   const labels = [...new JSDOM(HTML).window.document.querySelectorAll('.stat-label')].map((l) => l.textContent);
-  assert.deepEqual(labels, ['Treningsgrupper', 'Alder', 'Lengde', 'Høydeforskjell', 'Bakker']);
+  assert.deepEqual(labels, ['Treningsgrupper', 'Alder', 'Bakker', 'Lengde', 'Høydeforskjell']);
 });
