@@ -14,6 +14,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { JSDOM } = require('jsdom');
 const site = require('../site');
+const { stubFetch } = require('./helpers');
 
 const HTML = fs.readFileSync(
   path.join(__dirname, '..', 'kontakt.html'),
@@ -170,7 +171,6 @@ test('kontakt: page has no absolute internal links (subpath-safe)', () => {
 
 // Club info (ticket 032): Kontakt renders the facts, contact persons and
 // social cards from the clubInfo singleton; the HTML is the fallback.
-const { stubFetch } = require('./helpers');
 
 const CLUB = {
   visitAddress: 'Skiveien 1',
@@ -233,6 +233,13 @@ test('kontakt: social cards render only for networks with a URL; Spond follows s
     assert.equal(a.getAttribute('target'), '_blank');
     assert.equal(a.getAttribute('rel'), 'noopener');
   }
+});
+
+test('kontakt: social card handles follow the Instagram and TikTok URLs', async () => {
+  const doc = await renderWith({ clubInfo: CLUB });
+  const value = (net) => doc.querySelector(`[data-social="${net}"] .kontakt-social-value`).textContent;
+  assert.equal(value('instagram'), '@dsk_test');
+  assert.equal(value('tiktok'), '@dsk_test');
 });
 
 test('kontakt: on a rejected fetch the fallback cards and values remain', async () => {
