@@ -23,4 +23,4 @@ Stein gets the new content live and rehearses it for the board demo.
 - [ ] Demo step rehearsed.
 - [ ] (By eye) Brand icon shapes look right (from 030).
 - [ ] (By eye) Featured post tile crop looks right (from 033).
-- [ ] (By eye) Styret, Klubbinfo and Utvalgte innlegg singletons behave as singletons in Studio (from 029).
+- [ ] (By eye) Styret and Klubbinfo behave as singletons in Studio (no "create new", no duplicate/delete) (from 029).
