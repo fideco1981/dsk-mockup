@@ -1,5 +1,7 @@
 // The second image type in Sanity (ADR 0003). site.js shows the first six,
 // sorted by `order`, as square tiles in the landing page's "Følg oss" section.
+import { TikTokImageInput } from '../components/TikTokImageInput.js';
+
 export const featuredPost = {
   name: 'featuredPost',
   title: 'Utvalgt innlegg',
@@ -10,7 +12,9 @@ export const featuredPost = {
       title: 'Bilde',
       type: 'image',
       description:
-        'Last ned bildet fra Instagram eller TikTok og last det opp her. Vises som et kvadrat, beskåret fra midten, så hold det viktige i midten.',
+        'TikTok: lim inn lenken under og trykk «Hent bilde fra TikTok». Instagram: ta skjermbilde av innlegget, last det opp og beskjær til selve bildet (eller bruk originalbildet fra den som la ut innlegget). Vises som et kvadrat: flytt fokuspunktet til det viktigste.',
+      options: { hotspot: true },
+      components: { input: TikTokImageInput },
       validation: (Rule) => Rule.required(),
     },
     {

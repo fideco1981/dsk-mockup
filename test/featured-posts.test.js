@@ -104,3 +104,21 @@ test('featured posts: no breakpoint hides editor-picked tiles', () => {
   const css = fs.readFileSync(path.join(__dirname, '..', 'styles.css'), 'utf8');
   assert.doesNotMatch(css, /\.insta-tile:nth-child\([^)]*\)\s*\{[^}]*display:\s*none/);
 });
+
+// Crop and hotspot from Studio (screenshots cropped to the photo): the tile is
+// the largest square inside the crop, centred on the hotspot as far as it fits.
+test('featured posts: the tile follows the Studio crop and hotspot', async () => {
+  const size = { width: 1000, height: 500 };
+  const crop = { top: 0, bottom: 0, left: 0.1, right: 0 };
+  const src = async (extra) => {
+    const doc = await landing({ featuredPosts: [{ ...post(1, 1), size, ...extra }] });
+    return new URL(grid(doc).querySelector('img').src).searchParams;
+  };
+  assert.equal((await src({ crop })).get('rect'), '300,0,500,500', 'centre of the crop');
+  assert.equal((await src({ crop, hotspot: { x: 0.9, y: 0.5 } })).get('rect'), '500,0,500,500', 'hotspot, clamped to the crop');
+  assert.equal((await src({ hotspot: { x: 0.2, y: 0.5 } })).get('rect'), '0,0,500,500');
+  const plain = await src({});
+  assert.equal(plain.get('rect'), null, 'no crop or hotspot: plain centre crop');
+  assert.equal(plain.get('fit'), 'crop');
+  assert.equal((await src({ size: undefined, crop })).get('rect'), null, 'no dimensions: plain centre crop');
+});

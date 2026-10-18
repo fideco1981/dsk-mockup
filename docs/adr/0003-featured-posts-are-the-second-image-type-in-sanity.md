@@ -8,7 +8,7 @@ The landing page's socials section shows emoji placeholder tiles under the Insta
 
 ## Decision
 
-Add **Featured posts** (Sanity type `featuredPost`), hand-picked by editors: image, alt text, link (any URL) and order. `site.js` fetches them in the existing single query and loads each one from Sanity's image CDN, resized, the same way as Sponsor logos. Tiles are center-cropped to square, and Studio's hotspot is ignored. Like Sponsors, they have no Fallback content: without Sanity or JS the grid is hidden, and the heading and follow buttons (from Club info) stay.
+Add **Featured posts** (Sanity type `featuredPost`), hand-picked by editors: image, alt text, link (any URL) and order. `site.js` fetches them in the existing single query and loads each one from Sanity's image CDN, resized, the same way as Sponsor logos. Tiles are square: the largest square inside Studio's crop, centred on its hotspot (amended 2026-10-18, see below). Like Sponsors, they have no Fallback content: without Sanity or JS the grid is hidden, and the heading and follow buttons (from Club info) stay.
 
 ## Alternatives rejected
 
@@ -18,5 +18,14 @@ Add **Featured posts** (Sanity type `featuredPost`), hand-picked by editors: ima
 
 ## Consequences
 
-- Editors download an image from Instagram/TikTok and upload it again for each post. The grid goes stale if nobody does. It is presented as highlights, not a feed, so a grid that hasn't changed in months still reads as intended.
+- Editors supply the image for each post themselves. The grid goes stale if nobody does. It is presented as highlights, not a feed, so a grid that hasn't changed in months still reads as intended.
 - Images are now in Sanity for two types. A third still needs its own decision.
+
+## Amendment (2026-10-18): getting the image
+
+Neither app lets you save an image from a post, so "download and re-upload" didn't work in practice.
+
+- **TikTok:** a "Hent bilde fra TikTok" button in Studio fetches the post's cover image via TikTok's public oEmbed (no token; cross-origin allowed) and uploads it to Sanity. The image URL is signed and expires, so it is copied, never linked.
+- **Instagram:** a screenshot, cropped in Studio. Instagram's oEmbed needs a Meta app token and has no thumbnail since 2025-11-03. The image can be read from the post's embed page, but that page doesn't allow cross-origin requests, so it would need a server we don't have, and Meta doesn't document it.
+- So the image field has Studio's crop and hotspot, and `site.js` follows them (Sanity's `rect=`), reversing "hotspot is ignored" above.
+- Not done: playing videos on the site. TikTok's embed player (`tiktok.com/player/v1/{id}`) loads TikTok's own code, with the same consent problem as the rejected embeds.

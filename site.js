@@ -62,7 +62,7 @@
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position, phone, email, consent}},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role, phone, email, consent}},' +
-    ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url}}'; // sorted + capped in renderFeaturedPosts
+    ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url, "crop": image.crop, "hotspot": image.hotspot, "size": image.asset->metadata.dimensions{width, height}}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
     'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v2025-02-19/data/query/' +
@@ -977,7 +977,7 @@
       .slice(0, 6)
       .forEach(function (p) {
         const img = el(doc, 'img');
-        img.src = p.image + '?w=480&h=480&fit=crop&auto=format'; // ~2x the widest tile, centre crop
+        img.src = p.image + '?' + squareRect(p) + 'w=480&h=480&fit=crop&auto=format'; // ~2x the widest tile
         img.alt = p.alt;
         img.loading = 'lazy';
         const a = externalLink(doc, p.link, '');
@@ -987,6 +987,29 @@
         grid.append(tile);
       });
     grid.hidden = !grid.children.length;
+  }
+
+  /**
+   * "rect=x,y,s,s&": the largest square inside the Studio crop, centred on the
+   * hotspot as far as it fits. Empty (plain centre crop) without dimensions or
+   * without a crop or hotspot.
+   */
+  function squareRect(p) {
+    const size = p.size || {};
+    if (!(size.width > 0 && size.height > 0) || !(p.crop || p.hotspot)) return '';
+    const c = p.crop || {};
+    const frac = function (v) { return typeof v === 'number' ? v : 0; };
+    const x0 = frac(c.left) * size.width;
+    const y0 = frac(c.top) * size.height;
+    const w = size.width * (1 - frac(c.left) - frac(c.right));
+    const h = size.height * (1 - frac(c.top) - frac(c.bottom));
+    const side = Math.min(w, h);
+    const h0 = p.hotspot || {};
+    const at = function (f, start, len, total) {
+      const centre = typeof f === 'number' ? f * total : start + len / 2;
+      return Math.round(Math.min(Math.max(centre - side / 2, start), start + len - side));
+    };
+    return 'rect=' + [at(h0.x, x0, w, size.width), at(h0.y, y0, h, size.height), Math.round(side), Math.round(side)].join(',') + '&';
   }
 
   /**
