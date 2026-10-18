@@ -37,6 +37,14 @@ export default defineConfig({
                   .defaultOrdering([{ field: 'order', direction: 'asc' }]),
               ),
             S.listItem()
+              .title('Utvalgte innlegg')
+              .schemaType('featuredPost')
+              .child(
+                S.documentTypeList('featuredPost')
+                  .title('Utvalgte innlegg')
+                  .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+              ),
+            S.listItem()
               .title('Treningsgrupper')
               .schemaType('trainingGroup')
               .child(
