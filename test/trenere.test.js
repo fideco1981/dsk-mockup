@@ -111,7 +111,7 @@ test('trenere: markup in every text field renders as text', async () => {
 const grid = (doc) => doc.querySelector('[data-trainers-grid]');
 function assertPageStays(doc) {
   assert.equal(doc.querySelector('.page-hero-title').textContent, 'Trenere', 'hero stays');
-  assert.ok(!doc.querySelector('.section-sub').closest('[hidden]'), 'intro stays');
+  assert.ok(!doc.querySelector('.page-hero-sub').closest('[hidden]'), 'intro stays');
   assert.ok(!doc.querySelector('.board-note').closest('[hidden]'), 'privacy note stays');
 }
 
@@ -201,4 +201,11 @@ test('trenere: a non-https photo is not rendered, even with consent', async () =
   ] });
   assert.equal(doc.querySelector('[data-trainers-grid] img'), null);
   assert.deepEqual(cards(doc).map((c) => c.initials), ['KN', 'KN']);
+});
+
+test('trenere: headings go h1 → h2 → h3 with no repeated visible section header', async () => {
+  const doc = await renderWithCms({ trainers: TRAINERS });
+  const levels = [...doc.querySelectorAll('main h1, main h2, main h3')].map((h) => Number(h.tagName[1]));
+  assert.deepEqual(levels.slice(0, 3), [1, 2, 3]);
+  assert.equal(doc.querySelector('main .section-header'), null);
 });
