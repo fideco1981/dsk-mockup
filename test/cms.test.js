@@ -189,14 +189,18 @@ test('cms events: chips render with their mapped colours', async () => {
   );
 });
 
-test('cms events: location line has the decorative pin, description and an http(s) link', async () => {
+test('cms events: pin line with the location, then the description, then the http(s) link, each on its own', async () => {
   const doc = makeDoc('index');
   stubFetch(doc, { events: [{ title: 'A', date: '2999-01-01', location: 'Haukåsløypa', description: 'Åpent for alle.', link: 'https://example.org/p' }] });
   await site.init(doc);
-  const loc = cards(doc)[0].querySelector('.event-location');
+  const info = cards(doc)[0].querySelector('.event-info');
+  const loc = info.querySelector('.event-location');
   assert.equal(loc.querySelector('svg.icon').getAttribute('aria-hidden'), 'true');
-  assert.match(loc.textContent, /Haukåsløypa — Åpent for alle\./);
-  const a = loc.querySelector('a');
+  assert.equal(loc.textContent, 'Haukåsløypa');
+  assert.equal(info.querySelector('p.event-desc').textContent, 'Åpent for alle.');
+  assert.deepEqual([...info.children].map((c) => c.className), ['event-title', 'event-location', 'event-desc', 'event-more']);
+  const a = info.querySelector('.event-more a');
+  assert.equal(a.textContent, 'Mer info →');
   assert.equal(a.getAttribute('href'), 'https://example.org/p');
   assert.equal(a.getAttribute('target'), '_blank');
   assert.equal(a.getAttribute('rel'), 'noopener');

@@ -424,14 +424,18 @@
     }
     info.append(el(doc, 'h3', 'event-title', title));
 
-    const text = [e.location, e.description].filter(function (t) { return typeof t === 'string' && t; }).join(' — ');
-    const link = externalLink(doc, e.link, 'Mer info →');
-    if (text || link) {
+    if (isText(e.location)) {
       const loc = el(doc, 'div', 'event-location');
       setIcon(loc, 'pin');
-      if (text) loc.append(text);
-      if (link) loc.append(link);
+      loc.append(e.location);
       info.append(loc);
+    }
+    if (isText(e.description)) info.append(el(doc, 'p', 'event-desc', e.description));
+    const link = externalLink(doc, e.link, 'Mer info →');
+    if (link) {
+      const more = el(doc, 'p', 'event-more');
+      more.append(link);
+      info.append(more);
     }
     card.append(date, info);
     return card;

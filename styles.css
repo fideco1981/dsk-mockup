@@ -786,6 +786,8 @@
     align-items: center;
     gap: 5px;
   }
+  .event-desc { font-size: 13px; color: #4f6d8a; line-height: 1.55; margin-top: 6px; }
+  .event-more { font-size: 13px; font-weight: 600; margin-top: 8px; }
 
   /* ─── HAUKÅSLØYPA ─── */
   .haukos { background: var(--dark2); padding: 0; overflow: hidden; }
