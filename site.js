@@ -61,7 +61,7 @@
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position, phone, email, consent}},' +
-    ' "trainers": *[_type == "trainers"][0].trainers[]{name, role, presentation, merits, phone, email, consent},' +
+    ' "trainers": *[_type == "trainers"][0].trainers[]{name, role, presentation, merits, phone, email, consent, photoConsent, "photo": photo.asset->url, "crop": photo.crop, "hotspot": photo.hotspot, "size": photo.asset->metadata.dimensions{width, height}},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role, phone, email, consent}},' +
     ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url, "crop": image.crop, "hotspot": image.hotspot, "size": image.asset->metadata.dimensions{width, height}}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
@@ -696,9 +696,20 @@
         merits.forEach(function (m) { ul.append(el(doc, 'li', null, m)); });
         body.push(ul);
       }
-      mount.append(personCard(doc, t, t.role, null, false, body));
+      const card = personCard(doc, t, t.role, null, false, body);
+      if (t.photoConsent === true && isHttpsImage(t.photo)) card.querySelector('.board-avatar').replaceWith(trainerPhoto(doc, t));
+      mount.append(card);
     });
     mount.hidden = !trainers.length;
+  }
+
+  /** A trainer's round photo (ADR 0005): the crop/hotspot square, decorative beside the name. */
+  function trainerPhoto(doc, t) {
+    const img = el(doc, 'img', 'board-avatar trainer-photo');
+    img.src = t.photo + '?' + squareRect(t) + 'w=224&h=224&fit=crop&auto=format'; // 2x the 112 px avatar
+    img.alt = '';
+    img.loading = 'lazy';
+    return img;
   }
 
   /** Entries of a CMS list with a text name and a text <key> (role, position). */
