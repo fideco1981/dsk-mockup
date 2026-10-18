@@ -15,11 +15,11 @@
  *   - mark the current page's nav link active (aria-current + .active)
  *   - wire the mobile hamburger open/close + aria-expanded
  *   - load the Topbar message, landing-page Events, the footer's Sponsor
- *     strip, the Training groups, the Ski school, Courses, Lift hours and the
- *     Treningsplan from Sanity (test/cms.test.js, test/treningsopplegg.test.js,
- *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js),
- *     and Club info into any data-club / data-social / data-spond-signup
- *     element (test/club-info.test.js); init(doc)
+ *     strip, the Training groups, the Ski school, Courses, Lift hours, the
+ *     Treningsplan and the Board from Sanity (test/cms.test.js, test/treningsopplegg.test.js,
+ *     test/skiskole.test.js, test/lift-hours.test.js, test/treningsplan.test.js,
+ *     test/styret.test.js), and Club info into any data-club / data-social /
+ *     data-spond-signup element (test/club-info.test.js); init(doc)
  *     returns a Promise that resolves once CMS content or the fallback shows
  *
  * No build step: in a browser this auto-runs on DOMContentLoaded. Under a
@@ -59,6 +59,7 @@
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
+    ' "board": *[_type == "board"][0]{term, members[]{name, position}},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}}}';
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
@@ -258,6 +259,8 @@
       const lift = result && result.liftHours;
       if (lift && typeof lift === 'object') renderLiftHours(doc, lift);
       if (schedule && result && trainingGroups.length) renderSchedule(doc, schedule, trainingGroups, result.courses, liftByDay(lift));
+      const board = result && result.board;
+      if (board && typeof board === 'object') renderBoard(doc, board);
       const club = result && result.clubInfo;
       if (club && typeof club === 'object') renderClubInfo(doc, club);
     }
@@ -603,6 +606,46 @@
     }
     mount.hidden = false;
     nav.hidden = false;
+  }
+
+  /**
+   * Fill Styret's term line and board grids from the CMS, Vara members in the
+   * deputy grid, each in array order. Called only when the singleton exists;
+   * otherwise everything stays hidden (no fallback). CMS strings go in as text.
+   */
+  function renderBoard(doc, board) {
+    const term = doc.querySelector('[data-board-term]');
+    if (term && isText(board.term)) {
+      term.textContent = board.term;
+      term.hidden = false;
+    }
+    const members = (Array.isArray(board.members) ? board.members : [])
+      .filter(function (m) { return m && isText(m.name) && isText(m.position); });
+    [['[data-board-grid]', false], ['[data-vara-grid]', true]].forEach(function (g) {
+      const mount = doc.querySelector(g[0]);
+      if (!mount) return;
+      const list = members.filter(function (m) { return (m.position === 'Vara') === g[1]; });
+      mount.textContent = '';
+      list.forEach(function (m) { mount.append(boardCard(doc, m)); });
+      mount.hidden = !list.length;
+      if (g[1]) {
+        const head = doc.querySelector('[data-vara-head]');
+        if (head) head.hidden = !list.length;
+      }
+    });
+  }
+
+  function boardCard(doc, m) {
+    const words = m.name.trim().split(/\s+/);
+    const initials = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0];
+    const card = el(doc, 'article', 'board-card');
+    const avatar = el(doc, 'div', 'board-avatar' + (m.position === 'Vara' ? ' board-avatar-vara' : ''), initials.toUpperCase());
+    avatar.setAttribute('aria-hidden', 'true');
+    const contact = el(doc, 'span', 'board-contact');
+    setIcon(contact, 'info');
+    contact.append(' kontakt via styret');
+    card.append(avatar, el(doc, 'h3', 'board-name', m.name), el(doc, 'p', 'board-role', m.position), contact);
+    return card;
   }
 
   /**
