@@ -1,5 +1,7 @@
 // Singleton (see sanity.config.js): the board on styret.html. While it doesn't
 // exist or Sanity fails, Styret hides the board (no fallback).
+import { contactDetailsFields } from './contactDetails.js';
+
 const POSITIONS = ['Styreleder', 'Nestleder', 'Sportslig leder', 'Styremedlem', 'Vara'];
 
 export const board = {
@@ -18,7 +20,7 @@ export const board = {
       title: 'Styremedlemmer',
       type: 'array',
       description:
-        'Dra for å endre rekkefølgen på siden. Varamedlemmer vises i egen gruppe. Ikke skriv telefonnummer eller e-post her.',
+        'Dra for å endre rekkefølgen på siden. Varamedlemmer vises i egen gruppe. Telefon og e-post fylles inn i egne felt per person, og vises bare med samtykke.',
       of: [
         {
           type: 'object',
@@ -33,6 +35,7 @@ export const board = {
               options: { list: POSITIONS.map((p) => ({ title: p, value: p })) },
               validation: (Rule) => Rule.required(),
             },
+            ...contactDetailsFields,
           ],
           preview: { select: { title: 'name', subtitle: 'position' } },
         },

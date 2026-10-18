@@ -60,8 +60,8 @@
     ' "skiSchool": *[_type == "skiSchool"][0]{intro, age, includes, equipment, meetup, reservation},' +
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
-    ' "board": *[_type == "board"][0]{term, members[]{name, position}},' +
-    ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role}},' +
+    ' "board": *[_type == "board"][0]{term, members[]{name, position, phone, email, consent}},' +
+    ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role, phone, email, consent}},' +
     ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
   const CMS_URL =
@@ -336,7 +336,7 @@
     const grid = doc.querySelector('[data-contact-persons]');
     if (grid && persons.length) {
       grid.textContent = '';
-      persons.forEach(function (p) { grid.append(personCard(doc, p.name, p.role, 'klubben')); });
+      persons.forEach(function (p) { grid.append(personCard(doc, p, p.role, 'klubben')); });
     }
   }
 
@@ -650,7 +650,7 @@
       const mount = doc.querySelector(selector);
       if (!mount) return;
       mount.textContent = '';
-      list.forEach(function (m) { mount.append(personCard(doc, m.name, m.position, 'styret', isVara(m))); });
+      list.forEach(function (m) { mount.append(personCard(doc, m, m.position, 'styret', isVara(m))); });
       mount.hidden = !list.length;
     };
     const vara = members.filter(isVara);
@@ -665,19 +665,42 @@
     return (Array.isArray(list) ? list : []).filter(function (p) { return p && isText(p.name) && isText(p[key]); });
   }
 
-  /** A person card (Styret, Kontakt): initials avatar, name, role, "kontakt via <via>". */
-  function personCard(doc, name, role, via, vara) {
+  /**
+   * A person card (Styret, Kontakt): initials avatar, name, role, then phone
+   * and email links when the person has consented (ADR 0004) and the values
+   * are well-formed, else "kontakt via <via>".
+   */
+  function personCard(doc, person, role, via, vara) {
+    const name = person.name;
     const words = name.trim().split(/\s+/);
     const initials = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0];
     const card = el(doc, 'article', 'board-card');
     const avatar = el(doc, 'div', 'board-avatar' + (vara ? ' board-avatar-vara' : ''), initials.toUpperCase());
     avatar.setAttribute('aria-hidden', 'true');
-    const contact = el(doc, 'span', 'board-contact');
-    setIcon(contact, 'info');
-    contact.append(' kontakt via ' + via);
-    card.append(avatar, el(doc, 'h3', 'board-name', name), el(doc, 'p', 'board-role', role), contact);
+    card.append(avatar, el(doc, 'h3', 'board-name', name), el(doc, 'p', 'board-role', role));
+    const links = [];
+    if (person.consent === true) {
+      if (isPhone(person.phone)) links.push(contactLine(doc, 'phone', 'tel:' + person.phone.replace(/[^\d+]/g, ''), person.phone));
+      if (isEmail(person.email)) links.push(contactLine(doc, 'mail', 'mailto:' + person.email.trim(), person.email));
+    }
+    if (links.length) card.append.apply(card, links);
+    else card.append(contactLine(doc, 'info', null, 'kontakt via ' + via));
     return card;
   }
+
+  /** A card's contact line: icon and text, a link when there is an href. */
+  function contactLine(doc, icon, href, text) {
+    const n = el(doc, href ? 'a' : 'span', 'board-contact');
+    if (href) n.href = href;
+    setIcon(n, icon);
+    n.append(' ' + text.trim());
+    return n;
+  }
+
+  // Phone: same regex as studio/schemaTypes/contactDetails.js; keep them together.
+  // Email: a simple check of our own (Studio uses Sanity's email type).
+  function isPhone(v) { return typeof v === 'string' && /^\+?\d[\d ]{6,18}\d$/.test(v.trim()); }
+  function isEmail(v) { return typeof v === 'string' && /^[\w.+-]+@[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]{2,}$/i.test(v.trim()); }
 
   /**
    * Fill the Lift hours mounts from the CMS: the note, the compact week

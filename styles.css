@@ -1163,6 +1163,9 @@
     padding: 6px 14px;
   }
   .board-contact .icon { width: 14px; height: 14px; color: var(--blue-lt); }
+  a.board-contact { color: var(--snow); text-decoration: none; overflow-wrap: anywhere; }
+  a.board-contact:hover { border-color: rgba(0,159,227,0.4); }
+  .board-contact + .board-contact { margin-top: 8px; }
   .board-note {
     display: flex;
     align-items: flex-start;

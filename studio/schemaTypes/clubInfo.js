@@ -3,6 +3,8 @@
 // kontakt.html and on the landing page. While it doesn't exist, or a field is
 // empty, the pages show their hand-written fallback (except social links:
 // an empty one hides that button).
+import { contactDetailsFields } from './contactDetails.js';
+
 const url = (name, title, description) => ({
   name,
   title,
@@ -53,9 +55,10 @@ export const clubInfo = {
               name: 'role',
               title: 'Rolle',
               type: 'string',
-              description: 'For eksempel «Foreldrekontakt · U12–U14». Ikke skriv telefonnummer eller e-postadresse her, det blir publisert på nettsiden.',
+              description: 'For eksempel «Foreldrekontakt · U12–U14». Ikke skriv telefonnummer eller e-post her; bruk feltene under, som bare vises med samtykke.',
               validation: (Rule) => Rule.required(),
             },
+            ...contactDetailsFields,
           ],
           preview: { select: { title: 'name', subtitle: 'role' } },
         },

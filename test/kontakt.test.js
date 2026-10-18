@@ -267,3 +267,42 @@ test('kontakt: PII-leak guard holds on the page rendered from Club info', async 
   for (const secret of leaked) assert.ok(!html.includes(secret), `does not leak "${secret}"`);
   assert.match(doc.body.textContent, /kontakt via klubben/);
 });
+
+// Contact details with consent (ticket 035, ADR 0004). Fake values only.
+const contacts = (doc) => [...doc.querySelectorAll('.kontakt-grid .board-card')].map((c) =>
+  [...c.querySelectorAll('.board-contact')].map((n) => [n.getAttribute('href'), n.textContent.trim()]));
+
+test('kontakt: with consent, phone and email render as tel:/mailto: links', async () => {
+  const doc = await renderWith({ clubInfo: { ...CLUB, contactPersons: [
+    { name: 'Kari Nordmann', role: 'Skiskole', phone: '000 00 000', email: 'kari@example.no', consent: true, consentDate: '2026-10-18' },
+    { name: 'Ola', role: 'U12', email: 'ola@example.no', consent: true, consentDate: '2026-10-18' },
+    { name: 'Per', role: 'U8' },
+  ] } });
+  assert.deepEqual(contacts(doc), [
+    [['tel:00000000', '000 00 000'], ['mailto:kari@example.no', 'kari@example.no']],
+    [['mailto:ola@example.no', 'ola@example.no']],
+    [[null, 'kontakt via klubben']],
+  ]);
+});
+
+test('kontakt: without consent, filled-in details appear nowhere on the page', async () => {
+  const doc = await renderWith({ clubInfo: { ...CLUB, contactPersons: [{ name: 'Kari Nordmann', role: 'Skiskole', phone: '+47 000 00 000', email: 'kari@example.no', consent: false }] } });
+  const html = doc.documentElement.innerHTML;
+  assert.ok(!html.includes('000 00 000') && !html.includes('kari@example.no'));
+  assert.deepEqual(contacts(doc), [[[null, 'kontakt via klubben']]]);
+});
+
+test('kontakt: malformed details are not links; markup in them renders as text', async () => {
+  const evil = '<img src=x onerror=alert(1)>';
+  const doc = await renderWith({ clubInfo: { ...CLUB, contactPersons: [
+    { name: 'Kari Nordmann', role: 'Skiskole', phone: evil, email: 'a@b@c', consent: true },
+  ] } });
+  assert.equal(doc.querySelector('main a[href^="tel:"], main a[href^="mailto:"]'), null);
+  assert.deepEqual(contacts(doc), [[[null, 'kontakt via klubben']]]);
+  assert.equal(doc.querySelector('.kontakt-grid img'), null);
+});
+
+test('kontakt: on a rejected fetch there are no tel:/mailto: links', async () => {
+  const doc = await renderWith(() => Promise.reject(new Error('offline')));
+  assert.equal(doc.querySelector('a[href^="tel:"], a[href^="mailto:"]'), null);
+});

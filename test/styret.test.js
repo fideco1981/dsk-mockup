@@ -177,3 +177,34 @@ test('styret: personal phone numbers and emails are masked', async (t) => {
     'offers a masked "kontakt via styret" affordance',
   );
 });
+
+// Contact details with consent (ticket 035, ADR 0004). Fake values only.
+const PHONE = '+47 000 00 000';
+const EMAIL = 'kari@example.no';
+const contacts = (doc) => [...doc.querySelectorAll('.board-grid .board-card')].map((c) =>
+  [...c.querySelectorAll('.board-contact')].map((n) => [n.getAttribute('href'), n.textContent.trim()]));
+
+test('styret: with consent, phone and email render as tel:/mailto: links', async () => {
+  const doc = await renderWithCms({ board: { members: [{ ...BOARD[0], phone: PHONE, email: EMAIL, consent: true, consentDate: '2026-10-18' }] } });
+  assert.deepEqual(contacts(doc), [[['tel:+4700000000', PHONE], ['mailto:' + EMAIL, EMAIL]]]);
+});
+
+test('styret: without consent, filled-in details appear nowhere on the page', async () => {
+  const doc = await renderWithCms({ board: { members: [{ ...BOARD[0], phone: PHONE, email: EMAIL, consent: false }, { ...BOARD[1], phone: PHONE, email: EMAIL }] } });
+  const html = doc.documentElement.innerHTML;
+  assert.ok(!html.includes('000 00 000') && !html.includes(EMAIL));
+  assert.deepEqual(contacts(doc), [[[null, 'kontakt via styret']], [[null, 'kontakt via styret']]]);
+});
+
+test('styret: malformed details are not links; markup in them renders as text', async () => {
+  const evil = '<img src=x onerror=alert(1)>';
+  const doc = await renderWithCms({ board: { members: [
+    { ...BOARD[0], phone: 'ring meg', email: 'ikke-en-epost', consent: true },
+    { ...BOARD[1], phone: evil, email: evil + '@example.no', consent: true },
+    { ...BOARD[3], email: 'kari@example.no?bcc=evil.no', consent: true },
+    { ...BOARD[4], consent: true },
+  ] } });
+  assert.equal(doc.querySelector('a[href^="tel:"], a[href^="mailto:"]'), null);
+  assert.deepEqual(contacts(doc), Array(4).fill([[null, 'kontakt via styret']]), 'incl. consent with no details');
+  assert.equal(doc.querySelector('main img'), null);
+});
