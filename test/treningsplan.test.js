@@ -163,3 +163,16 @@ test('treningsplan: with no course this week, a note links to skiskole.html with
     () => Promise.reject(new Error('offline')),
   ]) assert.equal(nextNote(await render(cms)), null);
 });
+
+test('treningsplan: a session running past lift closing gets a "Kun <group>" piece at the end, in its colour', async () => {
+  const late = [{ title: 'Fun', colour: 'Orange', sessions: [session('Tirsdag', '19:00', '20:30')] }];
+  const doc = await render({ trainingGroups: [...GROUPS, ...late], liftHours: LIFT });
+  for (const view of VIEWS) {
+    const post = day(doc, view, 'Tirsdag').querySelector('.lift-post');
+    assert.equal(post.textContent, 'Kun Fun 20:00 – 20:30', view);
+    assert.ok(post.classList.contains('group-orange'), view);
+    assert.equal(post, day(doc, view, 'Tirsdag').lastElementChild, view + ': last in the day');
+    assert.equal(tail(doc, view, 'Tirsdag'), undefined, view + ': no lift tail');
+    assert.equal(day(doc, view, 'Mandag').querySelector('.lift-post'), null, view + ': ends before closing');
+  }
+});

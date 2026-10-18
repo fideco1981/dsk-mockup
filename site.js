@@ -600,7 +600,8 @@
    * Fill the landing page's Treningsplan from the Training groups' sessions
    * and this week's Courses, keeping the lift labels. Per day: the sessions by
    * `from`, a "Kun skiskole" piece when a course runs up to the lift opening,
-   * and the lift tail after the last session. With no course this week, a note
+   * and the lift tail after the last session, or a "Kun <group>" piece when it
+   * runs past closing. With no course this week, a note
    * gives the next course's start. Lift parts need Lift hours; the
    * fallback labels alone carry no times to compute with. CMS strings go in as text.
    */
@@ -635,7 +636,7 @@
       const cards = wrapper.querySelector('.lift-cards');
       cards.textContent = '';
       dayEntries.forEach(function (e) { cards.append(scheduleCard(doc, e)); });
-      wrapper.querySelectorAll('.lift-pre, .lift-tail').forEach(function (p) { p.remove(); });
+      wrapper.querySelectorAll('.lift-pre, .lift-tail, .lift-post').forEach(function (p) { p.remove(); });
       const open = lift[header.dataset.day];
       if (!open || !dayEntries.length) return;
       // Only a course that runs up to the lift opening extends the bar back.
@@ -645,11 +646,15 @@
       if (early) {
         wrapper.insertBefore(el(doc, 'div', 'lift-pre', 'Kun skiskole ' + early.session.from + ' – ' + open.from), header);
       }
-      const last = dayEntries.map(function (e) { return e.session.to; }).sort().pop();
+      const latest = dayEntries.slice().sort(function (a, b) { return compareStr(a.session.to, b.session.to); }).pop();
+      const last = latest.session.to;
       if (last < open.to) {
         const tail = el(doc, 'div', 'lift-tail');
         tail.append(el(doc, 'span', null, last + ' – ' + open.to), el(doc, 'div', 'tail-line'));
         wrapper.append(tail);
+      } else if (last > open.to) {
+        // Mirror of "Kun skiskole": the session that runs past closing gets the end piece.
+        wrapper.append(el(doc, 'div', 'lift-post ' + latest.cls, 'Kun ' + latest.title + ' ' + open.to + ' – ' + last));
       }
     });
     const fallback = mount.querySelector('[data-schedule-fallback]');

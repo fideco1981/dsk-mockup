@@ -26,10 +26,11 @@ const SPONSORS = ['A', 'B', 'C', 'D'].map((n) => ({
   name: `Sponsor ${n}`, url: 'https://example.org/s', logo: `https://cdn.sanity.io/images/p/d/${n}.png`,
 }));
 
-// One per colour, so every tag colour's contrast is scanned.
+// One per colour, so every tag colour's contrast is scanned. Fun runs past
+// the lift closing, so the Treningsplan's "Kun Fun" end piece is scanned too.
 const TRAINING_GROUPS = [['Grønn', 'Grønn'], ['Blå', 'Blå'], ['Rød', 'Rød'], ['Sort', 'Sort'], ['Fun', 'Orange']].map(([title, colour]) => ({
   title, colour, age: 'U10', place: 'Haukåsløypa', price: '3 500 kr', description: 'Lek og mestring.',
-  sessions: [{ day: 'Mandag', from: '18:00', to: '19:30' }],
+  sessions: [{ day: 'Mandag', from: '18:00', to: title === 'Fun' ? '20:30' : '19:30' }],
 }));
 
 const SKI_SCHOOL = {
@@ -65,6 +66,7 @@ const RENDERED = {
     await expect(page.locator('#programs-grid .program-age').first()).toBeVisible();
     await expect(page.locator('#schedule .lift-pre').filter({ visible: true })).toHaveText('Kun skiskole 17:30 – 18:00');
     await expect(page.locator('#schedule .session-card.group-skiskole').filter({ visible: true })).toBeVisible();
+    await expect(page.locator('#schedule .lift-post').filter({ visible: true })).toHaveText('Kun Fun 20:00 – 20:30');
   },
   failure: (page) => expect(page.locator('.topbar-msg')).toContainText('Sesong'),
   empty: (page) => expect(page.locator('.events-empty')).toBeVisible(),
