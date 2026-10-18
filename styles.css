@@ -1648,7 +1648,6 @@
     .board-grid { grid-template-columns: repeat(2, 1fr); }
     .programs-grid { grid-template-columns: repeat(2, 1fr); }
     .insta-grid { grid-template-columns: repeat(3, 1fr); }
-    .insta-tile:nth-child(n+4) { display: none; }
     .footer-inner { grid-template-columns: 1fr 1fr; }
     .achievement-grid { grid-template-columns: repeat(2, 1fr); }
     .kontakt-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1677,8 +1676,6 @@
     .haukos-inner { grid-template-columns: 1fr; }
     .haukos-visual { min-height: 260px; }
     .haukos-text { padding: 60px 20px; width: 100%; }
-    .insta-grid { grid-template-columns: repeat(3, 1fr); }
-    .insta-tile:nth-child(n+4) { display: block; }
     .footer-inner { grid-template-columns: 1fr 1fr; }
     .footer-brand { grid-column: 1 / -1; }
     .topbar { font-size: 12px; }
