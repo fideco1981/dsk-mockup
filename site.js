@@ -615,7 +615,7 @@
       validSessions(g.sessions).forEach(function (s) { entries.push({ session: s, title: g.title, cls: groupClass(g) }); });
     });
     courses.forEach(function (c) {
-      validSessions(c.sessions).forEach(function (s) { entries.push({ session: s, title: c.title, cls: SKI_SCHOOL_CLASS, isCourse: true }); });
+      validSessions(c.sessions).forEach(function (s) { entries.push({ session: s, title: 'Skiskole', cls: SKI_SCHOOL_CLASS, isCourse: true }); });
     });
     entries.sort(function (a, b) { return compareStr(a.session.from, b.session.from); });
 

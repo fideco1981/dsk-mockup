@@ -63,7 +63,7 @@ test('treningsplan: a course in the current week shows, a past one or one skippi
     const [card] = courseCards(shown, view);
     assert.equal(courseCards(shown, view).length, 1, view);
     assert.equal(card.closest('.lift-wrapper').querySelector('.lift-header').dataset.day, 'Tirsdag', view);
-    assert.equal(card.querySelector('.s-group').textContent, 'Skiskole ettermiddag', view);
+    assert.equal(card.querySelector('.s-group').textContent, 'Skiskole', view);
     assert.equal(card.getAttribute('href'), 'skiskole.html', view);
   }
   const allWeeks = Array.from({ length: 53 }, (_, i) => i + 1);
