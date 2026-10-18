@@ -61,7 +61,7 @@
     ' "courses": *[_type == "course"]{title, signupDeadline, startDate, endDate, sessions[]{day, from, to}, skipWeeks, price, link, note},' +
     ' "liftHours": *[_type == "liftHours"][0]{note, hours[]{day, from, to}},' +
     ' "board": *[_type == "board"][0]{term, members[]{name, position, phone, email, consent}},' +
-    ' "trainers": *[_type == "trainers"][0].trainers[]{name, role, presentation, merits, phone, email, consent},' +
+    ' "trainers": *[_type == "trainers"][0].trainers[]{name, role, presentation, merits, phone, email, consent, "groups": groups[]->{title, colour}, skiSchool},' +
     ' "clubInfo": *[_type == "clubInfo"][0]{visitAddress, postAddress, orgNumber, instagram, facebook, tiktok, spondSignup, membershipText, membershipPoints, contactPersons[]{name, role, phone, email, consent}},' +
     ' "featuredPosts": *[_type == "featuredPost"]{alt, link, order, "image": image.asset->url, "crop": image.crop, "hotspot": image.hotspot, "size": image.asset->metadata.dimensions{width, height}}}'; // sorted + capped in renderFeaturedPosts
   const SPOND_COURSES_URL = 'https://club.spond.com/landing/courses/drammensk';
@@ -689,6 +689,14 @@
     mount.textContent = '';
     trainers.forEach(function (t) {
       const body = [];
+      const tags = validGroups(t.groups).map(function (g) { return tag(doc, g.title, 'treningsopplegg.html#' + slug(g.title), groupClass(g)); });
+      if (t.skiSchool === true) tags.push(tag(doc, 'Skiskole', 'skiskole.html', SKI_SCHOOL_CLASS));
+      if (tags.length) {
+        const ul = el(doc, 'ul', 'trainer-tags');
+        ul.setAttribute('aria-label', 'Ansvarlig for');
+        tags.forEach(function (a) { const li = el(doc, 'li'); li.append(a); ul.append(li); });
+        body.push(ul);
+      }
       if (isText(t.presentation)) body.push(el(doc, 'p', 'trainer-presentation', t.presentation));
       const merits = (Array.isArray(t.merits) ? t.merits : []).filter(isText);
       if (merits.length) {
@@ -699,6 +707,13 @@
       mount.append(personCard(doc, t, t.role, null, false, body));
     });
     mount.hidden = !trainers.length;
+  }
+
+  /** A responsibility tag on a trainer card: a link in a .group-* colour. */
+  function tag(doc, text, href, cls) {
+    const a = el(doc, 'a', 'trainer-tag ' + cls, text);
+    a.href = href;
+    return a;
   }
 
   /** Entries of a CMS list with a text name and a text <key> (role, position). */

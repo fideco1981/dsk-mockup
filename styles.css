@@ -1171,6 +1171,15 @@
   .trainer-presentation { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 6px 0 14px; }
   .trainer-merits { list-style: none; padding: 0; margin: 0 0 16px; font-size: 13px; line-height: 1.5; }
   .trainer-merits li + li { margin-top: 4px; }
+  /* Responsibility tags, tinted by the .group-* colour like .session-card: white text passes AA for every colour. */
+  .trainer-tags { list-style: none; padding: 0; margin: 4px 0 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .trainer-tag {
+    display: inline-block; padding: 4px 12px; border-radius: 999px; text-decoration: none;
+    background: color-mix(in srgb, var(--group-bg) 30%, var(--dark2)); border: 1px solid var(--group-bg); color: #fff;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .trainer-tag:hover { background: color-mix(in srgb, var(--group-bg) 50%, var(--dark2)); }
+  .trainer-tag:focus-visible { outline: 2px solid var(--blue-lt); outline-offset: 2px; }
   .board-note {
     display: flex;
     align-items: flex-start;

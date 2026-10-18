@@ -138,3 +138,39 @@ test('trenere: with no trainers (or no singleton), the grid stays hidden', async
     assertPageStays(doc);
   }
 });
+
+// Responsibility tags (ticket 038): resolved groups in their colour, linking to
+// their Treningsopplegg anchor; "Skiskole" in the ski-school colour.
+const tags = (doc) => [...doc.querySelectorAll('[data-trainers-grid] .board-card')].map((c) =>
+  [...c.querySelectorAll('.trainer-tags a')].map((a) => [a.textContent, a.getAttribute('href'), a.className]));
+
+test('trenere: group tags in the group colour link to the group on Treningsopplegg', async () => {
+  const doc = await renderWithCms({ trainers: [{ ...TRAINERS[0], groups: [{ title: 'Grønn', colour: 'Grønn' }, { title: 'Blå Øvet', colour: 'Blå' }] }] });
+  assert.deepEqual(tags(doc), [[
+    ['Grønn', 'treningsopplegg.html#gronn', 'trainer-tag group-gronn'],
+    ['Blå Øvet', 'treningsopplegg.html#bla-ovet', 'trainer-tag group-bla'],
+  ]]);
+  assert.equal(doc.querySelector('.trainer-tags').getAttribute('aria-label'), 'Ansvarlig for');
+});
+
+test('trenere: a Skiskole tag in the ski-school colour links to Skiskole', async () => {
+  const doc = await renderWithCms({ trainers: [{ ...TRAINERS[1], groups: [{ title: 'Rød', colour: 'Rød' }], skiSchool: true }, { ...TRAINERS[2], skiSchool: false }] });
+  assert.deepEqual(tags(doc), [[
+    ['Rød', 'treningsopplegg.html#rod', 'trainer-tag group-rod'],
+    ['Skiskole', 'skiskole.html', 'trainer-tag group-skiskole'],
+  ], []]);
+  assert.equal(doc.querySelectorAll('.trainer-tags').length, 1, 'no empty tag list');
+});
+
+test('trenere: a deleted (unresolved) group is skipped without breaking the card', async () => {
+  const doc = await renderWithCms({ trainers: [{ ...TRAINERS[0], groups: [null, { title: 'Sort', colour: 'Sort' }, {}] }] });
+  assert.deepEqual(tags(doc), [[['Sort', 'treningsopplegg.html#sort', 'trainer-tag group-sort']]]);
+  assert.equal(cards(doc)[0].name, 'Kari Nordmann');
+});
+
+test('trenere: markup in a group title renders as text', async () => {
+  const evil = '<img src=x onerror=alert(1)><b>Hei</b>';
+  const doc = await renderWithCms({ trainers: [{ ...TRAINERS[0], groups: [{ title: evil, colour: 'Grønn' }] }] });
+  assert.equal(tags(doc)[0][0][0], evil);
+  assert.equal(doc.querySelector('main img, main b'), null);
+});

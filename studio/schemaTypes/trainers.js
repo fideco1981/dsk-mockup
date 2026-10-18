@@ -28,6 +28,21 @@ export const trainers = {
               description: 'Valgfritt, kort. For eksempel «Hovedtrener».',
             },
             {
+              name: 'groups',
+              title: 'Treningsgrupper',
+              type: 'array',
+              // Weak: a group can be deleted or renamed without editing trainers; the site skips missing ones.
+              of: [{ type: 'reference', to: [{ type: 'trainingGroup' }], weak: true }],
+              description: 'Gruppene treneren har ansvar for. Vises som merker i gruppens farge, med lenke til gruppen.',
+            },
+            {
+              name: 'skiSchool',
+              title: 'Skiskole',
+              type: 'boolean',
+              description: 'Kryss av hvis treneren er instruktør i skiskolen. Vises som merket «Skiskole».',
+              initialValue: false,
+            },
+            {
               name: 'presentation',
               title: 'Presentasjon',
               type: 'text',
