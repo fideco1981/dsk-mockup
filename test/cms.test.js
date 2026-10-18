@@ -167,6 +167,7 @@ test('cms events: only upcoming events, nearest first, at most 3', async () => {
   const first = cards(doc)[0];
   assert.equal(first.querySelector('.event-date .day').textContent, '15');
   assert.equal(first.querySelector('.event-date .month').textContent, 'Jan');
+  assert.equal(cards(doc)[1].querySelector('.event-date .day').textContent, '1', 'no leading zero');
 });
 
 test('cms events: rendered cards are not in the fade-in hidden state', async () => {

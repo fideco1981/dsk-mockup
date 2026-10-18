@@ -412,7 +412,7 @@
 
     const card = el(doc, 'div', 'event-card');
     const date = el(doc, 'div', 'event-date');
-    date.append(el(doc, 'div', 'day', pad2(parts[2])), el(doc, 'div', 'month', MONTHS_SHORT[parts[1] - 1]));
+    date.append(el(doc, 'div', 'day', String(parts[2])), el(doc, 'div', 'month', MONTHS_SHORT[parts[1] - 1]));
 
     const info = el(doc, 'div', 'event-info');
     if (Array.isArray(e.chips) && e.chips.length) {

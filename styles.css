@@ -731,11 +731,11 @@
   }
   .event-date {
     flex-shrink: 0;
-    width: 54px;
+    min-width: 54px; /* grows for wide Syne digits like "25" */
     text-align: center;
     background: var(--dark);
     border-radius: 10px;
-    padding: 10px 6px;
+    padding: 10px 8px;
     color: #fff;
   }
   .event-date .day {
